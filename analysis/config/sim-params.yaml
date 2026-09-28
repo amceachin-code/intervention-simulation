@@ -12,6 +12,9 @@ cells:
   - {subject: mathematics, grade: 12, subscale: MWPCM, label: "Math G12"}   # 0-300 scale, NOT MRPCM
 
 jurisdiction: NT      # national public + private
+# [reference year, comparison year]. 01-simulations.R queries these and
+# computes comparison minus reference. The CSV columns (q2019, sd2019, sd2024)
+# keep their names as a fixed schema that downstream scripts read.
 years: [2019, 2024]
 
 # Treated effect sizes, in SD. phi = 1.0 (no deflation): optimistic by construction.
@@ -31,12 +34,70 @@ participation:
   - {id: optin,     c: 0.187, label: "Opt-in tutoring take-up",    source: "robinson-bisht-loeb-2025"}
   - {id: summer,    c: 0.130, label: "Summer program reach",       source: "callen-etal-2025"}
 
-# Differential take-up by achievement (arm A3). Struggling students opt in at
-# roughly half the rate of passing students.
-optin_takeup:
-  struggling: 0.116
-  passing:    0.227
-  source: "robinson-bisht-loeb-2025"
+# The treated effect applied wherever the pipeline needs ONE program effect:
+# 01-simulations.R Table C3, the seat allocation (06), the tail sensitivity
+# (07), and tests/test-sim.R. Names a benchmark id above, so the number itself
+# lives in one place. tut_scale is the best-evidenced tutoring effect at
+# national scale.
+treated_effect: tut_scale
+
+# Program points on the district requirements figure (04-district-requirements.R).
+# Each pairs a benchmark effect (g_id) with a participation rate (c_id) by id.
+district_requirements_points:
+  - {label: "Tutoring, >=1000 students",   g_id: tut_scale,   c_id: hdt_dist}
+  - {label: "Tutoring, 400-999 students",  g_id: tut_mid,     c_id: hdt_dist}
+  - {label: "Summer, meta-analytic",       g_id: summer_math, c_id: summer}
+  - {label: "Summer, realized post-COVID", g_id: summer_real, c_id: summer}
+  # Source UNCONFIRMED: this pairs the 400-999 tutoring effect with opt-in
+  # take-up, a combination no single source reports. Kept as the script had
+  # it; see the "Confirm the opt-in tutoring pairing" item in TODO.md.
+  - {label: "Opt-in tutoring (ITT)",       g_id: tut_mid,     c_id: optin}
+
+# Program points on the requirements figure (02-figures.R, figure 8). TWO
+# participation denominators, not interchangeable: share_all is tutored /
+# ALL students, share_targeted is tutored / students the program TARGETED.
+# `basis` records which one the SOURCE reports. Each field is either a config
+# id (<field>_id) or a literal; null means the source does not report it.
+requirements_figure_points:
+  # Callen et al. report BOTH denominators for the same program: 12.7% of all
+  # students attended, and districts targeting low performers enrolled "about
+  # one in four targeted students". The only point where both are measured in
+  # the same study. (0.127 is the unrounded rate; participation.summer uses 0.130.)
+  - {label: "Summer, realized post-COVID", g_id: summer_real, share_all: 0.127, share_targeted: 0.25,
+     basis: both, src: "Callen et al. 2025"}
+  # Lynch et al.'s pooled effect has NO participation rate of its own; the
+  # meta-analysis could not analyze attendance. Borrowing Callen's rate is a
+  # construction, so it is marked as such.
+  - {label: "Summer, meta-analytic", g_id: summer_math, share_all: 0.127, share_targeted: null,
+     basis: borrowed, src: "Lynch et al. 2022 effect + Callen et al. 2025 rate"}
+  # Kraft/Schueler/Falken's 28% is a MODELLING ASSUMPTION used to map scale
+  # bins onto national enrolment ("assuming districts tutor 28 percent of
+  # their students"), not a measured participation rate. It is a share of all
+  # students in a district.
+  - {label: "Tutoring at scale (>=1000)", g_id: tut_scale, share_all_id: hdt_dist, share_targeted: null,
+     basis: assumed, src: "Kraft/Schueler/Falken 2024 (effect n.s.)"}
+  - {label: "Tutoring (400-999 students)", g_id: tut_mid, share_all_id: hdt_dist, share_targeted: null,
+     basis: assumed, src: "Kraft/Schueler/Falken 2024"}
+  # Carbonari et al. report shares of ELIGIBLE students. The three programs
+  # with robust positive effects served 1-2 percent of eligible students; the
+  # expert-teacher intervention reached 20-32 percent of eligible students.
+  # Converting to a share of all students needs the eligible fraction, which
+  # the notes do not give, so share_all is null and these are plotted on the
+  # targeted axis only.
+  - {label: "Effective tutoring (observed)", g: 0.220, share_all: null, share_targeted: 0.015,
+     basis: targeted, src: "Carbonari et al. 2025 (1-2% of eligible)"}
+  - {label: "Expert-teacher assignment", g: 0.060, share_all: null, share_targeted: 0.32,
+     basis: targeted, src: "Carbonari et al. 2025 (32% of eligible, math)"}
+  # Robinson et al. measure take-up among students OFFERED the resource, so
+  # its denominator is the offered (targeted) population, not all students.
+  - {label: "Opt-in tutoring take-up", g: null, share_all: null, share_targeted_id: optin,
+     basis: targeted, src: "Robinson/Bisht/Loeb 2025 (take-up only, no effect)"}
+
+# Economically disadvantaged share of the population, used by
+# 05-compile-summary.R section 6b. Source UNCONFIRMED: it matches the Reading
+# G4 2019 ECONDIS population share in tables/sim-bottom-decile.csv (0.5095)
+# rounded, but was hardcoded without a citation. See TODO.md.
+ed_population_share: 0.510
 
 # Kraft (2020) empirical distribution of education RCT effect sizes, for benchmarking
 # the REQUIRED effect against what interventions actually deliver.

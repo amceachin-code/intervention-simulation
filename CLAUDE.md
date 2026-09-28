@@ -19,8 +19,8 @@ Owner: Andrew McEachin (ETS Research Institute). Framing, target journal, and co
 
 Public data only.
 
-- **NAEP Data Service API**: 2019 and 2024 national percentiles (10, 25, 50, 75, 90) and SDs for reading and math at grades 4, 8, and 12 (six cells), plus the economic-disadvantage breakdown. Responses are cached in `analysis/.cache/` (R) and `analysis/.cache-stata/` (Stata); delete a cache to force a refresh.
-- **Literature parameters** in `analysis/config/sim-params.yaml`, each with its source.
+- **NAEP Data Service API**: 2019 and 2024 national percentiles (10, 25, 50, 75, 90) and SDs for reading and math at grades 4, 8, and 12 (six cells), plus the economic-disadvantage breakdown. Responses are cached in `analysis/.cache/` (R) and `analysis/.cache-stata/` (Stata). The caches are public JSON and are tracked in git, so a fresh clone reproduces every table without the live API; delete a cache to force a refresh, and review the refreshed responses in the diff.
+- **Literature parameters** in `analysis/config/sim-params.yaml`, each with its source. Every R script reads them through `analysis/config-helpers.R`; do not hardcode a parameter in a script. The Stata port keeps its own copies on purpose (independent implementation).
 - **`kraft-2023-data/`**: the Kraft (2023) effect-size database and the target-population coding of its studies.
 - **`district-enrollment-data/`**: CCD 2023-24 LEA membership and directory files.
 
@@ -55,7 +55,7 @@ The two data folders are **copies shared with `../naep-aera-open/`**, which also
 
 ## 6. Running the code
 
-Run everything from the project root; paths are root-relative. Order, and what each step needs, is in `analysis/README.md`. In short: `01-simulations.R` is the root and writes `tables/sim-quantiles.csv` and `tables/sim-bottom-decile.csv`, which everything else reads. `04-` and `06-` take a cell name as a positional argument (for example `"Math G8"`). Tests are standalone `Rscript` files in `analysis/tests/` that check committed outputs with no network.
+Run everything from the project root; paths are root-relative. Order, and what each step needs, is in `analysis/README.md`. In short: `01-simulations.R` is the root and writes `tables/sim-quantiles.csv` and `tables/sim-bottom-decile.csv`, which everything else reads. `04-` and `06-` take a cell name as a positional argument (for example `"Math G8"`). Tests are standalone `Rscript` files in `analysis/tests/` that check committed outputs with no network; `bash analysis/tests/run-all.sh` runs them all, and `--regen` adds a full rerun from the committed cache that byte-compares every `tables/*.csv`.
 
 This machine intercepts TLS, so the scripts shell out to `curl` rather than R's internal downloader. Run the Stata port through the stata-mcp server (the GUI binary cannot run batch mode here).
 

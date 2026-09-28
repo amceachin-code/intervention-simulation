@@ -7,15 +7,16 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 # CURRENT TASK: MOVE THE SIMULATIONS OUT OF NAEP-AERA-OPEN (2026-09-28)
 
-**Status:** in progress. Step 2 (copy files) is under way.
+**Status:** all plan steps complete. The review-fix changes from step 9 are
+applied but uncommitted; committing them is Andrew's call.
 
 ## Objective
 
-Move the RQ3 simulation analysis out of
-`/Users/andrewmceachin/projects/naep-aera-open` into this standalone project,
-with full project scope and no tie to the article. The article's current RQ3
-is a narrative section and no longer uses the simulations. The simulation
-code, outputs, memo, and scope now belong here.
+Spin the simulation analysis (formerly RQ3 of
+`/Users/andrewmceachin/projects/naep-aera-open`) out into this standalone
+project, with full project scope and no tie to the article. The article's
+current RQ3 is a narrative section and no longer uses the simulations. The
+simulation code, outputs, memo, and scope now belong here.
 
 Source commit in `naep-aera-open`: `f644941`.
 
@@ -23,23 +24,84 @@ Source commit in `naep-aera-open`: `f644941`.
 
 - [x] 0. Launch the README and PROGRESS background agents.
 - [x] 1. Scaffold folders.
-- [ ] 2. Copy files: simulation scripts 05 to 11, helpers, the Stata port, the
-      params yaml, tests, design docs, the memo, and the NAEP API cache; plus
-      `kraft-2023-data/` and `district-enrollment-data/` whole, and scripts
-      12 and 13, `kraft-helpers.R`, and their tests. **(in progress)**
-- [ ] 3. Rename `rq3-*` to `sim-*`, renumber scripts 05 to 13 as 01 to 09, and
-      repoint every path.
-- [ ] 4. Project docs: `CLAUDE.md`, `README.md`, `TODO.md`,
+- [x] 2. Copy files: simulation scripts, helpers, the Stata port, the params
+      yaml, tests, design docs, the memo (working-tree version, including
+      uncommitted edits), and the NAEP API caches; plus `kraft-2023-data/`
+      (279M) and `district-enrollment-data/` (1.3G) whole, and scripts 12 and
+      13, `kraft-helpers.R`, and their tests.
+- [x] 3. Rename `rq3-*` to `sim-*`, renumber scripts 05 to 13 as 01 to 09, and
+      repoint every path. RQ3 wording reworded throughout.
+- [x] 4. Project docs: `CLAUDE.md`, `README.md`, `TODO.md`,
       `analysis/README.md`, `tasks/lessons.md`, `manuscript/ai-use-log.md`,
       `.gitignore`.
-- [ ] 5. References: a subset `.bib`, `apa.csl`, and the render script.
-- [ ] 6. Regenerate all outputs; verify they are byte-identical to the
-      originals; run the tests; render the memo.
-- [ ] 7. `git init` and an initial commit.
-- [ ] 8. Clean up `naep-aera-open`: `git rm` the simulation-only files (left
-      uncommitted), trim `test-rq3.R`, and update its docs.
-- [ ] 9. `/datascience-reviewer` passes on both projects.
-- [ ] 10. Final README and PROGRESS agents; offer a code review.
+- [x] 5. References: `references/references.bib` (a 14-key subset),
+      `references/apa.csl`, and `manuscript/render-section.sh` repointed.
+- [x] 6. Regenerate all outputs and verify them (details below).
+- [x] 7. `git init` and commits (details below).
+- [x] 8. Clean up `naep-aera-open`: simulation-only files `git rm`'d (left
+      uncommitted there), `test-rq3.R` trimmed, docs updated.
+- [x] 9. `/datascience-reviewer` passes on both projects; review fixes
+      applied here (uncommitted; details below).
+- [x] 10. Final README and PROGRESS agents; code-review offer.
+
+## Step details
+
+### Step 6: regeneration and verification
+
+- Every CSV and the `.rds` in `tables/` came out byte-identical to the
+  article's originals.
+- The Stata port reproduced Table 2(a), and its CSV was byte-identical.
+- The memo rendered with every image resolving.
+- All tests passed.
+- Markdown output diffs were the renames plus two wording changes that were
+  already in the article's scripts but had never been regenerated there.
+
+### Step 7: commits
+
+- `0f70131`: the spin-out.
+- `30d0343`: records the initial commit SHA in the run manifests.
+- `d8033df`: Table 2(a) references now name "the companion AERA Open
+  article"; fig9 caption regenerated; `SIM-SUMMARY.md` no longer claims an
+  empty-cache rebuild; render-script examples and data SUMMARY copy notes
+  fixed.
+- `84d1602`: refreshes the manifest SHA.
+
+### Step 9: reviewer passes and fixes
+
+The reviewer found that the move broke nothing. Its verdict was "not yet
+satisfied" on issues that predate the move. Andrew approved all suggestions.
+Applied here, uncommitted:
+
+- The NAEP API caches (`analysis/.cache/`, `analysis/.cache-stata/`) are now
+  tracked in git.
+- New `analysis/config-helpers.R`. Every R script reads
+  `analysis/config/sim-params.yaml` through it, with no fallback values.
+  New yaml keys: `treated_effect`, `district_requirements_points`,
+  `requirements_figure_points`, `ed_population_share`. `optin_takeup` was
+  deleted because the `GEOM_*` constants differ from it. The `years` key is
+  now wired into 01.
+- New `analysis/api-helpers.R`, extracted from `01-simulations.R`.
+- New tests: `analysis/tests/test-api-guards.R` (33 checks, mutation-tested),
+  `analysis/tests/test-regen.sh`, and `analysis/tests/run-all.sh`.
+- Manifests now record package versions; the dirty-tree check is widened.
+- `file.exists` guards added in 03, 04, 05, and 07; 07 now sources
+  `alloc-rules.R`; stale comments fixed.
+
+Verified after the fixes: all CSV, `.rds`, and `.md` outputs byte-identical;
+`bash analysis/tests/run-all.sh --regen` passes 6 of 6; a parameter change was
+shown to propagate through the outputs and then reverted.
+
+**Not done, by choice:** `06-seat-allocation.R` still hardcodes
+`B0 <- 0.13`, and the prose "0.155 SD" in `03-district-cases.R` is still
+hardcoded. Only 01 takes `--config`.
+
+## Next steps
+
+1. Commit the review-fix changes (Andrew's decision).
+2. Rerun 01, 08, and 09 so the manifests record a clean SHA, and commit.
+3. Open `TODO.md` items: framing; the Table 2(a) citation plan; the
+   attendance ceiling; scenario arms; opt-in pairing; the source for the ED
+   share; argument conventions.
 
 ## Key decisions
 
@@ -52,32 +114,54 @@ Source commit in `naep-aera-open`: `f644941`.
 - **Simulation-only files are removed from the article** (step 8).
 - **Naming:** `sim-*` replaces `rq3-*`, since the work is no longer tied to a
   research question in the article.
+- **The memo stays a historical co-author memo**, with a provenance header,
+  rather than being rewritten as a paper draft.
 
-## Files (planned)
+## Files
 
 **Copied from `naep-aera-open`, renamed and renumbered:**
 
-- `analysis/01-simulations.R` to `analysis/07-tail-sensitivity.R` (old 05 to 11)
+- `analysis/01-simulations.R` to `analysis/07-tail-sensitivity.R` (old 05 to
+  11)
 - `analysis/08-district-enrollment.R`, `analysis/09-kraft-benchmarks.R` (old
   12, 13)
 - `analysis/alloc-rules.R`, `analysis/mixture.R`, `analysis/dist-helpers.R`,
   `analysis/kraft-helpers.R`
-- `analysis/stata/` (Stata port)
+- `analysis/stata/01_simulations.do` (Stata port)
 - `analysis/config/sim-params.yaml`
-- `analysis/tests/test-sim.R` and the Kraft and district tests
+- `analysis/tests/test-sim.R`, `test-kraft-benchmarks.R`,
+  `test-kraft-target.R`, `test-district-enrollment.R`
 - `analysis/design-public-data.md`, `analysis/appendix-district-variation.md`
-- `manuscript/simulation-memo.md` (was `manuscript/RQ3-memo.md`)
-- The NAEP API cache
+- `manuscript/simulation-memo.md` (was `manuscript/RQ3-memo.md`), with its
+  rendered `.rendered.md` and `.docx`, and `manuscript/reference.docx`
+- `analysis/.cache/`, `analysis/.cache-stata/` (NAEP API caches, now tracked)
 - `kraft-2023-data/`, `district-enrollment-data/` (whole)
-- `tables/sim-*`, `figures/sim/` (regenerated in step 6)
 
-**Created:** `CLAUDE.md`, `README.md`, `TODO.md`, `analysis/README.md`,
-`tasks/lessons.md`, `manuscript/ai-use-log.md`, `.gitignore`, a references
-subset `.bib`, `apa.csl`, `manuscript/render-section.sh`, `PROGRESS.md`.
+**Regenerated outputs:** `tables/sim-*`, `tables/SIM-SUMMARY.md`,
+`tables/kraft-2023-benchmarks-*`, `tables/district-enrollment-2324-*`,
+`figures/sim/`, `figures/kraft/`, `figures/district-enrollment/`.
 
-**Removed from `naep-aera-open` (step 8):** the simulation-only scripts,
-helpers, tests, memo, and outputs. `test-rq3.R` there is trimmed rather than
-deleted.
+**Created in the spin-out:** `CLAUDE.md`, `README.md`, `TODO.md`,
+`PROGRESS.md`, `analysis/README.md`, `tasks/lessons.md`,
+`manuscript/ai-use-log.md`, `manuscript/render-section.sh`, `.gitignore`,
+`references/references.bib`, `references/apa.csl`.
+
+**Created in the step 9 fixes (uncommitted):** `analysis/config-helpers.R`,
+`analysis/api-helpers.R`, `analysis/tests/test-api-guards.R`,
+`analysis/tests/test-regen.sh`, `analysis/tests/run-all.sh`.
+
+**Modified in the step 9 fixes (uncommitted):** `.gitignore`, `CLAUDE.md`,
+`TODO.md`, `analysis/README.md`, scripts 01 to 09, `analysis/alloc-rules.R`,
+`analysis/config/sim-params.yaml`, `analysis/stata/01_simulations.do`,
+`analysis/tests/test-sim.R`, and the three manifests
+(`tables/sim-manifest.txt`, `tables/kraft-2023-benchmarks-manifest.txt`,
+`tables/district-enrollment-2324-manifest.txt`).
+
+**Deleted from `naep-aera-open` (step 8, `git rm`'d, uncommitted there):**
+scripts 06 to 11, `analysis/alloc-rules.R`, `analysis/mixture.R`,
+`analysis/stata/`, the RQ3 design notes, `manuscript/RQ3-memo.md`,
+`figures/rq3/`, and the simulation-only tables. `test-rq3.R` there was trimmed
+rather than deleted.
 
 ---
 

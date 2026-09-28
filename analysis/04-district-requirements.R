@@ -19,6 +19,9 @@ suppressPackageStartupMessages({
 
 IN <- "tables"; OUT <- "figures/sim"
 dir.create(OUT, showWarnings=FALSE, recursive=TRUE)
+if (!file.exists(file.path(IN, "sim-quantiles.csv")))
+  stop("missing ", file.path(IN, "sim-quantiles.csv"),
+       ". Run: Rscript analysis/01-simulations.R", call.=FALSE)
 qd <- read.csv(file.path(IN,"sim-quantiles.csv"), stringsAsFactors=FALSE)
 
 CELL   <- if (length(commandArgs(TRUE))) commandArgs(TRUE)[1] else "Math G8"
@@ -40,14 +43,17 @@ req <- function(offset, p) {
   (q19[[as.character(p)]] - own24) / S
 }
 
-benchmarks <- tribble(
-  ~label,                        ~g,     ~c,
-  "Tutoring, >=1000 students",   0.155, 0.280,
-  "Tutoring, 400-999 students",  0.214, 0.280,
-  "Summer, meta-analytic",       0.100, 0.130,
-  "Summer, realized post-COVID", 0.027, 0.130,
-  "Opt-in tutoring (ITT)",       0.214, 0.187)
-kraft <- c(p50=0.10, p75=0.25, p90=0.47)
+## Program points: each pairs a config benchmark effect with a config
+## participation rate, by id (district_requirements_points in
+## analysis/config/sim-params.yaml). The "Opt-in tutoring (ITT)" pairing is
+## flagged there as unconfirmed.
+source("analysis/config-helpers.R")
+cfg <- load_sim_config()
+benchmarks <- bind_rows(lapply(cfg_get(cfg, "district_requirements_points"), function(pt)
+  tibble(label=pt$label,
+         g=cfg_point_value(cfg, pt, "g", "benchmarks"),
+         c=cfg_point_value(cfg, pt, "c", "participation"))))
+kraft <- cfg_kraft2020(cfg)
 
 cs <- seq(0.05, 1, length.out=400)
 contours <- bind_rows(lapply(seq_len(nrow(districts)), function(i) {

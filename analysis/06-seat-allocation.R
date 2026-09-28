@@ -42,7 +42,10 @@ CELL <- if (length(commandArgs(TRUE))) commandArgs(TRUE)[1] else "Reading G4"
 if (!CELL %in% qd$cell)
   stop("unknown cell '", CELL, "'. Available: ",
        paste(sort(unique(qd$cell)), collapse=", "), call.=FALSE)
-G    <- 0.155   # treated effect, SD: best-evidenced tutoring at national scale
+## Treated effect, SD: the config's treated_effect benchmark (best-evidenced
+## tutoring at national scale).
+source("analysis/config-helpers.R")
+G    <- cfg_treated_g(load_sim_config())
 z <- qd[qd$cell==CELL,]; z <- z[order(z$percentile),]
 S <- z$sd2019[1]
 PS <- z$percentile
@@ -142,7 +145,7 @@ f13 <- ggplot(grid, aes(budget, -differential, colour=rule)) +
   scale_y_continuous("Remaining 90-10 gap after the program (NAEP points)") +
   scale_colour_brewer(palette="Dark2") +
   labs(title=sprintf("Helping the whole district: where the seats go decides the shape (%s)", CELL),
-       subtitle=paste("Every rule spends the SAME number of seats and delivers the same 0.155 SD to whoever takes them.",
+       subtitle=paste(sprintf("Every rule spends the SAME number of seats and delivers the same %.3f SD to whoever takes them.", G),
                       "\nOnly the allocation differs. Lower is a narrower gap; the dashed line is doing nothing."),
        caption=paste("Every curve meets the no-program line at full coverage, because a budget that reaches everyone",
                      "\nleaves the shape alone whoever it was aimed at. Below that, note where the PROPORTIONAL curve sits: it targets",
@@ -186,7 +189,7 @@ f14 <- ggplot(curves, aes(percentile, -residual, colour=rule, linetype=rule)) +
                                  "Eligibility screen (ECONDIS)"="solid")) +
   labs(title=sprintf("The same seats, spent four ways (%s)", CELL),
        subtitle=sprintf(paste("Seat budget fixed at %.0f percent of all students, the rate Callen et al. observed for summer school.",
-                              "\nTreated effect 0.155 SD. Closer to zero is better."), B0*100),
+                              "\nTreated effect %.3f SD. Closer to zero is better."), B0*100, G),
        caption=paste("Bottom-up allocation concentrates the entire budget below the 13th percentile, cutting the p10",
                      "shortfall\nfrom 10.0 to 4.0 points while leaving every other percentile untouched. Proportional allocation",
                      "offers\nevery percentile the same rate and still leaves the bottom further behind than the top, because at",

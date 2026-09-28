@@ -1,6 +1,7 @@
-generated: 2026-09-28 09:26:16 PDT
-git: 0f70131
+generated: 2026-09-28 09:52:58 PDT
+git: 84d1602
 R: R version 4.5.1 (2025-06-13)
+packages: data.table 1.17.8, ggplot2 4.0.0, scales 1.4.0
 membership file: district-enrollment-data/ccd_lea_052_2324_l_1a_073124/ccd_lea_052_2324_l_1a_073124.csv
 directory file: district-enrollment-data/ccd_lea_029_2324_w_1a_073124/ccd_lea_029_2324_w_1a_073124.csv
 LEAs with a total row: 18546

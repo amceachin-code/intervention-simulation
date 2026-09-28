@@ -23,11 +23,13 @@
 ## Public data only. Usage: Rscript analysis/07-tail-sensitivity.R
 
 source("analysis/mixture.R")
-
-## Bottom-up allocation, restated here rather than sourced from
-## analysis/alloc-rules.R so this script has no dependency on the
-## bottom-decile CSV that the eligibility screen needs.
-alloc_bottom <- function(p, B) as.numeric(p <= round(B * 100, 9))
+## alloc_bottom comes from alloc-rules.R, the same definition 06 uses.
+## Sourcing that file only defines functions: the eligibility screen reads the
+## bottom-decile CSV when make_ed_curve() is CALLED, which this script never
+## does, so there is no dependency on that CSV. (An earlier version restated
+## alloc_bottom here to avoid a dependency that did not exist.)
+source("analysis/alloc-rules.R")
+source("analysis/config-helpers.R")
 
 ## Quantile function with a swappable lower tail. Everything at or above the
 ## bottom knot is identical to make_quantile_fn in analysis/mixture.R; only the
@@ -59,8 +61,12 @@ make_quantile_fn_tail <- function(pct, vals, tail = "normal_span") {
   }
 }
 
+if (!file.exists("tables/sim-quantiles.csv"))
+  stop("missing tables/sim-quantiles.csv. Run: Rscript analysis/01-simulations.R",
+       call. = FALSE)
 qd <- read.csv("tables/sim-quantiles.csv", stringsAsFactors = FALSE)
-G  <- 0.155  # treated effect in SD, as in analysis/06-seat-allocation.R
+## Treated effect in SD: the config's treated_effect, as in 06-seat-allocation.R.
+G  <- cfg_treated_g(load_sim_config())
 
 CELLS   <- c("Reading G4", "Math G8")
 TAILS   <- c("normal_span", "normal_local", "logistic_span", "linear_local")

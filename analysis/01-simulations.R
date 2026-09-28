@@ -22,13 +22,9 @@
 ## treated as "no data".
 ##
 ## Usage: Rscript analysis/01-simulations.R [--cache DIR] [--out DIR]
+##          [--config FILE] [--jurisdiction CODE]
 
 suppressPackageStartupMessages({library(jsonlite)})
-has_yaml <- requireNamespace("yaml", quietly=TRUE)
-
-API <- "https://www.nationsreportcard.gov/DataService/GetAdhocData.aspx"
-PCT_CODE <- c("10"="PC:P1","25"="PC:P2","50"="PC:P5","75"="PC:P7","90"="PC:P9")
-CODE_PCT <- setNames(as.integer(names(PCT_CODE)), PCT_CODE)
 
 args <- commandArgs(trailingOnly=TRUE)
 getarg <- function(f, d) { i <- match(f, args); if (is.na(i)) d else args[i+1] }
@@ -40,88 +36,16 @@ dir.create(OUT,   showWarnings=FALSE, recursive=TRUE)
 
 ## ------------------------------------------------------------- API access
 
-## Portable MD5 via base R (tools::md5sum), not a shelled-out `md5`/`md5sum`
-## binary whose name differs between macOS and Linux.
-cache_key_hash <- function(s) {
-  tf <- tempfile(); on.exit(unlink(tf)); writeLines(s, tf)
-  unname(tools::md5sum(tf))
-}
-
-## expect_rows: minimum number of result rows a response must have before it is
-## trusted and cached. Without this a PARTIAL response (say, one percentile
-## instead of six) would be cached permanently and silently produce an
-## incomplete table on every later run.
-fetch_api <- function(params, tries=3, pause=5, expect_rows=1) {
-  qs <- paste0(names(params), "=",
-               vapply(params, function(v) URLencode(as.character(v), reserved=TRUE),
-                      character(1)), collapse="&")
-  url <- paste0(API, "?", qs)
-  key <- file.path(CACHE, paste0(substr(cache_key_hash(qs), 1, 16), ".json"))
-  if (file.exists(key)) return(fromJSON(readLines(key, warn=FALSE), simplifyVector=FALSE))
-  for (a in seq_len(tries)) {
-    tmp <- tempfile()
-    st <- suppressWarnings(system2("curl", c("-sS","--max-time","240","-o",tmp,shQuote(url)),
-                                   stdout=TRUE, stderr=TRUE))
-    if (file.exists(tmp) && file.info(tmp)$size > 0) {
-      txt <- paste(readLines(tmp, warn=FALSE), collapse="")
-      d <- tryCatch(fromJSON(txt, simplifyVector=FALSE), error=function(e) NULL)
-      if (!is.null(d) && length(d$result) >= expect_rows && !is.character(d$result)) {
-        writeLines(txt, key); unlink(tmp); return(d)
-      }
-      if (!is.null(d) && !is.character(d$result) &&
-          length(d$result) > 0 && length(d$result) < expect_rows)
-        message("    partial response (", length(d$result), " of >=", expect_rows,
-                " rows); not caching, retrying")
-      if (!is.null(d) && is.character(d$result))
-        message("    API says: ", d$result)      # 400: bad stattype/subscale
-    } else {
-      message("    curl failed: ", paste(st, collapse=" "))
-    }
-    unlink(tmp); if (a < tries) Sys.sleep(pause)
-  }
-  NULL
-}
-
-
-## NAEP marks unusable cells three ways: a 999 sentinel, isStatDisplayable=0,
-## and errorFlag. jsonlite parses JSON 0 as INTEGER, so identical(x, 0) is FALSE
-## for 0L -- an earlier version of this guard was dead code for that reason.
-## Compare numerically instead, and count what we drop so it is never silent.
-DROPPED <- new.env(parent=emptyenv()); DROPPED$n <- 0L
-usable <- function(r) {
-  if (is.null(r$value)) return(FALSE)
-  bad <- abs(r$value - 999) < 1e-9 ||
-    (!is.null(r$isStatDisplayable) &&
-       isTRUE(suppressWarnings(as.numeric(r$isStatDisplayable)) == 0)) ||
-    (!is.null(r$errorFlag) &&
-       isTRUE(suppressWarnings(as.numeric(r$errorFlag)) != 0))
-  if (bad) DROPPED$n <- DROPPED$n + 1L
-  !bad
-}
-
-get_stats <- function(cell, variable, stattypes, years, expect_rows=NULL) {
-  ## TOTAL yields exactly one group, so the default (one grid's worth) is
-  ## exact. Subgroup variables yield more than one group; callers that know
-  ## the group count (e.g. ECONDIS has 3) should pass it via expect_rows so a
-  ## response missing a whole group is rejected rather than cached.
-  need <- if (!is.null(expect_rows)) expect_rows else length(stattypes) * length(years)
-  d <- fetch_api(list(type="data", subject=cell$subject, grade=cell$grade,
-                      subscale=cell$subscale, variable=variable,
-                      jurisdiction=JURIS, stattype=paste(stattypes, collapse=","),
-                      Year=paste(years, collapse=","), ShowDetails="true"),
-                 expect_rows=need)
-  if (is.null(d)) return(NULL)
-  out <- list()
-  for (r in d$result) {
-    if (!usable(r)) next
-    grp <- if (is.null(r$varValueLabel)) "TOTAL" else r$varValueLabel
-    k <- paste(r$year, grp, sep="||")
-    if (is.null(out[[k]])) out[[k]] <- list()
-    out[[k]][[r$stattype]] <- c(value=r$value,
-                                se=if (is.null(r$stdError)) NA_real_ else r$stdError)
-  }
-  out
-}
+## fetch_api (with the expect_rows partial-response gate), usable(),
+## get_stats(), and group_composition() (the population-share guard behind
+## c_of_p) live in api-helpers.R, shared with analysis/tests/test-api-guards.R
+## so the guards have fixture tests that need no network. The helpers take
+## the cache directory and jurisdiction as arguments; this wrapper supplies
+## this run's values.
+source("analysis/api-helpers.R")
+get_stats_run <- function(cell, variable, stattypes, years, expect_rows=NULL)
+  get_stats(cell, variable, stattypes, years, jurisdiction=JURIS, cache=CACHE,
+            expect_rows=expect_rows)
 
 ## -------------------------------------------------- distribution helpers
 
@@ -130,10 +54,44 @@ get_stats <- function(cell, variable, stattypes, years, expect_rows=NULL) {
 ## script from the repo root (as its own usage comment specifies).
 source("analysis/dist-helpers.R")
 
+## ------------------------------------------------------------ parameters
+
+## Parameters come from analysis/config/sim-params.yaml so that effect sizes
+## and coverage rates are declared once, with their sources, rather than being
+## buried in code. The loader in config-helpers.R stops (naming the yaml
+## package, the file, or the key) if anything is missing. There used to be a
+## built-in-defaults fallback here; it was a second, unsynchronized copy of
+## the config, so it is gone.
+source("analysis/config-helpers.R")
+CFG <- getarg("--config", CONFIG_DEFAULT)
+cfg <- load_sim_config(CFG)
+
+cells   <- cfg_get(cfg, "cells")
+## The companion article's Table 2 column (a), for the validation check.
+table2a <- cfg_table2a(cfg)
+benchmarks    <- lapply(cfg_get(cfg, "benchmarks"),    function(b) list(b$label, b$g))
+participation <- lapply(cfg_get(cfg, "participation"), function(x) list(x$label, x$c))
+PS <- as.character(unlist(cfg_get(cfg, "percentiles")))
+## A --jurisdiction flag other than the default NT wins over the config.
+if (identical(JURIS, "NT")) JURIS <- cfg_get(cfg, "jurisdiction")
+## Kraft (2020) reference points for Table B, and the single treated effect
+## Table C3 applies.
+KRAFT   <- cfg_kraft2020(cfg)
+G_TREAT <- cfg_treated_g(cfg)
+
+## years: c(reference, comparison). Everything below computes comparison minus
+## reference. The CSV column names (q2019, sd2019, sd2024) are a fixed schema
+## the downstream scripts read, so they do not follow this setting.
+YEARS <- cfg_get(cfg, "years")
+if (length(YEARS) != 2 || YEARS[1] >= YEARS[2])
+  stop("config 'years' must be [reference, comparison] with reference first; got ",
+       paste(YEARS, collapse=", "), call.=FALSE)
+REF_YR <- as.character(YEARS[1]); CMP_YR <- as.character(YEARS[2])
+
 ## ---------------------------------------------------------- the analysis
 
 observed <- function(cell) {
-  raw <- get_stats(cell, "TOTAL", c(unname(PCT_CODE), "SD:SD"), c(2019, 2024))
+  raw <- get_stats_run(cell, "TOTAL", c(unname(PCT_CODE), "SD:SD"), YEARS)
   if (is.null(raw) || !length(raw)) return(NULL)
   q <- list()
   for (k in names(raw)) {
@@ -145,10 +103,10 @@ observed <- function(cell) {
       q[[yr]][[lbl]] <- val
     }
   }
-  if (is.null(q[["2019"]]) || is.null(q[["2024"]])) return(NULL)
+  if (is.null(q[[REF_YR]]) || is.null(q[[CMP_YR]])) return(NULL)
   D <- list(); Q19 <- list()
   for (p in names(PCT_CODE)) {
-    a <- q[["2019"]][[p]]; b <- q[["2024"]][[p]]
+    a <- q[[REF_YR]][[p]]; b <- q[[CMP_YR]][[p]]
     if (is.null(a) || is.null(b)) next
     ## Independent samples across administrations, per NCES convention for
     ## cross-year comparisons. Shared scale linking induces a small positive
@@ -160,8 +118,8 @@ observed <- function(cell) {
                   se=sqrt(unname(a["se"])^2 + unname(b["se"])^2))
     Q19[[p]] <- unname(a["value"])
   }
-  list(S=unname(q[["2019"]][["SD"]]["value"]),
-       S2024=unname(q[["2024"]][["SD"]]["value"]),
+  list(S=unname(q[[REF_YR]][["SD"]]["value"]),
+       S2024=unname(q[[CMP_YR]][["SD"]]["value"]),
        D=D, Q19=Q19,
        diff_change=if (!is.null(D[["90"]]) && !is.null(D[["10"]]))
          unname(D[["90"]]["d"] - D[["10"]]["d"]) else NA_real_,
@@ -181,88 +139,19 @@ requirements <- function(obs)
 ## ECONDIS returns THREE groups (disadvantaged, not, and "information not
 ## available"), not the single TOTAL group get_stats' generic expect_rows
 ## assumes. Passing the generic count let a response missing one whole group
-## pass the "trusted, cache it" gate: with only 2 of 3 groups, `total` in the
-## loop below is computed over a smaller population, so share_of_tail can be
-## silently normalized to ~100% for whichever group happened to arrive.
+## pass the "trusted, cache it" gate: with only 2 of 3 groups, the total mass
+## is computed over a smaller population, so share_of_tail can be silently
+## normalized to ~100% for whichever group happened to arrive.
+## The decomposition itself, with its population-share guard, is
+## group_composition() in api-helpers.R.
 c_of_p <- function(cell, obs, cut_pct="10", n_groups=3) {
-  raw <- get_stats(cell, "ECONDIS", c(unname(PCT_CODE), "RP:RP"), c(2019, 2024),
-                    expect_rows=n_groups * (length(PCT_CODE) + 1) * 2)
+  raw <- get_stats_run(cell, "ECONDIS", c(unname(PCT_CODE), "RP:RP"), YEARS,
+                       expect_rows=n_groups * (length(PCT_CODE) + 1) * 2)
   if (is.null(raw) || !length(raw)) return(NULL)
-  res <- list()
-  for (yr in c("2019", "2024")) {
-    cut <- if (yr == "2019") obs$Q19[[cut_pct]]
-           else obs$Q19[[cut_pct]] + unname(obs$D[[cut_pct]]["d"])
-    rows <- list(); total <- 0
-    for (k in names(raw)) {
-      kk <- strsplit(k, "\\|\\|")[[1]]
-      if (kk[1] != yr) next
-      st <- raw[[k]]
-      share <- if (!is.null(st[["RP:RP"]])) unname(st[["RP:RP"]]["value"]) else NA
-      pcts <- c()
-      for (code in names(st)) if (code %in% names(CODE_PCT))
-        pcts[as.character(CODE_PCT[[code]])] <- unname(st[[code]]["value"])
-      if (is.na(share) || length(pcts) < 2) next
-      below <- group_cdf(pcts, cut); mass <- share/100 * below
-      rows[[length(rows)+1]] <- list(group=kk[2], share=share/100,
-                                     p_below=below, mass=mass)
-      total <- total + mass
-    }
-    if (!length(rows) || total <= 0) next
-    ## Belt-and-suspenders on top of the expect_rows fix above: if population
-    ## shares don't sum close to 1, a group silently dropped out somewhere
-    ## between the API and here, and share_of_tail would be computed over a
-    ## partial population.
-    pop_sum <- sum(vapply(rows, function(r) r$share, numeric(1)))
-    if (abs(pop_sum - 1) > 0.02) {
-      message("  !! ", cell$label, " ", yr, ": ECONDIS population shares sum to ",
-              round(pop_sum, 3), ", not ~1 -- skipping (a group likely dropped out)")
-      next
-    }
-    for (i in seq_along(rows)) rows[[i]]$share_of_tail <- rows[[i]]$mass/total
-    res[[yr]] <- list(cut=cut, rows=rows, reconstructed_mass=total)
-  }
-  if (length(res)) res else NULL
+  group_composition(raw, obs, cut_pct, YEARS, cell$label)
 }
 
 ## ------------------------------------------------------------------ main
-
-## Parameters come from analysis/config/sim-params.yaml so that effect sizes
-## and coverage rates are declared once, with their sources, rather than being
-## buried in code. Falls back to the documented defaults if yaml is missing.
-CFG <- getarg("--config", "analysis/config/sim-params.yaml")
-cfg <- if (has_yaml && file.exists(CFG)) yaml::read_yaml(CFG) else NULL
-if (is.null(cfg)) message("NOTE: config not read (", CFG,
-                          "); using built-in defaults.")
-
-cells <- if (!is.null(cfg$cells)) cfg$cells else list(
-  list(subject="reading",     grade=4,  subscale="RRPCM", label="Reading G4"),
-  list(subject="reading",     grade=8,  subscale="RRPCM", label="Reading G8"),
-  list(subject="reading",     grade=12, subscale="RRPCM", label="Reading G12"),
-  list(subject="mathematics", grade=4,  subscale="MRPCM", label="Math G4"),
-  list(subject="mathematics", grade=8,  subscale="MRPCM", label="Math G8"),
-  ## grade 12 math is MWPCM on a 0-300 scale; MRPCM returns HTTP 400 there
-  list(subject="mathematics", grade=12, subscale="MWPCM", label="Math G12"))
-
-## The companion article's Table 2 column (a), for the validation check.
-table2a <- if (!is.null(cfg$table2a_diff_change)) unlist(cfg$table2a_diff_change) else
-  c("Reading G4"=8.7, "Reading G8"=7.0, "Reading G12"=1.5,
-    "Math G4"=7.9,    "Math G8"=6.4,    "Math G12"=4.5)
-
-benchmarks <- if (!is.null(cfg$benchmarks))
-  lapply(cfg$benchmarks, function(b) list(b$label, b$g)) else
-  list(list("Tutoring, >=1000 students", 0.155),
-       list("Tutoring, 400-999 students", 0.214),
-       list("Summer, meta-analytic (math)", 0.100),
-       list("Summer, realized post-COVID", 0.027))
-
-participation <- if (!is.null(cfg$participation))
-  lapply(cfg$participation, function(x) list(x$label, x$c)) else
-  list(list("Universal, full", 1.000), list("District HDT", 0.280),
-       list("Opt-in take-up", 0.187),  list("Summer reach", 0.130))
-
-PS <- if (!is.null(cfg$percentiles)) as.character(unlist(cfg$percentiles)) else
-  c("10","25","50","75","90")
-if (!is.null(cfg$jurisdiction) && identical(JURIS, "NT")) JURIS <- cfg$jurisdiction
 
 message("Pulling public NAEP percentiles (API is slow; 30-180s per cell)...\n")
 res <- list(); failed <- character(0)
@@ -279,11 +168,11 @@ message("  rows dropped as suppressed/flagged: ", DROPPED$n)
 L <- c("# Simulation outputs: benchmarking the recovery requirement", "",
        "Generated by `analysis/01-simulations.R`. **Public NAEP data only** -",
        "no restricted-use microdata is used or required.", "",
-       "## Table A. Observed quantile differences, 2024 minus 2019", "",
+       sprintf("## Table A. Observed quantile differences, %s minus %s", CMP_YR, REF_YR), "",
        "Validation: the differential change should reproduce Table 2 column (a)",
        "of the companion AERA Open article, computed from restricted-use microdata.", "",
        paste0("| Cell | ", paste(sprintf("D(p%s)", PS), collapse=" | "),
-              " | Diff. change | Table 2(a) | 2019 SD | 2024 SD |"),
+              sprintf(" | Diff. change | Table 2(a) | %s SD | %s SD |", REF_YR, CMP_YR)),
        paste0("|---|", strrep("---|", 8)))
 for (lab in names(res)) {
   o <- res[[lab]]$obs
@@ -293,10 +182,10 @@ for (lab in names(res)) {
                     o$diff_change, table2a[[lab]], o$S, o$S2024))
 }
 
-L <- c(L, "", "## Table B. Restoration requirement g*(p), in 2019 national SD units", "",
+L <- c(L, "", sprintf("## Table B. Restoration requirement g*(p), in %s national SD units", REF_YR), "",
        "The effect a fully-covered intervention must deliver at each percentile to",
-       "restore its 2019 value. Kraft (2020), 1,942 effects from 747 RCTs:",
-       "median 0.10, P75 0.25, P90 0.47.", "",
+       sprintf("restore its %s value. Kraft (2020), 1,942 effects from 747 RCTs:", REF_YR),
+       sprintf("median %.2f, P75 %.2f, P90 %.2f.", KRAFT[["p50"]], KRAFT[["p75"]], KRAFT[["p90"]]), "",
        paste0("| Cell | ", paste(sprintf("g*(p%s)", PS), collapse=" | "),
               " | p10 vs observed-effect distribution |"),
        paste0("|---|", strrep("---|", 6)))
@@ -305,8 +194,8 @@ for (lab in names(res)) {
   gs <- paste(vapply(PS, function(p) if (!is.null(r$req[[p]]))
     sprintf("%.3f", r$req[[p]]["g"]) else "--", character(1)), collapse=" | ")
   g10 <- if (!is.null(r$req[["10"]])) unname(r$req[["10"]]["g"]) else NA
-  pos <- if (is.na(g10)) "--" else if (g10 >= 0.47) "**above P90 of observed effects**" else
-         if (g10 >= 0.25) "**above P75**" else if (g10 >= 0.10) "above the median" else
+  pos <- if (is.na(g10)) "--" else if (g10 >= KRAFT[["p90"]]) "**above P90 of observed effects**" else
+         if (g10 >= KRAFT[["p75"]]) "**above P75**" else if (g10 >= KRAFT[["p50"]]) "above the median" else
          "below the median"
   L <- c(L, sprintf("| %s | %s | %s |", lab, gs, pos))
 }
@@ -342,13 +231,13 @@ for (lab in names(res)) {
     }, character(1))
     L <- c(L, sprintf("| %s (%.3f) | %s |", cv[[1]], cv[[2]], paste(row_cells, collapse=" | ")))
   }
-  L <- c(L, "", sprintf("## Table C3. %s: share of the deficit closed by a 0.155 SD program", lab), "",
+  L <- c(L, "", sprintf("## Table C3. %s: share of the deficit closed by a %.3f SD program", lab, G_TREAT), "",
          paste0("| Participation | ", paste(sprintf("p%s", PS), collapse=" | "), " |"),
          paste0("|---|", strrep("---|", length(PS))))
   for (cv in participation) {
     row_cells <- vapply(PS, function(p) {
       g <- if (!is.null(r$req[[p]])) unname(r$req[[p]]["g"]) else NA_real_
-      if (is.na(g) || g <= 0) "--" else sprintf("%.0f%%", min(cv[[2]]*0.155/g, 1)*100)
+      if (is.na(g) || g <= 0) "--" else sprintf("%.0f%%", min(cv[[2]]*G_TREAT/g, 1)*100)
     }, character(1))
     L <- c(L, sprintf("| %s (%.3f) | %s |", cv[[1]], cv[[2]], paste(row_cells, collapse=" | ")))
   }
@@ -459,17 +348,32 @@ git_sha <- suppressWarnings(system2("git", c("rev-parse","--short","HEAD"),
                                     stdout=TRUE, stderr=FALSE))
 git_sha <- if (!is.null(attr(git_sha, "status")) && attr(git_sha, "status") != 0)
   "not-a-repo" else git_sha
-git_dirty <- suppressWarnings(system2("git", c("status","--porcelain",
-                                               "analysis/01-simulations.R"),
+## The dirty check covers every file whose content can change this script's
+## output: the script, the helpers it sources, and the config. Checking only
+## the script let an edited helper or parameter ride under a clean SHA.
+## (The config is the default path even under --config, which is recorded
+## separately below.)
+DIRTY_FILES <- c("analysis/01-simulations.R", "analysis/api-helpers.R",
+                 "analysis/dist-helpers.R", "analysis/config-helpers.R",
+                 "analysis/config/sim-params.yaml")
+git_dirty <- suppressWarnings(system2("git", c("status","--porcelain", DIRTY_FILES),
                                       stdout=TRUE, stderr=FALSE))
 if (!identical(git_sha, "not-a-repo") && length(git_dirty) > 0)
-  git_sha <- paste0(git_sha, "-dirty (analysis/01-simulations.R has uncommitted changes)")
+  git_sha <- paste0(git_sha, "-dirty (uncommitted changes in: ",
+                    paste(sub("^.. ", "", git_dirty), collapse=", "), ")")
+## Package versions, next to the R version: a jsonlite change in how JSON
+## integers parse is exactly the kind of thing usable() has been bitten by.
+PKGS <- c("jsonlite", "yaml")
+pkg_versions <- paste(vapply(PKGS, function(p) paste(p, as.character(packageVersion(p))),
+                             character(1)), collapse=", ")
 writeLines(c(
   "# Simulation run manifest",
   paste("generated:", format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z")),
   paste("script:", "analysis/01-simulations.R"),
   paste("git_sha:", git_sha),
   paste("R:", R.version.string),
+  paste("packages:", pkg_versions),
+  paste("config:", CFG),
   paste("jurisdiction:", JURIS),
   paste("api:", API),
   paste("cells_ok:", paste(names(res), collapse=", ")),

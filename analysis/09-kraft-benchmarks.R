@@ -297,10 +297,16 @@ if (file.exists(coding_path)) {
 ## ----------------------------------------------------------------- manifest
 
 sha <- tryCatch(system("git rev-parse --short HEAD", intern = TRUE), error = function(e) "unknown")
+## Package versions next to the R version, so a changed output can be traced
+## to a package upgrade (a readxl or data.table release that parses a column
+## differently would otherwise leave no trace here).
+pkg_versions <- paste(vapply(c("data.table", "readxl", "ggplot2", "scales"), function(p)
+  paste(p, as.character(packageVersion(p))), character(1)), collapse = ", ")
 writeLines(c(
   sprintf("generated: %s", format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z")),
   sprintf("git: %s", sha),
   sprintf("R: %s", R.version.string),
+  sprintf("packages: %s", pkg_versions),
   sprintf("input: %s (%d effect sizes)", KRAFT_XLS, nrow(raw)),
   sprintf("Table 1 reproduction: k=%d p30=%.2f p50=%.2f p70=%.2f share<0.05=%.2f (published: 3426, 0.02, 0.10, 0.21, 0.36)",
           overall$k, overall$p30, overall$p50, overall$p70, overall$share_lt_05),

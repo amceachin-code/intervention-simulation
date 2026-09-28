@@ -21,6 +21,9 @@
 suppressPackageStartupMessages({library(dplyr)})
 
 IN <- "tables"; OUT <- "tables"
+if (!file.exists(file.path(IN, "sim-quantiles.csv")))
+  stop("missing ", file.path(IN, "sim-quantiles.csv"),
+       ". Run: Rscript analysis/01-simulations.R", call.=FALSE)
 qd <- read.csv(file.path(IN, "sim-quantiles.csv"), stringsAsFactors=FALSE)
 
 ## Featured cell. G4 reading anchors the paper's narrative.

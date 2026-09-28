@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
-## Simulation figures. Reads tables/sim-results.rds written by 01-simulations.R.
+## Simulation figures. Reads tables/sim-quantiles.csv and tables/sim-bottom-decile.csv
+## written by 01-simulations.R, and the program points from the config.
 ##
 ## Figure 8: the requirements figure. Coverage on x, treated effect size on y,
 ##   iso-restoration contours for p10 and p90, with real programs plotted at
@@ -56,37 +57,23 @@ feat <- c("Reading G4","Reading G8","Math G4","Math G8")
 ## `basis` records which denominator the SOURCE actually reports; `share_all`
 ## is the plotted quantity, derived where a conversion is defensible and left
 ## NA where it is not. Nothing here is silently converted.
-benchmarks <- tribble(
-  ~label,                         ~g,     ~share_all, ~share_targeted, ~basis,        ~src,
-  ## Callen et al. report BOTH denominators for the same program: 12.7% of
-  ## all students attended, and districts targeting low performers enrolled
-  ## "about one in four targeted students". This is the only point where both
-  ## are measured in the same study.
-  "Summer, realized post-COVID",  0.027,  0.127,      0.25,            "both",        "Callen et al. 2025",
-  ## Lynch et al.'s pooled effect has NO participation rate of its own; the
-  ## meta-analysis could not analyze attendance. Borrowing Callen's rate is a
-  ## construction, so it is marked as such.
-  "Summer, meta-analytic",        0.100,  0.127,      NA,              "borrowed",    "Lynch et al. 2022 effect + Callen et al. 2025 rate",
-  ## Kraft/Schueler/Falken's 28% is a MODELLING ASSUMPTION used to map scale
-  ## bins onto national enrolment ("assuming districts tutor 28 percent of
-  ## their students"), not a measured participation rate. It is a share of all
-  ## students in a district.
-  "Tutoring at scale (>=1000)",   0.155,  0.28,       NA,              "assumed",     "Kraft/Schueler/Falken 2024 (effect n.s.)",
-  "Tutoring (400-999 students)",  0.214,  0.28,       NA,              "assumed",     "Kraft/Schueler/Falken 2024",
-  ## Carbonari et al. report shares of ELIGIBLE students. The three programs
-  ## with robust positive effects served 1-2 percent of eligible students; the
-  ## expert-teacher intervention reached 20-32 percent of eligible students.
-  ## Converting to a share of all students needs the eligible fraction, which
-  ## the notes do not give, so share_all is left NA and these are plotted on
-  ## the targeted axis only.
-  "Effective tutoring (observed)", 0.220, NA,         0.015,           "targeted",    "Carbonari et al. 2025 (1-2% of eligible)",
-  "Expert-teacher assignment",     0.060, NA,         0.32,            "targeted",    "Carbonari et al. 2025 (32% of eligible, math)",
-  ## Robinson et al. measure take-up among students OFFERED the resource, so
-  ## its denominator is the offered (targeted) population, not all students.
-  "Opt-in tutoring take-up",       NA,    NA,         0.187,           "targeted",    "Robinson/Bisht/Loeb 2025 (take-up only, no effect)")
+##
+## The points themselves, with a comment per point on which denominator its
+## source reports and why, live in analysis/config/sim-params.yaml
+## (requirements_figure_points). Effects and rates that are also config
+## benchmarks or participation rates are referenced there by id, so a revised
+## parameter moves this figure along with every table.
+source("analysis/config-helpers.R")
+cfg <- load_sim_config()
+benchmarks <- bind_rows(lapply(cfg_get(cfg, "requirements_figure_points"), function(pt)
+  tibble(label=pt$label,
+         g=cfg_point_value(cfg, pt, "g", "benchmarks"),
+         share_all=cfg_point_value(cfg, pt, "share_all", "participation"),
+         share_targeted=cfg_point_value(cfg, pt, "share_targeted", "participation"),
+         basis=cfg_get(pt, "basis"), src=cfg_get(pt, "src"))))
 
 ## Kraft (2020) empirical distribution of 1,942 education RCT effects.
-kraft <- c(p50=0.10, p75=0.25, p90=0.47)
+kraft <- cfg_kraft2020(cfg)
 
 theme_sim <- theme_minimal(base_size=11) +
   theme(panel.grid.minor=element_blank(),
@@ -125,7 +112,7 @@ mk_fig8 <- function(cell_lab, lo_p = 10, hi_p = 90) {
              colour="grey45", label="above the 90th pctile of observed education effects") +
     geom_hline(yintercept=kraft, linetype="dotted", colour="grey55") +
     annotate("text", x=0.06, y=kraft, hjust=0, vjust=-0.4, size=2.6, colour="grey45",
-             label=c("median observed effect (0.10)","P75 (0.25)","P90 (0.47)")) +
+             label=sprintf(c("median observed effect (%.2f)","P75 (%.2f)","P90 (%.2f)"), kraft)) +
     geom_line(data=contours, aes(c, g, colour=which, linetype=which), linewidth=0.9) +
     ## Program points disabled; figure now shows only the Kraft (2020)
     ## reference lines and the restoration contours.

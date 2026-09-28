@@ -48,7 +48,10 @@ manuscript/*.pdf
 manuscript/*.html
 *.log
 
-# --- NAEP Data Service API response cache ---
-# Public API responses only. Regenerated on demand; delete to force a refresh.
-analysis/.cache/
-analysis/.cache-stata/
+# --- NAEP Data Service API response cache: TRACKED, deliberately ---
+# analysis/.cache/ (R) and analysis/.cache-stata/ (Stata) hold public NAEP Data
+# Service JSON responses only (about 150 KB). They are committed so a fresh
+# clone reproduces every table without the live API, which NCES can revise or
+# take down; analysis/tests/test-regen.sh depends on them. Deleting a cache
+# still forces a refresh, and the refreshed responses then show up in the git
+# diff, which is the point. No rule above matches *.json in those folders.

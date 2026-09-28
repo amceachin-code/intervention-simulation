@@ -15,9 +15,10 @@
 *! benchmarked-program share of the deficit (D), and the ECONDIS bottom-decile
 *! decomposition (Table E) have a single implementation, in R.
 *!
-*! Dependencies: none beyond base Stata.  JSON is parsed with native string
-*! functions because insheetjson/libjson are not installed and are not needed
-*! for a payload this regular.
+*! Dependencies: none beyond base Stata.  JSON is parsed in Mata (tokens() to
+*! split the result records, regexm()/regexs() to pull each field) because
+*! insheetjson/libjson are not installed and are not needed for a payload
+*! this regular.
 *!
 *! Usage:  do analysis/stata/01_simulations.do
 

@@ -5,6 +5,11 @@
 ## restricted data. They are the checks that would catch a silent regression.
 
 source("analysis/dist-helpers.R")
+source("analysis/config-helpers.R")
+cfg <- load_sim_config()
+## Treated effect for the group-gap and mixture checks below: the config's
+## treated_effect, the same value 06-seat-allocation.R applies.
+G_TREAT <- cfg_treated_g(cfg)
 
 fails <- 0
 ok <- function(cond, msg) {
@@ -21,8 +26,11 @@ bd <- if (file.exists(bd_path)) read.csv(bd_path, stringsAsFactors=FALSE) else N
 cat("\n1. Validation against the companion article's restricted-use analysis\n")
 ## The single most important test: public data must reproduce Table 2 col (a).
 ## If NCES revises, or a subscale/jurisdiction is wrong, this breaks first.
-table2a <- c("Reading G4"=8.7, "Reading G8"=7.0, "Reading G12"=1.5,
-             "Math G4"=7.9,    "Math G8"=6.4,    "Math G12"=4.5)
+## Targets are read from the config, the one place they are declared. The
+## config is under version control, so a target edit shows up in the diff
+## rather than hiding in a second copy here.
+table2a <- cfg_table2a(cfg)
+ok(length(table2a) == 6, "the config declares Table 2(a) targets for all six cells")
 for (cell in names(table2a)) {
   got <- unique(qd$diff_change[qd$cell == cell])
   ok(length(got) == 1 && abs(got - table2a[[cell]]) < 0.05,
@@ -32,10 +40,10 @@ for (cell in names(table2a)) {
 
 cat("\n2. Internal consistency\n")
 ## g_star and d are written from the same computation in the same row of the
-## same CSV (01-simulations.R:418-419), so this cannot catch a wrong S or a
-## wrong sign convention -- only file-level corruption (e.g. a column shift
-## from a read.csv/write.csv mismatch). Kept as a cheap smoke test, not billed
-## as validating the formula.
+## same CSV (the data.frame 01-simulations.R builds for sim-quantiles.csv), so
+## this cannot catch a wrong S or a wrong sign convention -- only file-level
+## corruption (e.g. a column shift from a read.csv/write.csv mismatch). Kept
+## as a cheap smoke test, not billed as validating the formula.
 ok(all(abs((qd$g_star + qd$d / qd$sd2019)) < 1e-9),
    "g*(p) and d/sd2019 are consistent within the CSV (smoke test, not a formula check)")
 dc <- by(qd, qd$cell, function(z) {
@@ -239,7 +247,7 @@ for (rn in names(rules)) {
 zr <- qd[qd$cell=="Reading G4", ]; zr <- zr[order(zr$percentile), ]
 defr <- setNames(-zr$d, zr$percentile); Sr <- zr$sd2019[1]
 spread <- function(fn, B) {
-  r <- defr - fn(zr$percentile, B) * 0.155 * Sr
+  r <- defr - fn(zr$percentile, B) * G_TREAT * Sr
   -(r[["90"]] - r[["10"]])
 }
 base <- -(defr[["90"]] - defr[["10"]])
@@ -295,7 +303,7 @@ source("analysis/mixture.R")
 
 zr <- qd[qd$cell=="Reading G4", ]; zr <- zr[order(zr$percentile), ]
 PSr <- zr$percentile; q24 <- zr$q2019 + zr$d
-Sr <- zr$sd2019[1]; deltar <- 0.155 * Sr
+Sr <- zr$sd2019[1]; deltar <- G_TREAT * Sr
 Qr <- make_quantile_fn(PSr, q24)
 none <- function(p, B) rep(0, length(p))
 all1 <- function(p, B) rep(1, length(p))

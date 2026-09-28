@@ -1,6 +1,7 @@
-generated: 2026-09-28 09:26:18 PDT
-git: 0f70131
+generated: 2026-09-28 09:52:59 PDT
+git: 84d1602
 R: R version 4.5.1 (2025-06-13)
+packages: data.table 1.17.8, readxl 1.4.5, ggplot2 4.0.0, scales 1.4.0
 input: kraft-2023-data/kraft2023effectsize.xls (3426 effect sizes)
 Table 1 reproduction: k=3426 p30=0.02 p50=0.10 p70=0.21 share<0.05=0.36 (published: 3426, 0.02, 0.10, 0.21, 0.36)
 g* reference lines: from tables/sim-quantiles.csv (p10 to p90)

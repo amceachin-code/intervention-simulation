@@ -49,6 +49,12 @@ alloc_uniform <- function(p, B) rep(B, length(p))
 ## who passed all fall 2020 courses and students who received a D or F, when
 ## both groups were offered the same tutoring platform.
 ##
+## The anchors below are a stylized shape, not those take-up rates: the config
+## used to carry them (optin_takeup: 0.116 struggling, 0.227 passing) but no
+## script read them, and GEOM_LO = 0.10 with an exact doubling is not derived
+## from them. Only the shape matters (see below), so wiring 0.116/0.227 in
+## would change results rather than document them. The key was removed.
+##
 ## Anchored at three points: 10 percent take-up at p10, doubling to 20 percent
 ## at p50, doubling again to 40 percent at p90. A constant doubling distance
 ## implies constant proportional growth per percentile point, i.e. an

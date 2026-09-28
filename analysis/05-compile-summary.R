@@ -1,9 +1,34 @@
+#!/usr/bin/env Rscript
+## Assemble tables/SIM-SUMMARY.md from the committed CSVs written by
+## 01-simulations.R and the literature parameters in the config.
+##
+## Every parameter printed or used here (Table 2(a) targets, Kraft (2020)
+## percentiles, participation rates, program effects, the ED population
+## share) is read from analysis/config/sim-params.yaml. Revising one there
+## moves this summary along with 01's tables; before, this file carried its
+## own copies.
+##
+## Public data only. Usage: Rscript analysis/05-compile-summary.R
+
 suppressPackageStartupMessages({library(dplyr)})
+for (f in c("tables/sim-quantiles.csv", "tables/sim-bottom-decile.csv"))
+  if (!file.exists(f))
+    stop("missing ", f, ". Run: Rscript analysis/01-simulations.R", call.=FALSE)
 qd <- read.csv("tables/sim-quantiles.csv", stringsAsFactors=FALSE)
 bd <- read.csv("tables/sim-bottom-decile.csv", stringsAsFactors=FALSE)
 ord <- c("Reading G4","Reading G8","Reading G12","Math G4","Math G8","Math G12")
 qd$cell <- factor(qd$cell, levels=ord); bd$cell <- factor(bd$cell, levels=ord)
-t2 <- c("Reading G4"=8.7,"Reading G8"=7.0,"Reading G12"=1.5,"Math G4"=7.9,"Math G8"=6.4,"Math G12"=4.5)
+
+source("analysis/config-helpers.R")
+cfg <- load_sim_config()
+t2    <- cfg_table2a(cfg)
+kraft <- cfg_kraft2020(cfg)
+G_TREAT <- cfg_treated_g(cfg)
+## Participation rates, by config id. c_univ is the universal column.
+c_univ <- cfg_c(cfg, "universal"); c_hdt <- cfg_c(cfg, "hdt_dist")
+c_opt  <- cfg_c(cfg, "optin");     c_sum <- cfg_c(cfg, "summer")
+## Rate as a percent label for table headers: 0.28 -> "28", 0.187 -> "18.7".
+pct_lab <- function(x) format(round(x*100, 1))
 L <- c()
 add <- function(...) L <<- c(L, sprintf(...))
 
@@ -49,16 +74,16 @@ add("")
 add("## 3. Restoration requirement g*(p), in 2019 national SD units")
 add("")
 add("The effect a fully-covered intervention must deliver at each percentile to restore")
-add("its 2019 value. Benchmark: Kraft (2020), 1,942 effects from 747 RCTs, median 0.10,")
-add("P75 0.25, P90 0.47.")
+add("its 2019 value. Benchmark: Kraft (2020), 1,942 effects from 747 RCTs, median %.2f,", kraft[["p50"]])
+add("P75 %.2f, P90 %.2f.", kraft[["p75"]], kraft[["p90"]])
 add("")
 add("| Cell | p10 | p25 | p50 | p75 | p90 | p10 sits |")
 add("|---|---|---|---|---|---|---|")
 for (c in ord) {
   z <- qd[qd$cell==c,]; z <- z[order(z$percentile),]
   g <- z$g_star[1]
-  pos <- if (g>=0.47) "**above P90 of observed effects**" else if (g>=0.25) "**above P75**" else
-         if (g>=0.10) "above the median" else "below the median"
+  pos <- if (g>=kraft[["p90"]]) "**above P90 of observed effects**" else if (g>=kraft[["p75"]]) "**above P75**" else
+         if (g>=kraft[["p50"]]) "above the median" else "below the median"
   add("| %s | **%.3f** | %.3f | %.3f | %.3f | %.3f | %s |", c,
       z$g_star[1],z$g_star[2],z$g_star[3],z$g_star[4],z$g_star[5], pos)
 }
@@ -67,15 +92,16 @@ add("## 4. Participation-adjusted requirement: what the treated effect must be")
 add("")
 add("Required g = g*(p10) / participation, where participation is the share of a\npercentile's students who actually take part. Real programs reach 13-28 percent.")
 add("")
-add("| Cell | Universal (100%%) | District HDT (28%%) | Opt-in (18.7%%) | Summer (13%%) |")
+add("| Cell | Universal (%s%%) | District HDT (%s%%) | Opt-in (%s%%) | Summer (%s%%) |",
+    pct_lab(c_univ), pct_lab(c_hdt), pct_lab(c_opt), pct_lab(c_sum))
 add("|---|---|---|---|---|")
 for (c in ord) {
   g <- qd$g_star[qd$cell==c & qd$percentile==10]
-  add("| %s | %.2f | %.2f | %.2f | %.2f |", c, g, g/0.28, g/0.187, g/0.130)
+  add("| %s | %.2f | %.2f | %.2f | %.2f |", c, g/c_univ, g/c_hdt, g/c_opt, g/c_sum)
 }
 add("")
 add("Nothing in the education literature delivers 1.3 to 2.2 SD. The best-evidenced")
-add("at-scale tutoring effect is 0.155 SD, and it is not statistically distinguishable")
+add("at-scale tutoring effect is %.3f SD, and it is not statistically distinguishable", G_TREAT)
 add("from zero.")
 add("")
 add("## 4b. The same requirement measured at p25 instead of p10")
@@ -84,13 +110,14 @@ add("p25 is arguably the more policy-relevant target: an eligibility screen can 
 add("reach the bottom quartile, whereas no observable screen isolates the bottom decile.")
 add("The requirement falls but does not become easy.")
 add("")
-add("| Cell | g*(p10) | g*(p25) | g*(p90) | p25 at c=28%% | p25 at c=18.7%% |")
+add("| Cell | g*(p10) | g*(p25) | g*(p90) | p25 at c=%s%% | p25 at c=%s%% |",
+    pct_lab(c_hdt), pct_lab(c_opt))
 add("|---|---|---|---|---|---|")
 for (cc in ord) {
   z <- qd[as.character(qd$cell)==cc,]
   g10 <- z$g_star[z$percentile==10]; g25 <- z$g_star[z$percentile==25]
   g90 <- z$g_star[z$percentile==90]
-  add("| %s | %.3f | **%.3f** | %.3f | %.2f | %.2f |", cc, g10, g25, g90, g25/0.28, g25/0.187)
+  add("| %s | %.3f | **%.3f** | %.3f | %.2f | %.2f |", cc, g10, g25, g90, g25/c_hdt, g25/c_opt)
 }
 add("")
 add("Two things worth noting. Restoring p25 in Reading G4 needs 0.216 SD, still above the")
@@ -103,14 +130,15 @@ add("## 5. Share of the p10 deficit closed")
 add("")
 add("| Cell | Program | Universal | District HDT | Opt-in | Summer |")
 add("|---|---|---|---|---|---|")
-progs <- list(c("Tutoring, >=1000 students","0.155"), c("Tutoring, 400-999","0.214"),
-              c("Summer, meta-analytic","0.100"), c("Summer, realized","0.027"))
+## Short display labels for this table, paired with config benchmark ids.
+progs <- list(c("Tutoring, >=1000 students","tut_scale"), c("Tutoring, 400-999","tut_mid"),
+              c("Summer, meta-analytic","summer_math"), c("Summer, realized","summer_real"))
 for (c in c("Reading G4","Math G8")) {
   g <- qd$g_star[qd$cell==c & qd$percentile==10]
   for (p in progs) {
-    e <- as.numeric(p[2])
+    e <- cfg_g(cfg, p[2])
     add("| %s | %s (%.3f) | %.0f%% | %.0f%% | %.0f%% | %.0f%% |", c, p[1], e,
-        min(e/g,1)*100, min(0.28*e/g,1)*100, min(0.187*e/g,1)*100, min(0.130*e/g,1)*100)
+        min(c_univ*e/g,1)*100, min(c_hdt*e/g,1)*100, min(c_opt*e/g,1)*100, min(c_sum*e/g,1)*100)
   }
 }
 add("")
@@ -151,7 +179,9 @@ add("off differently depending on where the target is drawn.")
 add("")
 add("| Target | ED share of the target | Target as %% of population | Share of treated students who are IN the target | Effort landing outside the target |")
 add("|---|---|---|---|---|")
-edpop <- 0.510
+## ED population share: config ed_population_share, source unconfirmed (see
+## the yaml comment and TODO.md).
+edpop <- cfg_get(cfg, "ed_population_share")
 for (q in c(10,25)) {
   e <- bd[bd$cell=="Reading G4" & grepl("^Econ", bd$group) & bd$target_pct==q & bd$year==2019,]
   if (!nrow(e)) next
@@ -167,8 +197,9 @@ add("The same screen is far less wasteful against the broader target.")
 add("")
 add("There is a reachability constraint pointing the same way. With perfect")
 add("targeting, a program with participation c can reach at most")
-add("min(1, c/q) of the bottom q. At the observed 18.7 percent opt-in participation rate that")
-add("is 100 percent of the bottom decile but only 75 percent of the bottom quartile.")
+add("min(1, c/q) of the bottom q. At the observed %s percent opt-in participation rate that", pct_lab(c_opt))
+add("is %.0f percent of the bottom decile but only %.0f percent of the bottom quartile.",
+    min(1, c_opt/0.10)*100, min(1, c_opt/0.25)*100)
 add("So take-up binds on intensity at p10 and on both intensity and reach at p25 --")
 add("but the p10 target is the one where almost all the effort is wasted on")
 add("students outside it.")
