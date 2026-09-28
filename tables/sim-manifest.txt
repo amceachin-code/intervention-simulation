@@ -1,7 +1,7 @@
 # Simulation run manifest
-generated: 2026-09-28 09:33:45 PDT
+generated: 2026-09-28 09:33:56 PDT
 script: analysis/01-simulations.R
-git_sha: 30d0343-dirty (analysis/01-simulations.R has uncommitted changes)
+git_sha: d8033df
 R: R version 4.5.1 (2025-06-13)
 jurisdiction: NT
 api: https://www.nationsreportcard.gov/DataService/GetAdhocData.aspx
