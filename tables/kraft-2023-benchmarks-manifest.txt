@@ -1,5 +1,5 @@
-generated: 2026-09-28 09:52:59 PDT
-git: 84d1602
+generated: 2026-09-28 09:58:56 PDT
+git: 22e51b3
 R: R version 4.5.1 (2025-06-13)
 packages: data.table 1.17.8, readxl 1.4.5, ggplot2 4.0.0, scales 1.4.0
 input: kraft-2023-data/kraft2023effectsize.xls (3426 effect sizes)

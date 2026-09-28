@@ -1,7 +1,7 @@
 # Simulation run manifest
-generated: 2026-09-28 09:52:43 PDT
+generated: 2026-09-28 09:58:51 PDT
 script: analysis/01-simulations.R
-git_sha: 84d1602-dirty (uncommitted changes in: analysis/01-simulations.R, analysis/config/sim-params.yaml, analysis/api-helpers.R, analysis/config-helpers.R)
+git_sha: 22e51b3
 R: R version 4.5.1 (2025-06-13)
 packages: jsonlite 2.0.0, yaml 2.3.10
 config: analysis/config/sim-params.yaml
