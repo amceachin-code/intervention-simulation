@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Intervention Explorer</title>
-<meta name="description" content="How much of the 2019-to-2024 NAEP score decline a hypothetical program would undo, by percentile.">
+<title>NAEP Recovery Explorer</title>
+<meta name="description" content="How much of the 2019-to-2024 drop in NAEP scores a tutoring or summer program could undo, for low, middle, and high scorers.">
 <style>
   /* Colors are role tokens. Light is the default; dark is its own set of
      steps (not an automatic inversion), applied for an OS dark preference
@@ -95,7 +95,7 @@
            border: 1px solid var(--border); border-radius: 6px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .chip { font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; cursor: pointer;
-          border: 1px solid var(--border); background: transparent; color: var(--text-secondary); }
+          border: 1px solid var(--border); background: transparent; color: var(--text-secondary); text-align: left; }
   .chip:hover { border-color: var(--accent); color: var(--text-primary); }
   .seg { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
   .seg.two { grid-template-columns: repeat(2, 1fr); }
@@ -133,24 +133,79 @@
 
   /* Table */
   .tbl-wrap { overflow-x: auto; }
+  caption { caption-side: bottom; text-align: left; color: var(--text-muted); font-size: 0.78rem; padding-top: 6px; }
   table { border-collapse: collapse; width: 100%; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
   th:first-child, td:first-child { text-align: left; }
   th { color: var(--text-secondary); font-weight: 600; font-size: 0.78rem; }
   .note { color: var(--text-muted); font-size: 0.8rem; max-width: 80ch; }
-  .note p { margin: 0 0 6px; }
+  .note p { margin: 0 0 8px; }
+  .note h2 { color: var(--text-primary); }
+  .note details { margin-top: 8px; }
+  .note summary { cursor: pointer; color: var(--text-secondary); font-weight: 600; }
+  .intro { margin-bottom: 20px; }
+  .intro > summary { cursor: pointer; font-weight: 650; font-size: 1rem; }
+  .intro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 24px; margin-top: 12px; }
+  @media (max-width: 860px) { .intro-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .intro-grid { grid-template-columns: 1fr; } }
+  .intro h3 { font-size: 0.9rem; margin: 0 0 2px; }
+  .intro p { margin: 0 0 10px; color: var(--text-secondary); font-size: 0.88rem; }
+  .sub { color: var(--text-muted); font-size: 0.8rem; margin: -4px 0 8px; }
+  .axis-cap { color: var(--text-muted); font-size: 0.78rem; text-align: center; margin: 2px 0 0; }
+  .chips-label { color: var(--text-muted); font-size: 0.78rem; margin: 8px 0 0; }
+  .chips-label + .chips { margin-top: 4px; }
   code { font-size: 0.9em; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Intervention explorer</h1>
+  <h1>Could a program undo the drop in NAEP scores?</h1>
   <p class="lede">
-    The dashed line is the 2019-to-2024 NAEP score decline at each percentile, D(p)/S: the 2024
-    score minus the 2019 score, in 2019 SD units. It is negative where scores fell. Set a program
-    below and the solid line shows where each percentile ends up; zero is the 2019 level. The
-    restoration requirement g*(p) is the same curve with its sign flipped.
+    Between 2019 and 2024, scores on the National Assessment of Educational Progress (NAEP) fell in
+    reading and math, and the lowest-scoring students fell the furthest. Use this tool to design a
+    program, such as tutoring or summer school, and see how much of that drop it would undo for
+    students at different score levels.
   </p>
+
+  <details class="card intro" open>
+    <summary>What you are looking at</summary>
+    <div class="intro-grid">
+      <div>
+        <h3>NAEP</h3>
+        <p>NAEP, often called the Nation's Report Card, tests a nationally representative sample of
+        students in grades 4, 8, and 12. It gives the same test the same way every time, so scores
+        can be compared across years.</p>
+      </div>
+      <div>
+        <h3>Different students each time</h3>
+        <p>The students tested in 2024 are not the ones tested in 2019. The tool compares 2024's
+        fourth graders with 2019's fourth graders, and the same for grades 8 and 12. It does not measure
+        how much any one student lost.</p>
+      </div>
+      <div>
+        <h3>Percentiles</h3>
+        <p>Line up every student from lowest score to highest. A student at the 10th percentile scored
+        above 10 percent of students; the 50th percentile is the middle; the 90th is near the top. NAEP
+        reports scores at the 10th, 25th, 50th, 75th, and 90th percentiles.</p>
+      </div>
+      <div>
+        <h3>The widening gap</h3>
+        <p>In every subject and grade here, scores fell more at the 10th percentile than at the 90th, so
+        low and high scorers ended up further apart. <span id="intro-gap"></span></p>
+      </div>
+      <div>
+        <h3>Standard deviations</h3>
+        <p>Researchers usually report a program's effect in standard deviations (SD), a unit that lets
+        different tests be compared. The tool uses SD for both the drop and the program.
+        <span id="intro-sd"></span></p>
+      </div>
+      <div>
+        <h3>How to use it</h3>
+        <p>Pick a subject and grade, then set up the program on the left. The chart shows how far each
+        percentile sits below its 2019 score, with and without the program. Zero means back to 2019.</p>
+      </div>
+    </div>
+  </details>
 
   <div class="layout">
     <!-- Controls -->
@@ -161,38 +216,40 @@
       </div>
 
       <div>
-        <label class="ctl-label" for="effect">1. Program effect</label>
+        <label class="ctl-label" for="effect">1. How much the program helps</label>
         <div class="ctl-row">
           <input type="range" id="effect" min="0" max="0.5" step="0.005">
           <span class="ctl-value" id="effect-v"></span>
         </div>
-        <p class="ctl-help">Treated effect in 2019 SD units, averaged over all percentiles.</p>
+        <p class="ctl-help" id="effect-help"></p>
+        <p class="chips-label">Estimates from research:</p>
         <div class="chips" id="effect-chips"></div>
       </div>
 
       <div>
-        <label class="ctl-label" for="share">2. Share of students treated</label>
+        <label class="ctl-label" for="share">2. How many students take part</label>
         <div class="ctl-row">
           <input type="range" id="share" min="0" max="100" step="0.1">
           <span class="ctl-value" id="share-v"></span>
         </div>
+        <p class="chips-label">Examples from research:</p>
         <div class="chips" id="share-chips"></div>
       </div>
 
       <fieldset>
-        <legend>3. Participation and prior achievement</legend>
+        <legend>3. Who takes part</legend>
         <div class="seg" id="kPart"></div>
         <p class="ctl-help" id="kPart-help"></p>
       </fieldset>
 
       <fieldset>
-        <legend>4. Effect and prior achievement</legend>
+        <legend>4. Who gains the most</legend>
         <div class="seg" id="kEffect"></div>
         <p class="ctl-help" id="kEffect-help"></p>
       </fieldset>
 
       <fieldset>
-        <legend>5. Outcome read on</legend>
+        <legend>5. How to count the result</legend>
         <div class="seg two" id="mode"></div>
         <p class="ctl-help" id="mode-help"></p>
       </fieldset>
@@ -201,55 +258,72 @@
     <!-- Results -->
     <div class="stack">
       <div class="tiles">
-        <div class="card tile"><div class="k">Decline undone at p10</div><div class="v" id="t-p10"></div><div class="s" id="t-p10-s"></div></div>
-        <div class="card tile"><div class="k">Decline undone at p50</div><div class="v" id="t-p50"></div><div class="s" id="t-p50-s"></div></div>
-        <div class="card tile"><div class="k">90-10 gap after the program</div><div class="v" id="t-gap"></div><div class="s" id="t-gap-s"></div></div>
+        <div class="card tile"><div class="k">Drop undone at the 10th percentile</div><div class="v" id="t-p10"></div><div class="s" id="t-p10-s"></div></div>
+        <div class="card tile"><div class="k">Drop undone at the middle (50th)</div><div class="v" id="t-p50"></div><div class="s" id="t-p50-s"></div></div>
+        <div class="card tile"><div class="k">Gap between the 90th and 10th percentiles</div><div class="v" id="t-gap"></div><div class="s" id="t-gap-s"></div></div>
       </div>
 
       <section class="card">
-        <h2 id="main-title">Decline by percentile</h2>
+        <h2 id="main-title"></h2>
+        <p class="sub">In standard deviations. Below zero means below the 2019 score.</p>
         <div class="legend">
-          <span><i class="sw dash" style="border-color:var(--series-before)"></i>Before the program: D(p)/S</span>
-          <span><i class="sw" style="border-color:var(--series-after)"></i>After the program</span>
-          <span><i class="sw box" style="background:var(--closed-fill)"></i>Undone by the program</span>
-          <span><i class="sw box" style="background:var(--over-fill)"></i>Above the 2019 level</span>
+          <span><i class="sw dash" style="border-color:var(--series-before)"></i>2024, no program</span>
+          <span><i class="sw" style="border-color:var(--series-after)"></i>2024, with the program</span>
+          <span><i class="sw box" style="background:var(--closed-fill)"></i>Drop the program undoes</span>
+          <span><i class="sw box" style="background:var(--over-fill)"></i>Above the 2019 score</span>
         </div>
         <div class="chart" id="main-chart"><div class="tip"></div></div>
+        <p class="axis-cap">Percentile, from lowest-scoring students (left) to highest (right)</p>
       </section>
 
       <section class="card">
         <h2>Who takes part, and how much they gain</h2>
         <div class="small-multiples">
-          <div><div class="legend"><span><i class="sw" style="border-color:var(--series-part)"></i>Participation rate</span></div>
+          <div><div class="legend"><span><i class="sw" style="border-color:var(--series-part)"></i>Share of students taking part</span></div>
                <div class="chart" id="part-chart"><div class="tip"></div></div></div>
-          <div><div class="legend"><span><i class="sw" style="border-color:var(--series-effect)"></i>Effect for treated students (SD)</span></div>
+          <div><div class="legend"><span><i class="sw" style="border-color:var(--series-effect)"></i>Boost for students who take part (SD)</span></div>
                <div class="chart" id="eff-chart"><div class="tip"></div></div></div>
         </div>
       </section>
 
       <section class="card">
-        <h2>At the published percentiles</h2>
+        <h2>At the five percentiles NAEP reports</h2>
         <div class="tbl-wrap"><table id="tbl"></table></div>
         <div class="tbl-wrap" style="margin-top:12px"><table id="gap-tbl"></table></div>
       </section>
 
       <section class="card note">
-        <p><b>How this is computed.</b> The 2019 and 2024 distributions are rebuilt from the five
-        published percentiles with monotone interpolation. Participation and the treated effect vary
-        linearly with prior rank; the average across all students stays at the values set above, and
-        participation is capped at 100 percent with the excess seats handed to percentiles below the cap.</p>
-        <p><b>Group</b> follows the students who started at percentile p. A share of them is treated,
-        so the group gains that share times the effect. <b>Distribution</b> asks where whoever stands at
-        percentile p after the program is. Treated students pass untreated neighbors, so a partial
-        program spreads the distribution and the two readings differ. The two agree when everyone or no
-        one at a percentile is treated.</p>
-        <p>Assumptions: within a percentile, who takes part is unrelated to how much they would gain; the
-        chart covers p10 to p90, the range the published percentiles support. Share undone above 100
-        percent means the percentile ends above its 2019 level. Scores are NAEP scale
-        points, and requirements and effects are 2019 SD units. The R pipeline in
-        <code>analysis/</code> is the reference implementation; <code>analysis/tests/test-tool-engine.mjs</code>
-        checks this page's engine against it.</p>
-        <p id="provenance"></p>
+        <h2>How the tool works</h2>
+        <p>NAEP publishes scores at five percentiles. The tool draws a smooth curve through those points
+        to estimate the scores in between. That is why the charts run from the 10th to the 90th
+        percentile and no further.</p>
+        <p>Changing who takes part does not change how many take part. The tool moves the same number
+        of seats between low and high scorers. No group can go above 100 percent; any extra seats go to
+        groups that still have room. The boost works the same way, so its average across all
+        students stays at the value you set.</p>
+        <p>The two ways of counting give different answers when only some students at a score level take
+        part. "All students" lines everyone up again after the program. Students who took part can move
+        past classmates who did not, so a program that reaches only some students spreads scores out.
+        "Same students" follows each starting group and averages its gain. The two agree when everyone
+        at a score level takes part, or no one does.</p>
+        <p>The tool assumes that, among students with the same score, those who take part would gain as
+        much as those who do not. A share above 100 percent means a percentile ends up above its 2019
+        score.</p>
+        <details>
+          <summary>Technical notes</summary>
+          <p>The dashed curve is D(p)/S, the 2024 quantile minus the 2019 quantile at percentile p,
+          divided by the 2019 national standard deviation S for that subject and grade. The restoration
+          requirement g*(p) = &minus;D(p)/S is the same curve with the sign flipped. Quantile functions are
+          rebuilt from the published percentiles by monotone (Fritsch&ndash;Carlson) interpolation with
+          normal tails. Participation and the treated effect are linear in prior rank with mean held
+          fixed; participation is capped at 1 and water-filled to conserve the seat budget.</p>
+          <p>"All students" is the distributional estimand: post-program quantiles of the exact
+          treated/untreated mixture, calibrated to reproduce the published knots. "Same students" is the
+          group estimand, Q(p) + &pi;(p)&delta;(p). The R pipeline in <code>analysis/</code> is the
+          reference implementation; <code>analysis/tests/test-tool-engine.mjs</code> checks this page
+          against it.</p>
+          <p id="provenance"></p>
+        </details>
       </section>
     </div>
   </div>
@@ -309,16 +383,34 @@ function writeHash() {
 // ---------------------------------------------------------------- controls
 const $ = (id) => document.getElementById(id);
 const cellSel = $("cell");
-D.cells.forEach((c) => cellSel.add(new Option(c.label, c.label)));
+// Display names. The data keys stay as the pipeline writes them ("Reading
+// G4"); only what the reader sees changes ("Reading, grade 4").
+const cellName = (label) => label.replace(/ G(\d+)$/, ", grade $1");
+D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
+const ord = (p) => p + (p % 10 === 1 && p !== 11 ? "st" : p % 10 === 2 && p !== 12 ? "nd" : p % 10 === 3 && p !== 13 ? "rd" : "th");
 
 function chip(parent, text, title, onClick) {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chip"; b.textContent = text; b.title = title;
   b.addEventListener("click", onClick); parent.appendChild(b);
 }
-D.benchmarks.forEach((b) => chip($("effect-chips"), `${b.g.toFixed(3)} ${b.label}`, b.source,
+// Plain-language chip names, keyed by config id. The numbers still come from
+// the config; an id without an entry here falls back to the config's label.
+// Hovering a chip shows the source the config cites.
+const CHIP_NAMES = {
+  tut_scale:   "Tutoring, large programs (1,000+ students)",
+  tut_mid:     "Tutoring, mid-size programs (400 to 999 students)",
+  summer_math: "Summer school, math (average across studies)",
+  summer_real: "Summer school since COVID (what districts saw)",
+  universal:   "Every student",
+  hdt_dist:    "District tutoring (common planning figure)",
+  optin:       "Sign-up rate for optional tutoring",
+  summer:      "Summer school attendance",
+};
+const chipName = (x) => CHIP_NAMES[x.id] || x.label;
+D.benchmarks.forEach((b) => chip($("effect-chips"), `${b.g.toFixed(3)} SD: ${chipName(b)}`, "Source: " + b.source,
   () => { state.effect = b.g; sync(); }));
-D.participation.forEach((p) => chip($("share-chips"), `${fmtPct(p.c)} ${p.label}`, p.source,
+D.participation.forEach((p) => chip($("share-chips"), `${fmtPct(p.c)}: ${chipName(p)}`, "Source: " + p.source,
   () => { state.share = p.c; sync(); }));
 
 function segmented(id, options, key) {
@@ -332,22 +424,38 @@ function segmented(id, options, key) {
     root.append(inp, lab);
   });
 }
-const tiltOpts = E.TILT_LEVELS.map((l) => ({ id: l.id, html: l.label.replace(" ", "<br>") }));
-segmented("kPart", tiltOpts, "kPart");
-segmented("kEffect", tiltOpts, "kEffect");
-segmented("mode", [{ id: "distributional", html: "Distribution" }, { id: "group", html: "Group" }], "mode");
+// Button labels for the five levels, by engine level id. The same levels
+// drive both controls, so each gets its own wording.
+const PART_LABELS = {
+  "strong-neg": "Mostly<br>low scorers", "mild-neg": "More<br>low scorers", neutral: "All<br>equally",
+  "mild-pos": "More<br>high scorers", "strong-pos": "Mostly<br>high scorers",
+};
+const EFFECT_LABELS = {
+  "strong-neg": "Low scorers,<br>much more", "mild-neg": "Low scorers,<br>more", neutral: "All<br>equally",
+  "mild-pos": "High scorers,<br>more", "strong-pos": "High scorers,<br>much more",
+};
+segmented("kPart", E.TILT_LEVELS.map((l) => ({ id: l.id, html: PART_LABELS[l.id] })), "kPart");
+segmented("kEffect", E.TILT_LEVELS.map((l) => ({ id: l.id, html: EFFECT_LABELS[l.id] })), "kEffect");
+segmented("mode", [{ id: "distributional", html: "All students" }, { id: "group", html: "Same students" }], "mode");
 
-// Plain-language reading of each gradient level, using its p90:p10 ratio.
-function tiltHelp(levelId, what) {
+// Plain-language reading of each level, built from its p90:p10 ratio.
+function tiltHelp(levelId, kind) {
   const l = E.TILT_LEVELS.find((x) => x.id === levelId);
   const [a, b] = l.ratio.split(":").map(Number);   // p90:p10
-  if (a === b) return `The same ${what} at every percentile.`;
-  const hi = a > b ? "p90" : "p10", lo = a > b ? "p10" : "p90";
-  return `${what[0].toUpperCase() + what.slice(1)} at ${hi} is ${Math.max(a, b) / Math.min(a, b)} times that at ${lo}.`;
+  if (a === b)
+    return kind === "part" ? "Students at every score level are equally likely to take part."
+                           : "Every student who takes part gets the same boost.";
+  const times = Math.max(a, b) / Math.min(a, b);
+  const [more, less] = a > b ? ["90th", "10th"] : ["10th", "90th"];
+  return kind === "part"
+    ? `Students at the ${more} percentile are ${times} times as likely to take part as students at the ${less}.`
+    : `Students at the ${more} percentile gain ${times} times as much as students at the ${less}.`;
 }
 const MODE_HELP = {
-  distributional: "Whoever stands at percentile p after the program. The estimand the rest of the paper uses.",
-  group: "The students who started at percentile p, followed through the program.",
+  distributional: "Line everyone up again after the program and compare each percentile with its 2019 score. " +
+    "Students who took part can move past classmates who did not. This is the tool's main measure.",
+  group: "Follow the students who started at each percentile and average their gain, " +
+    "counting both those who took part and those who did not.",
 };
 
 cellSel.addEventListener("change", () => { state.cell = cellSel.value; sync(); });
@@ -359,10 +467,10 @@ $("share").addEventListener("input", (e) => { state.share = Number(e.target.valu
 let pending = false;
 function sync() {
   cellSel.value = state.cell;
-  $("effect").value = state.effect; $("effect-v").textContent = state.effect.toFixed(3);
+  $("effect").value = state.effect; $("effect-v").textContent = state.effect.toFixed(3) + " SD";
   $("share").value = (state.share * 100).toFixed(1); $("share-v").textContent = fmtPct(state.share);
   for (const k of ["kPart", "kEffect", "mode"]) $(`${k}-${state[k]}`).checked = true;
-  $("kPart-help").textContent = tiltHelp(state.kPart, "participation rate");
+  $("kPart-help").textContent = tiltHelp(state.kPart, "part");
   $("kEffect-help").textContent = tiltHelp(state.kEffect, "effect");
   $("mode-help").textContent = MODE_HELP[state.mode];
   if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; render(); }); }
@@ -370,7 +478,7 @@ function sync() {
 
 // ---------------------------------------------------------------- format
 function fmtPct(x) { const v = x * 100; return (Math.abs(v - Math.round(v)) < 0.05 ? v.toFixed(0) : v.toFixed(1)) + "%"; }
-const f2 = (x) => x.toFixed(2), f3 = (x) => x.toFixed(3), f1 = (x) => x.toFixed(1);
+const f2 = (x) => x.toFixed(2), f3 = (x) => x.toFixed(3), f1 = (x) => x.toFixed(1), f0 = (x) => x.toFixed(0);
 function shareClosed(k) { return k.gStar > 0 ? k.gain / k.gStar : NaN; }
 function fmtShare(s) { return Number.isFinite(s) ? Math.round(s * 100) + "%" : "n/a"; }
 
@@ -388,26 +496,37 @@ function render() {
   for (const p of [10, 50]) {
     const r = at(p);
     $(`t-p${p}`).textContent = fmtShare(shareClosed(r));
-    $(`t-p${p}-s`).textContent = `${f3(r.gain)} of a ${f3(r.gStar)} SD decline`;
+    $(`t-p${p}-s`).textContent = `${f3(r.gain)} of a ${f3(r.gStar)} SD drop`;
   }
   const g = res.gap9010;
   const widen = g.y2024 - g.y2019;
-  $("t-gap").textContent = f1(g.post) + " pts";
+  $("t-gap").textContent = f1(g.post) + " points";
   // Say which way the program moved the gap rather than printing a negative
   // share: a program that favors higher scorers can widen it further.
   const moved = g.y2024 - g.post;
   let verdict = "";
-  if (Math.abs(moved) < 0.05) verdict = "About the same as in 2024.";
-  else if (moved < 0) verdict = `${f1(-moved)} points wider than in 2024.`;
-  else if (widen > 0) verdict = `${fmtShare(moved / widen)} of the 2019-to-2024 widening undone.`;
-  else verdict = `${f1(moved)} points narrower than in 2024.`;
-  $("t-gap-s").textContent = `2019: ${f1(g.y2019)}, 2024: ${f1(g.y2024)}. ${verdict}`;
+  if (Math.abs(moved) < 0.05) verdict = "About the same as without the program.";
+  else if (moved < 0) verdict = `The program widens it by ${f1(-moved)} more points.`;
+  else if (widen > 0) verdict = `The program undoes ${fmtShare(moved / widen)} of the widening since 2019.`;
+  else verdict = `The program narrows it by ${f1(moved)} points.`;
+  $("t-gap-s").textContent = `It was ${f1(g.y2019)} in 2019 and ${f1(g.y2024)} in 2024. ${verdict}`;
 
-  $("main-title").textContent = `Decline by percentile, ${cell.label} (2019 SD units, 2024 minus 2019)`;
+  // Cell-specific sentences in the introduction and the effect control, so
+  // the reader sees real points for the subject and grade they picked.
+  const name = cellName(cell.label), S = cell.sd2019;
+  const drop = (p) => -cell.d[PS.indexOf(p)];
+  $("intro-gap").textContent = `In ${name}, students at the 10th percentile scored ${f0(drop(10))} points lower ` +
+    `in 2024 than in 2019; students at the 90th scored ${f0(drop(90))} ${f0(drop(90)) === "1" ? "point" : "points"} lower. ` +
+    `The tool tracks the distance between the 90th and 10th percentiles, called the 90-10 gap.`;
+  $("intro-sd").textContent = `In ${name}, 1 SD is about ${f0(S)} NAEP points, so a 0.1 SD boost adds about ${f0(0.1 * S)} points.`;
+  $("effect-help").textContent = `The average boost for a student who takes part, in SD. ` +
+    `${f3(state.effect)} SD is about ${f1(state.effect * S)} NAEP points in ${name}.`;
+
+  $("main-title").textContent = `How far each percentile sits below its 2019 score: ${name}`;
   drawMain(res.curve);
-  drawProfile("part-chart", res.curve, (r) => r.part, [0, 1], (v) => fmtPct(v), "var(--series-part)", "Participation");
+  drawProfile("part-chart", res.curve, (r) => r.part, [0, 1], (v) => fmtPct(v), "var(--series-part)", "Taking part");
   const effMax = Math.max(0.05, ...res.curve.map((r) => r.effect)) * 1.1;
-  drawProfile("eff-chart", res.curve, (r) => r.effect, [0, effMax], (v) => f2(v), "var(--series-effect)", "Effect (SD)");
+  drawProfile("eff-chart", res.curve, (r) => r.effect, [0, effMax], (v) => f2(v), "var(--series-effect)", "Boost (SD)");
   drawTable(res, cell);
 
   $("provenance").textContent = `Data: ${D.sources.map((f) => `${f.path} (md5 ${f.md5.slice(0, 8)})`).join(", ")}. ` +
@@ -436,7 +555,7 @@ function frame(containerId, W, H, yDom, yFmt, nTicks) {
     el("text", { x: m.l - 6, y: y(t) + 4, "text-anchor": "end" }, ax).textContent = yFmt(t);
   });
   PS.forEach((p) => {
-    el("text", { x: x(p), y: H - 8, "text-anchor": "middle" }, ax).textContent = "p" + p;
+    el("text", { x: x(p), y: H - 8, "text-anchor": "middle" }, ax).textContent = ord(p);
     el("line", { class: "gridline", x1: x(p), x2: x(p), y1: m.t, y2: H - m.b }, ax);
   });
   if (yDom[0] < 0 && yDom[1] > 0) el("line", { class: "zero", x1: m.l, x2: W - m.r, y1: y(0), y2: y(0) }, svg);
@@ -482,14 +601,15 @@ function drawMain(curve) {
     el("circle", { cx: x(r.p), cy: y(before(r)), r: 4, fill: "var(--series-before)", stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
   });
   hover(F, curve, (r) => y(after(r)),
-    (r) => `<div>p${r.p}</div><div>D(p)/S: <b>${f3(before(r))}</b> SD</div><div>After program: <b>${f3(after(r))}</b> SD</div>` +
-           `<div>Undone: <b>${f3(r.gain)}</b> SD (${fmtShare(shareClosed(r))})</div>`);
+    (r) => `<div>${ord(r.p)} percentile</div><div>No program: <b>${f3(before(r))}</b> SD</div>` +
+           `<div>With the program: <b>${f3(after(r))}</b> SD</div>` +
+           `<div>Drop undone: <b>${f3(r.gain)}</b> SD (${fmtShare(shareClosed(r))})</div>`);
 }
 
 function drawProfile(id, curve, acc, yDom, yFmt, color, name) {
   const F = frame(id, 340, 180, yDom, yFmt, 4);
   el("path", { d: path(curve.map((r) => [F.x(r.p), F.y(acc(r))])), fill: "none", stroke: color, "stroke-width": 2 }, F.svg);
-  hover(F, curve, (r) => F.y(acc(r)), (r) => `<div>p${r.p}</div><div>${name}: <b>${yFmt(acc(r))}</b></div>`);
+  hover(F, curve, (r) => F.y(acc(r)), (r) => `<div>${ord(r.p)} percentile</div><div>${name}: <b>${yFmt(acc(r))}</b></div>`);
 }
 
 // Crosshair and tooltip: snap to the nearest whole percentile.
@@ -519,13 +639,14 @@ function hover(F, curve, yOf, html) {
 }
 
 function drawTable(res, cell) {
-  const rows = res.knots.map((r) => `<tr><td>p${r.p}</td><td>${f3(-r.gStar)}</td><td>${fmtPct(r.part)}</td>` +
+  const rows = res.knots.map((r) => `<tr><td>${ord(r.p)}</td><td>${f3(-r.gStar)}</td><td>${fmtPct(r.part)}</td>` +
     `<td>${f3(r.effect)}</td><td>${f3(r.gain)}</td><td>${f3(-r.remaining)}</td><td>${fmtShare(shareClosed(r))}</td></tr>`).join("");
-  $("tbl").innerHTML = `<thead><tr><th>Percentile</th><th>D(p)/S, SD</th><th>Participation</th><th>Effect, SD</th>` +
-    `<th>Undone, SD</th><th>After program, SD</th><th>Share undone</th></tr></thead><tbody>${rows}</tbody>`;
+  $("tbl").innerHTML = `<thead><tr><th>Percentile</th><th>Drop, 2019 to 2024</th><th>Taking part</th>` +
+    `<th>Boost</th><th>Drop undone</th><th>With the program</th><th>Share undone</th></tr></thead><tbody>${rows}</tbody>` +
+    `<caption>All columns except the two shares are in SD, measured against the 2019 score.</caption>`;
   const g = res.gap9010;
-  $("gap-tbl").innerHTML = `<thead><tr><th>90-10 gap, NAEP points</th><th>2019</th><th>2024</th><th>After program</th></tr></thead>` +
-    `<tbody><tr><td>${cell.label}</td><td>${f1(g.y2019)}</td><td>${f1(g.y2024)}</td><td>${f1(g.post)}</td></tr></tbody>`;
+  $("gap-tbl").innerHTML = `<thead><tr><th>90-10 gap, NAEP points</th><th>2019</th><th>2024</th><th>2024 with the program</th></tr></thead>` +
+    `<tbody><tr><td>${cellName(cell.label)}</td><td>${f1(g.y2019)}</td><td>${f1(g.y2024)}</td><td>${f1(g.post)}</td></tr></tbody>`;
 }
 
 sync();
