@@ -1,0 +1,54 @@
+# --- OS and editor files ---
+.DS_Store
+Thumbs.db
+*~
+
+# --- R ---
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj.user
+.Rapp.history
+
+# --- NAEP restricted-use data must never be committed ---
+# Backstop only. Restricted data does not belong anywhere in this folder.
+# This also keeps the raw CCD files in district-enrollment-data/ (650 MB CSV,
+# SAS copy) local-only; 08-district-enrollment.R documents where to get them.
+data/
+**/data/
+*.csv
+*.tsv
+*.rds
+*.rda
+*.RData
+*.sav
+*.dta
+*.sas7bdat
+*.xpt
+*.parquet
+*.feather
+*.zip
+!tables/**/*.csv
+
+# --- Kraft study coding (kraft-2023-data/studies/): retrieved PDFs, text, and
+# the WWC export stay local; the CSV outputs are tracked by the negations below.
+kraft-2023-data/studies/pdf/
+kraft-2023-data/studies/text/
+kraft-2023-data/studies/wwc/*
+!kraft-2023-data/studies/wwc/wwc-manifest.txt
+!kraft-2023-data/studies/wwc/request-payload.json
+!kraft-2023-data/studies/*.csv
+!kraft-2023-data/studies/coding/*.csv
+!kraft-2023-data/studies/resolution-manual/*.csv
+
+# --- Build artifacts ---
+manuscript/*.docx
+!manuscript/reference.docx
+manuscript/*.pdf
+manuscript/*.html
+*.log
+
+# --- NAEP Data Service API response cache ---
+# Public API responses only. Regenerated on demand; delete to force a refresh.
+analysis/.cache/
+analysis/.cache-stata/

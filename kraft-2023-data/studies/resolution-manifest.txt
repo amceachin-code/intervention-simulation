@@ -1,0 +1,14 @@
+generated: 2026-09-18 13:28:16 PDT
+services skipped after repeated rate limiting: openalex
+studies processed: 254
+fryer reference entries: 246
+status by source (auto = accepted automatically, review = sent to batch agents):
+  bee          auto=20  review=50
+  bee;eef      review=1
+  bee;fryer    auto=1  review=4
+  bee;i3       auto=1  review=1
+  eef          auto=18  review=21
+  fryer        auto=34  review=23
+  i3           auto=2  review=5
+  ies90        auto=3  review=7
+  wwc          auto=42  review=21

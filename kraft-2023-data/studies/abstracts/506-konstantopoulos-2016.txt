@@ -1,0 +1,5 @@
+Effects of Interim Assessments on Student Achievement: Evidence From a Large-Scale Experiment
+https://doi.org/10.1080/19345747.2015.1116031
+abstract source: eric EJ1115334
+
+We use data from a large-scale, school-level randomized experiment conducted in 2010-2011 in public schools in Indiana. Our sample includes more than 30,000 students in 70 schools. We examine the impact of two interim assessment programs (i.e., mCLASS in Grades K-2 and Acuity in Grades 3--8) on mathematics and reading achievement. Two-level models were used to capture the nesting in the data. Results indicate that the treatment effect is insignificant in Grades 3-8, and thus students in treatment schools perform as well as students in control schools. In contrast, the treatment effect is negative and significant in Grades K-2 (i.e., kindergarten and second grade), indicating that students in control schools perform higher than students in treatment schools.

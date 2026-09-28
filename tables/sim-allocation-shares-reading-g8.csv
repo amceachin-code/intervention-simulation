@@ -1,0 +1,25 @@
+"cell","rule","budget","p10","p25","p50","p75","p90"
+"Reading G8","Bottom-up (lowest first)",0.1,1,0,0,0,0
+"Reading G8","Bottom-up (lowest first)",0.13,1,0,0,0,0
+"Reading G8","Bottom-up (lowest first)",0.25,1,1,0,0,0
+"Reading G8","Bottom-up (lowest first)",0.5,1,1,1,0,0
+"Reading G8","Bottom-up (lowest first)",0.75,1,1,1,1,0
+"Reading G8","Bottom-up (lowest first)",1,1,1,1,1,1
+"Reading G8","Proportional (untargeted)",0.1,0.1,0.1,0.1,0.1,0.1
+"Reading G8","Proportional (untargeted)",0.13,0.13,0.13,0.13,0.13,0.13
+"Reading G8","Proportional (untargeted)",0.25,0.25,0.25,0.25,0.25,0.25
+"Reading G8","Proportional (untargeted)",0.5,0.5,0.5,0.5,0.5,0.5
+"Reading G8","Proportional (untargeted)",0.75,0.75,0.75,0.75,0.75,0.75
+"Reading G8","Proportional (untargeted)",1,1,1,1,1,1
+"Reading G8","Opt-in gradient",0.1,0.0448668674684944,0.0581222478381981,0.0896367598131124,0.138238781338273,0.179079148810433
+"Reading G8","Opt-in gradient",0.13,0.0583269277090427,0.0755589221896576,0.116527787757046,0.179710415739755,0.232802893453563
+"Reading G8","Opt-in gradient",0.25,0.112167168671236,0.145305619595495,0.224091899532781,0.345596953345684,0.447697872026082
+"Reading G8","Opt-in gradient",0.5,0.224334337342472,0.290611239190991,0.448183799065562,0.691193906691367,0.895395744052165
+"Reading G8","Opt-in gradient",0.75,0.392794094520228,0.508840420542322,0.784739204965498,1,1
+"Reading G8","Opt-in gradient",1,1,1,1,1,1
+"Reading G8","Eligibility screen (ECONDIS)",0.1,0.155480687827833,0.134934547293147,0.09330517452973,0.0672118552749877,0.0516444481309952
+"Reading G8","Eligibility screen (ECONDIS)",0.13,0.202124894176183,0.175414911481092,0.121296726888649,0.087375411857484,0.0671377825702937
+"Reading G8","Eligibility screen (ECONDIS)",0.25,0.388701719569582,0.337336368232868,0.233262936324325,0.168029638187469,0.129111120327488
+"Reading G8","Eligibility screen (ECONDIS)",0.5,0.777403439139165,0.674672736465737,0.46652587264865,0.336059276374939,0.258222240654976
+"Reading G8","Eligibility screen (ECONDIS)",0.75,1,1,0.748384539435976,0.539094574423435,0.414231115516802
+"Reading G8","Eligibility screen (ECONDIS)",1,1,1,1,1,1

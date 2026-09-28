@@ -1,0 +1,5 @@
+Are High-Quality Schools Enough to Increase Achievement Among the Poor? Evidence from the Harlem Children's Zone
+https://doi.org/10.1257/app.3.3.158
+abstract source: crossref
+
+Harlem Children's Zone (HCZ), an ambitious social experiment, combines community programs with charter schools. We provide the first empirical test of the causal impact of HCZ charters on educational outcomes. Both lottery and instrumental variable identification strategies suggest that the effects of attending an HCZ middle school are enough to close the black-white achievement gap in mathematics. The effects in elementary school are large enough to close the racial achievement gap in both mathematics and ELA. We conclude with evidence that suggests high-quality schools are enough to significantly increase academic achievement among the poor. Community programs appear neither necessary nor sufficient. (JEL H75, I21, I28, J13, R23)

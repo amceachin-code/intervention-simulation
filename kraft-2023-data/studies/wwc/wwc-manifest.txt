@@ -1,0 +1,22 @@
+WWC data export, fetched 2026-09-18 16:19 PDT by POST to https://ies.ed.gov/ncee/wwc/StudyFindings/AllDataExport
+Request payload: request-payload.json (EssaRatingId = 1,2,3; every other filter empty; IndividualFilesDownload false).
+Why this payload: the endpoint returns HTTP 500 unless InterventionId or EssaRatingId is non-empty, and every
+non-empty filter intersects. EssaRatingId set to all three tiers with the rest empty is the widest pull the endpoint
+gives (755 studies, 2,173 findings). InterventionId set to all 2,534 listed interventions gives only 94 studies.
+Studies without an ESSA tier (for example grant-competition reviews such as WWC study 86097) are not in this file.
+Files: Interventions_Studies_And_Findings.csv (merged findings x studies x intervention reports; i_, s_, f_ prefixes),
+ReviewDictionary.csv (data dictionary), ReadMe.txt (WWC's Excel import note).
+Everything in this folder except this manifest is git-ignored.
+
+---- match run
+generated: 2026-09-18 22:40:49 PDT
+export: Interventions_Studies_And_Findings.csv, 755 WWC studies (see wwc-manifest section above for the request)
+Kraft studies: 254; WWC-sourced: 63
+WWC-sourced matched: 54 of 63 (by method: {'export': 36, 'search': 12, 'override': 6, 'override-none': 5, 'search-none': 4})
+other-sourced matched through the export: 37
+wwc_code distribution over 91 matched studies: {'universal': 35, 'targeted_other': 31, 'unclear': 17, 'targeted_low': 8}
+wwc_level distribution: {'school': 33, 'none': 28, 'unclear': 24, 'student': 6}
+confidence: {'high': 52, 'medium': 22, 'low': 17}
+narrative (Setting or Study sample) present: 74
+unmatched WWC-sourced: 340-gallagher-2015 [override-none], 490-kim-2018 [override-none], 619-usdepartmentofeducation-2015 [search-none], 634-dumont-2012 [search-none], 658-pane-2013 [override-none], 698-programevaluationgroupcollegeofeducationuniversityofgeorgia-2015 [search-none], 788-rethwisch-2012 [search-none], 938-vadasy-2015 [override-none], 961-vaughn-2010 [override-none]
+manual review rows written: 0 (wwc-match-manual.csv)

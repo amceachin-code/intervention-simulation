@@ -1,0 +1,5 @@
+The Impact of Indiana’s System of Interim Assessments on Mathematics and Reading Achievement
+https://doi.org/10.3102/0162373713498930
+abstract source: crossref
+
+Interim assessments are increasingly common in U.S. schools. We use high-quality data from a large-scale school-level cluster randomized experiment to examine the impact of two well-known commercial interim assessment programs on mathematics and reading achievement in Indiana. Results indicate that the treatment effects are positive but not consistently significant. The treatment effects are smaller in lower grades (i.e., kindergarten to second grade) and larger in upper grades (i.e., third to eighth grade). Significant treatment effects are detected in Grades 3 to 8, especially in third- and fourth-grade reading and in fifth- and sixth-grade mathematics.

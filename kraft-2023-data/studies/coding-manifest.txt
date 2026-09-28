@@ -1,0 +1,22 @@
+generated: 2026-09-25 10:16:48 PDT
+coded studies: 254 of 254; missing: none
+code distribution: {'universal': 112, 'targeted_other': 55, 'targeted_low': 54, 'unclear': 33}
+unclear share: 0.13
+level distribution: {'none': 112, 'school': 57, 'student': 41, 'unclear': 34, 'both': 10}
+confidence: {'high': 111, 'medium': 91, 'low': 52}
+source_used: {'pdf': 151, 'abstract': 77, '': 15, 'wwc-page': 11}
+opt_in = 1: 41; mixed_samples = 1: 25
+adjudicated: 28
+reliability recodes: 25; code agreement 23/25 (kappa 0.88); level agreement 22/25 (kappa 0.82)
+WWC agreement where neither is unclear: 37/72 (0.51)
+validation problems: 0
+code by source:
+  bee: {'targeted_other': 9, 'universal': 29, 'targeted_low': 17, 'unclear': 15}
+  bee;eef: {'targeted_low': 1}
+  bee;fryer: {'targeted_other': 1, 'unclear': 3, 'universal': 1}
+  bee;i3: {'unclear': 1, 'universal': 1}
+  eef: {'universal': 16, 'targeted_low': 13, 'targeted_other': 5, 'unclear': 5}
+  fryer: {'universal': 34, 'targeted_low': 4, 'targeted_other': 13, 'unclear': 6}
+  i3: {'universal': 5, 'targeted_other': 2}
+  ies90: {'targeted_low': 3, 'targeted_other': 3, 'universal': 4}
+  wwc: {'universal': 22, 'targeted_low': 16, 'targeted_other': 22, 'unclear': 3}

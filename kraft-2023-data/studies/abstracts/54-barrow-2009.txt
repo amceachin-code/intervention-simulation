@@ -1,0 +1,5 @@
+Technology's Edge: The Educational Benefits of Computer-Aided Instruction
+https://doi.org/10.1257/pol.1.1.52
+abstract source: crossref
+
+We present results from a randomized study of a well-defined use of computers in schools, a popular instructional computer program for pre-algebra and algebra. We primarily assess the program using a test designed to target pre-algebra and algebra skills. Students randomly assigned to computer-aided instruction score significantly higher on a pre-algebra and algebra test than students randomly assigned to traditional instruction. We hypothesize that this effectiveness arises from increased individualized instruction as the effects appear larger for students in larger classes and in classes with high student absentee rates. (JEL H75, I21)

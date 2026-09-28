@@ -1,0 +1,4 @@
+generated: 2026-09-18 22:55:17 PDT
+studies in log: 254
+status counts: abstract-only=82, failed=4, manual-pdf=9, pdf=145, unresolved=14
+hosts skipped after repeated 429/403: none

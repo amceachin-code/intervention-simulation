@@ -1,0 +1,255 @@
+study_id,key,batch,sources,kraft_citation,wwc_study_id,method,score,n_candidates,why,wwc_citation
+31,31-augustine-2016,bee-a,bee,Augustine et al. (2016),,,,1,,
+54,54-barrow-2009,bee-a,bee,"Barrow, Markman, and Rouse, 2009",,,,0,,
+70,70-becker-1994,bee-a,bee,"Becker, 1994",,,,0,,
+98,98-borman-2007,bee-a,bee,"Borman, Dowling, and Schneck, 2007",82904,export,7,11,surname;year;+2 surnames,"Borman, G. D., Dowling, N. M., & Schneck, C. (2008). A multisite cluster randomized field trial of Open Court Reading. Educational Evaluation and Policy Analysis, 30(4), 389–407."
+128,128-cabalo-2007,bee-a,bee,"Cabalo and Vu, 2007",,,,0,,
+141,141-campuzano-2009,bee-a,bee,"Campuzzano et al., 2009",82115,export,8,1,surname;year;+3 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+225,225-denverpublicschools-2016,bee-a,bee,"Denver Public Schools, 2016",,,,0,,
+226,226-deussen-2012,bee-a,bee,"Deussen et al., 2012",,,,0,,
+239,239-dominguez-2006,bee-a,bee,"Dominguez et al., 2006",,,,2,,
+249,249-watts-2018,bee-a,bee,Duncan et al. (2018),,,,0,,
+252,252-campuzano-2007,bee-a,bee,Dynarski et al. (2007); Campuzano et al. (2009),82115,export,8,1,surname;+3 surnames;es 0.04,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+254,254-dynarski-2007,bee-a,bee,"Dynarski et al., 2007a",82115,export,5,4,surname;+2 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+264,264-eddy-2011,bee-a,bee,Eddy et al. (2011),,,,2,,
+265,265-eddy-2010,bee-a,bee,"Eddy et al., 2010",,,,2,,
+271,271-faddis-2011,bee-a,bee,"Faddis et al., 2011a",81690,export,12,3,"surname;year;+5 surnames;es 0.20,0.29,0.32","Faddis, Bonnie J., Beam, Margaret, Maxim, Lauren, Gandhi, Elizabeth Vale, Hahn, Karen, Hale, Rita. (2011). Portland Public Schools' Striving Readers Program: Year 5 Evaluation Report. RMC Research Cor"
+290,290-fogarty-2014,bee-a,bee,"Fogarty et al., 2014",,,,0,,
+339,339-gallagher-2017,bee-a,bee,"Gallagher et al., 2017",,,,8,,
+347,347-gatti-2008,bee-a,bee,"Gatti and Giordano, 2008",,,,0,,
+386,386-kim-2016,bee-a,bee,Guryan et al. (2016),,,,8,,
+432,432-jaciw-2016,bee-a,bee,"Jaciw et al., 2016",,override-none,,,Coder (bee-a): matched to Newman et al. AMSTI. 2026-09-18,
+435,435-jacob-2015,bee-a,bee,Jacob et al. (2015),80616,export,8,1,surname;year;+1 surnames;es 0.09,"Tepper Jacob, Robin; Armstrong, Catherine; Willard, Jacklyn Altuna. (2015). Mobilizing Volunteer Tutors to Improve Student Literacy: Implementation, Impacts, and Costs of the Reading Partners Program."
+464,464-jordan-2009,bee-a,bee,"Jordan, 2009",,,,14,,
+470,470-karper-1993,bee-a,bee,"Karper and Melnick, 1993",,,,0,,
+476,476-kim-2010,bee-a,bee,Kim & Guryan (2010),,,,8,,
+477,477-kim-2008,bee-a,bee,Kim & White (2008),,,,8,,
+479,479-kim-2006,bee-a,bee,Kim (2006),,,,8,,
+482,482-kim-2010,bee-a,bee,Kim et al. (2010),,,,8,,
+483,483-kim-2011,bee-a,bee,Kim et al. (2011),,override-none,,,"Coder (bee-a): matched to the Pathway Project, which is study 485; 483 is READ 180 after-school. 2026-09-18",
+485,485-olson-2012,bee-a,bee,"Kim et al., 2011; Olsen et al., 2012",78614,export,10,4,surname;year;+5 surnames,"Kim, James S.; Olson, Carol Booth; Scarcella, Robin; Kramer, Jason; Pearson, Matthew; van Dyk, David; Collins, Penny; Land, Robert E. (2011). A Randomized Experiment of a Cognitive Strategies Approach"
+486,486-kim-2016,bee-a,bee,"Kim et al., 2016",85771,export,12,8,surname;year;+5 surnames;es 0.21,"Kim, James S.; Hemphill, Lowry; Troyer, Margaret; Thomson, Jenny M.; Jones, Stephanie M.; LaRusso, Maria D.; Donovan, Suzanne. (2017). Engaging Struggling Adolescent Readers to Improve Reading Skills."
+506,506-konstantopoulos-2016,bee-a,bee,"Konstantopoulos et al., 2016",,,,1,,
+507,507-kozlow-2004,bee-a,bee,"Kozlow and Bellamy, 2004",,,,0,,
+521,521-lin-2016,bee-a,bee,"Lawrence et al., 2016",,,,3,,
+526,526-lenard-2019,bee-a,bee,Lenard & Rhea (2019),,override-none,,,"Coder (bee-a): matched to Hemelt, Lenard, Paeplow 2019 career academies; Kraft row is DreamBox. 2026-09-18",
+534,534-little-2014,bee-a,bee,"Little et al., 2014",,,,0,,
+551,551-mie-2015,bee-b,bee,"MIE, 2015",,,,0,,
+552,552-madden-2011,bee-b,bee,"Madden et al., 2011",,,,3,,
+632,632-dumont-2012,bee-b,bee,Newman et al. (2012),,,,0,,
+662,662-hamm-2019,bee-b,bee,Parker et al. (2019),,,,0,,
+694,694-prast-2018,bee-b,bee,Prast et al. (2018),,,,0,,
+712,712-ragosta-1983,bee-b,bee,"Ragosta, 1983",,,,0,,
+729,729-reis-2008,bee-b,bee,"Reis, Eckhert, McCoach, Jacobs, and Coyne, 2008",,,,0,,
+733,733-resendez-2005,bee-b,bee,"Resendez and Manley, 2005",,,,0,,
+734,734-resendez-2009,bee-b,bee,"Resendez et al., 2009",,,,0,,
+735,735-resendez-2009,bee-b,bee,"Resendez, 2009",,,,0,,
+736,736-resendez-2005,bee-b,bee,"Resendez, Azin, and Sridharan, 2005",,,,0,,
+742,742-rimm-kaufman-2014,bee-b,bee,"Rimm-Kaufman et al., 2014",,,,0,,
+744,744-ritter-2000,bee-b,bee,Ritter (2000),,,,1,,
+786,786-schenckjr-2011,bee-b,bee,"Schenck et al., 2011",,,,0,,
+787,787-rethwisch-2012,bee-b,bee,"Schenck et al., 2012",,,,0,,
+790,790-schiller-2012,bee-b,bee,"Schiller et al., 2012",81697,export,10,1,surname;year;+5 surnames,"Schiller, E., Wei, X., Thayer, S., Blackorby, J., Javitz, H., & Williamson, C. (2012). A randomized controlled trial of the impact of the Fusion Reading intervention on reading achievement and motivat"
+800,800-seeetal-2018,bee-b,bee,See et al. (2018),,,,0,,
+802,802-serveminnesota-2017,bee-b,bee,"ServeMinnesota, 2017",90323,export,5,1,surname;year,ServeMinnesota. (2018). A year-long state-wide RCT of the Minnesota Math Corps: Final report to Laura and John Arnold Foundation. Minnesota Math Corps. https://osf.io/7s4bv/.
+806,806-shanoski-1986,bee-b,bee,"Shanoski, 1986",,,,0,,
+815,815-simmons-2014,bee-b,bee,"Simmons et al., 2014",,override-none,,,Coder (bee-b): matched to a Vaughn/Swanson/Roberts paper with empty sample fields. 2026-09-18,
+816,816-simon-2011,bee-b,bee,"Simon et al., 2011",,,,0,,
+822,822-sivin-kachala-2012,bee-b,bee,"Sivin-Kachala and Bialo, 2012",,,,0,,
+825,825-slavin-1984,bee-b,bee,"Slavin and Karweit, 1984",72996,export,6,4,surname;year;+1 surnames,"Slavin, R. E., & Karweit, N. L. (1984). Mastery learning and student teams: A factorial experiment in urban general mathematics classes. American Educational Research Journal, 12(4), 725&ndash;736."
+866,866-sun-2017,bee-b,bee,"Strobel et al., 2017",,override-none,,,"Coder (bee-b): matched to Mokher, Lee, Sun 2016 Tennessee high schools; Kraft row is an elementary math study. 2026-09-18",
+873,873-suppes-2013,bee-b,bee,"Suppes et al., 2013",,,,0,,
+898,898-torgerson-2018,bee-b,bee,"Torgerson et al., 2018",,,,0,,
+942,942-sullivan-2015,bee-b,bee,"Vaden-Kiernan et al., 2015",,override-none,,,Coder (bee-b): matched to a Louisiana Title I middle-school study; Kraft row is the Everyday Mathematics K-5 scale-up. 2026-09-18,
+945,945-vandusen-1994,bee-b,bee,"VanDusen and Worthen, 1994",,,,0,,
+948,948-vaughan-2006,bee-b,bee,"Vaughan, Serido, and Wilhelm, 2006",,,,1,,
+952,952-vaughn-2019,bee-b,bee,Vaughn et al. (2019),,,,12,,
+953,953-vaughn-2011,bee-b,bee,"Vaughn et al., 2011",,,,12,,
+970,970-wang-2011,bee-b,bee,"Wang and Woodworth, 2011b",78475,export,8,15,surname;year;+1 surnames;es 0.11,"Wang, H., & Woodworth, K. (2011). Evaluation of Rocketship Education’s use of DreamBox Learning’s online mathematics program. Menlo Park, CA: SRI International. Retrieved from http://www.dreambox.com/"
+974,974-wanzek-2017,bee-b,bee,Wanzek et al. (2017),,override-none,,,Coder (bee-b): matched to a Vaughn/Martinez/Wanzek study; Kraft row is Wanzek et al. 2017 grade 4. 2026-09-18,
+999,999-wijekumar-2009,bee-b,bee,"Wijekumar, 2009",,,,3,,
+1029,1029-ysseldkye-2006,bee-b,bee,"Ysseldkye and Bolt, 2006",,,,0,,
+49,49-barlow-2015,eef,eef,"Barlow, Wigelsworth, Lendrum, Pert, Joyce, Stephens, Wo, Squires, Woods, Calam, Harrison, Turner, Humphrey, 2015",,,,0,,
+112,112-boylan-2018,eef,eef,"Boylan, Demack, Wolstenholme, Reidy, Reaney-Wood, 2018",,,,0,,
+206,206-craig-2013,eef,eef,"Craig (2013), The impact of a technology-based mathematics after-school program using ALEKS on student's knowledge and behaviors",,,,5,,
+213,213-culliney-2019,eef,eef,"Culliney, Moore, Coldwell, Demack, 2019",,,,0,,
+253,253-dynarski-2007,eef,eef,"Dynarski et al., 2007",82115,export,5,4,surname;+2 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+373,373-gorard-2016,eef,eef,"Gorard, See, Siddiqui, Smith, White, 2016",,,,0,,
+374,374-gorard-2014,eef,eef,"Gorard, Siddiqui, See, 2014",,,,0,,
+375,375-gorard-2015,eef,eef,"Gorard, Siddiqui, See, 2015",,,,0,,
+376,376-gorard-2017,eef,eef,"Gorard, Siddiqui, See,Smith, White, 2017",,,,0,,
+411,411-hodgen-2019,eef,eef,"Hodgen, Adkins, Ainsworth, Evans, 2019",,,,0,,
+422,422-humphrey-2020,eef,eef,"Humphrey, Squires, Choudry, Byrne, Demkowicz, Troncoso, Wo, 2020.",,,,0,,
+425,425-husain-2016,eef,eef,"Husain, Jabin, Haywood, Kasim, Paylor, 2016",,,,0,,
+443,443-jay-2017,eef,eef,"Jay, Willis, Thomas, Taylor, Moore, Burnett, Merchant, Stevens, 2017",,,,2,,
+447,447-jerrim-2016,eef,eef,"Jerrim, Macmillan, Micklewright, Sawtell, Wiggins, 2016",,,,0,,
+481,481-kim-2008,eef,eef,"Kim (2008), Scaffolding Voluntary Summer Reading for Children in Grades 3 to 5: An Experimental Study",,,,8,,
+536,536-lloyd-2015,eef,eef,"Lloyd, Edovald, Kiss, Morris, Skipp, Ahmed, 2015",,override-none,,,"Coder (eef): matched to Kennedy, Deshler, Lloyd 2015. 2026-09-18",
+537,537-lloyd-2015,eef,eef,"Lloyd, Edovald, Morris, Kiss, Skipp, Haywood, 2015",,override-none,,,"Coder (eef): matched to Kennedy, Deshler, Lloyd 2015. 2026-09-18",
+592,592-menzies-2016,eef,eef,"Menzies, Kasim, Kokotsaki, Hewitt, Akhter, Collyer, Younger, Wiggins, Torgerson, 2016",,,,0,,
+595,595-mertes-2013,eef,eef,"Mertes (2013), A Mathematics Education Comparative Analysis of ALEKS Technology and Direct Classroom Instruction",,,,0,,
+607,607-miller-2016,eef,eef,"Miller, Davison, Yohanis, Sloan, Gildea, Thurston, 2016",84224,export,12,13,surname;year;+5 surnames;es 0.03,"Miller, Sarah; Davison, Jenny; Yohanis, Jamie; Sloan, Seaneen; Gildea, Aideen; Thurston, Allen. (2017). Texting Parents: Evaluation Report and Executive Summary. Education Endowment Foundation."
+653,653-ohare-2019,eef,eef,"O‚ÄôHare, Stark, Cockerill, Lloyd, McConnellogue, Gildea, Biggart, Connolly, Bower, 2019",,,,0,,
+741,741-rienzo-2016,eef,eef,"Rienzo, Rolfe, Wilkinson, 2016",,,,0,,
+761,761-roy-2019,eef,eef,"Roy, Rutt, Buchanan, Rennie, Martin, Walker, 2019",,override-none,,,Coder (eef): matched to Barnett et al. SUNY placement. 2026-09-18,
+762,762-roy-2019,eef,eef,"Roy, Rutt, Easton, Sims, Bradshaw, McNamara, 2019",,override-none,,,Coder (eef): matched to Barnett et al. SUNY placement. 2026-09-18,
+765,765-rudd-2017,eef,eef,"Rudd, Villaneuva Aguilera, Elliott, Chambers, 2017",,,,5,,
+801,801-see-2018,eef,eef,"See, Morris, Gorard, Siddiqui, 2018",,,,0,,
+876,876-sutherland-2019,eef,eef,"Sutherland, Broeks, Sim, Brown, Iakovidou, Ilie, Jarke, Belanger, 2019",,override-none,,,"Coder (eef): matched to Sutherland, Conroy et al. 2018 early childhood. 2026-09-18",
+888,888-thurston-2016,eef,eef,"Thurston, 2016",,override-none,,,"Coder (eef): matched to Miller et al. 2016 Texting Parents, which is study 607. 2026-09-18",
+896,896-torgerson-2018,eef,eef,Torgerson et al. (2018),,,,0,,
+899,899-torgerson-2018,eef,eef,"Torgerson, Ainsworth, Bell, Elliott, Fountain, Gascoine, Hewitt, Kasim, Kokotsaki, Torgerson, 2018",,,,0,,
+947,947-vaughan-2006,eef,eef,"Vaughan, Serido, & Wilhelm, 2006",,,,1,,
+949,949-vaughn-2011,eef,eef,"Vaughn (2011), 'Efficacy of Collaborative Strategic Reading with Middle School Students'",,,,12,,
+992,992-wigelsworth-2018,eef,eef,"Wigelsworth, Squires, Birchinall, Kalambouka, Lendrum, Black, Troncoso, Santos, Ashworth, Britteon, 2018",,,,0,,
+994,994-wiggins-2019,eef,eef,"Wiggins, Jerrim, Tripney, Khatwa, Gough, 2019",,,,0,,
+995,995-wiggins-2017,eef,eef,"Wiggins, Sawtell, Jerrim, 2017",,,,0,,
+1040,1040-campuzano-2009,eef,eef,"campuzano et al., 2009",82115,export,8,1,surname;year;+3 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+1044,1044-dynarski-2008,eef,eef,"dynarski et al., 2008",82115,export,7,4,surname;year;+2 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+1062,1062-rouse-2004,eef,eef,"rouse and krueger, 2004",,,,1,,
+1069,1069-vaughn-2006,eef,eef,"vaughn, serido, and wilhelm, 2006",,,,12,,
+1,1-abdulkadiroglu-2011,fryer-a,fryer,"Abdulkadiroglu et al., 2011",,,,0,,
+19,19-abdulkadiroglu-2011,fryer-a,fryer,"Angrist et al., 2011",,,,0,,
+53,53-barrow-2009,fryer-a,fryer,"Barrow et al, 2009",,,,0,,
+76,76-bettinger-2012,fryer-a,fryer,"Bettinger, 2012",,,,4,,
+82,82-bifulco-2009,fryer-a,fryer,"Bifulco et al., 2009",81476,export,5,1,surname;year,"Bifulco, Robert; Cobb, Casey D.; Bell, Courtney. (2009). Can Interdistrict Choice Boost Student Achievement? The Case of Connecticut's Interdistrict Magnet School Program. Educational Evaluation and P"
+88,88-black-2009,fryer-a,fryer,"Black et al., 2009",,,,1,,
+95,95-borman-2008,fryer-a,fryer,"Borman et al., 2008",,,,11,,
+106,106-bosetal-2012,fryer-a,fryer,"Bos et al., 2012",,,,0,,
+116,116-brandt-2013,fryer-a,fryer,"Brandt et al., 2013",87694,export,5,1,surname;+2 surnames,"Meyers, Coby V.; Molefe, Ayrin; Brandt, W. Christopher; Zhu, Bo; Dhillon, Sonica. (2016). Impact Results of the eMINTS Professional Development Validation Study: Professional Development Validation St"
+137,137-campbell-2011,fryer-a,fryer,"Campbell and Malkus, 2011",,,,3,,
+144,144-cantrell-2008,fryer-a,fryer,"Cantrell et al., 2008",67272,export,8,1,surname;year;+3 surnames,"Cantrell, Steven; Fullerton, Jon; Kane, Thomas J.; Staiger, Douglas O. (2008). National Board Certification and Teacher Effectiveness: Evidence from a Random Assignment Experiment. NBER Working Paper "
+150,150-carlson-2011,fryer-a,fryer,"Carlson et al., 2011",,,,4,,
+168,168-clark-2013,fryer-a,fryer,"Clark et al., 2013",1120,export,10,6,surname;year;+5 surnames,"Clark, Melissa A.; Chiang, Hanley S.; Silva, Tim; McConnell, Sheena; Sonnenfeld, Kathy; Erbe, Anastasia; Puma, Michael. (2013). The Effectiveness of Secondary Math Teachers from Teach For America and "
+184,184-cole-1992,fryer-a,fryer,"Cole, 1992",,,,4,,
+193,193-constantine-2009,fryer-a,fryer,"Constantine et al, 2009",,,,1,,
+195,195-cook-1999,fryer-a,fryer,"Cook et al, 1999",,,,6,,
+202,202-courtney-2008,fryer-a,fryer,"Courtney et al., 2008",,override-none,,,Coder (fryer-a): row duplicates study 82 (Bifulco magnet schools); Kraft row is Courtney foster-youth tutoring. 2026-09-18,
+203,203-cowen-2008,fryer-a,fryer,"Cowen, 2008",,,,1,,
+212,212-cullen-2006,fryer-a,fryer,"Cullen et al., 2006",,,,0,,
+237,237-dobbie-2011,fryer-a,fryer,"Dobbie and Fryer, 2011",,,,1,,
+273,273-fairlie-2013,fryer-a,fryer,"Fairlie and Robinson, 2013",,,,0,,
+297,297-fryer-2015,fryer-a,fryer,"Fryer et al., 2015",,,,5,,
+298,298-fryer-2011,fryer-a,fryer,"Fryer, 2011",,,,5,,
+300,300-fryer-2013,fryer-a,fryer,"Fryer, 2013b",,,,5,,
+301,301-fryer-2014,fryer-a,fryer,"Fryer, 2014a",,,,5,,
+357,357-glassman-1989,fryer-a,fryer,"Glassman, 1989",,,,0,,
+359,359-glazerman-2006,fryer-a,fryer,"Glazerman et al., 2006",1121,export,9,6,surname;year;+2 surnames;es 0.15,"Glazerman, Steven; Mayer, Daniel; Decker, Paul. (2006). Alternative Routes to Teaching: The Impacts of Teach for America on Student Achievement and Other Outcomes. Journal of Policy Analysis and Manag"
+360,360-glazerman-2009,fryer-a,fryer,"Glazerman et al., 2009",80566,export,5,6,surname;year,"Glazerman, Steven; Seifullah, Allison. (2010). An Evaluation of the Teacher Advancement Program (TAP) in Chicago: Year Two Impact Report. Mathematica Policy Research, Inc."
+361,361-glazerman-2013,fryer-a,fryer,"Glazerman et al., 2013",78648,export,9,6,surname;year;+4 surnames,"Glazerman, Steven; Protik, Ali; Teh, Bing-ru; Bruch, Julie; Max, Jeffrey. (2013). Transfer Incentives for High-Performing Teachers: Final Results from a Multisite Randomized Experiment. NCEE 2014-4003"
+365,365-gleason-2010,fryer-b,fryer,"Gleason et al., 2010",67302,export,10,5,surname;year;+3 surnames;es 0.04,"Gleason, Philip; Clark, Melissa; Tuttle, Christina Clark; Dwoyer, Emily. (2010). The Evaluation of Charter School Impacts: Final Report. NCEE 2010-4029. National Center for Education Evaluation and Re"
+381,381-greenwood-1989,fryer-b,fryer,"Greenwood et al., 1989",,,,1,,
+417,417-hoxby-2009,fryer-b,fryer,"Hoxby and Murarka, 2009",,,,1,,
+431,431-isenberg-2009,fryer-b,fryer,"Isenberg et al., 2009",,,,0,,
+441,441-james-burdumy-2005,fryer-b,fryer,"James-Burdumy et al., 2005",,,,1,,
+473,473-kemple-2000,fryer-b,fryer,"Kemple and Snipes, 2000",78544,export,6,4,surname;year;+1 surnames,"Kemple, James J.; Snipes, Jason C. (2000). Career Academies: Impacts on Students' Engagement and Performance in High School. "
+487,487-kim-2006,fryer-b,fryer,"Kim, 2006",,,,8,,
+488,488-kim-2007,fryer-b,fryer,"Kim, 2007",,override-none,,,Coder (fryer-b): matched to Denton et al. Responsive Reading; Kraft row is Kim 2007. 2026-09-18,
+574,574-mayer-2002,fryer-b,fryer,"Mayer et al., 2002",,,,5,,
+576,576-maynard-1979,fryer-b,fryer,"Maynard & Murname, 1979",,,,1,,
+605,605-miller-2007,fryer-b,fryer,"Miller and Jaciw, 2007",,,,13,,
+633,633-dumont-2012,fryer-b,fryer,"Newman et al., 2012",,,,0,,
+642,642-nunnery-2006,fryer-b,fryer,"Nunnery et al., 2006",,,,1,,
+643,643-nussbaum-2010,fryer-b,fryer,"Nussbaum, 2010",,,,0,,
+717,717-randel-2011,fryer-b,fryer,"Randel et al., 2011",,,,0,,
+728,728-reis-2008,fryer-b,fryer,"Reis et al., 2008",,,,0,,
+740,740-riccio-2010,fryer-b,fryer,"Riccio et al., 2010",67293,export,5,1,surname;year,"Miller, Cynthia; Riccio, James. (2011). Toward Reducing Poverty across Generations: Early Findings from New York City's Conditional Cash Transfer Program. Society for Research on Educational Effective"
+750,750-rockoff-2012,fryer-b,fryer,"Rockoff et al., 2012",,,,0,,
+760,760-rouse-1998,fryer-b,fryer,"Rouse, 1998",,,,1,,
+775,775-sallis-1999,fryer-b,fryer,"Sallis et al., 1999",,,,0,,
+776,776-sanbonmatsu-2006,fryer-b,fryer,"Sanbonmatsu et al., 2006",,,,1,,
+826,826-slavin-1985,fryer-b,fryer,"Slavin and Karweit, 1985",72996,export,6,4,surname;year;+1 surnames,"Slavin, R. E., & Karweit, N. L. (1984). Mastery learning and student teams: A factorial experiment in urban general mathematics classes. American Educational Research Journal, 12(4), 725&ndash;736."
+854,854-springer-2010,fryer-b,fryer,"Springer et al., 2010",,,,1,,
+855,855-springer-2012,fryer-b,fryer,"Springer et al., 2012",,,,1,,
+923,923-tuttle-2013,fryer-b,fryer,"Tuttle et al., 2013",77028,export,12,4,surname;year;+5 surnames;es 0.11,"Tuttle, C. C., Gill, B., Gleason, P., Knechtel, V., Nichols-Barrer, I., & Resch, A. (2013). KIPP middle schools: Impacts on achievement and other outcomes, final report. Washington, DC: Mathematica Po"
+985,985-mitchem-2001,fryer-b,fryer,"West et al., 2001",,,,0,,
+997,997-wijekumar-2012,fryer-b,fryer,"Wijekumar et al., 2012",77453,export,7,3,surname;year;+2 surnames,"Wijekumar, Kausalai Kay; Meyer, Bonnie J. F.; Lei, Puiwa. (2012). Large-Scale Randomized Controlled Trial with 4th Graders Using Intelligent Tutoring of the Structure Strategy to Improve Nonfiction Re"
+1010,1010-wolf-2010,fryer-b,fryer,"Wolf et al., 2010",67279,export,12,6,surname;year;+5 surnames;es 0.03,"Wolf, Patrick; Gutmann, Babette; Puma, Michael; Kisida, Brian; Rizzo, Lou; Eissa, Nada. (2009). Evaluation of the DC Opportunity Scholarship Program: Impacts after Three Years. NCEE 2009-4050. Nationa"
+89,89-black-2009,other,ies90,"Black, Somers, Doolittle, Unterman, and Grossman, 2009",,,,1,,
+108,108-bos-2012,other,ies90,"Bos, Sanchez, Tseng, Rayyes, Ortiz, and Sinicrope, 2012",,,,5,,
+139,139-campuzano-2009,other,bee;eef,"Campuzano et al., 2009",82115,export,8,1,surname;year;+3 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+140,140-campuzano-2009,other,ies90,"Campuzano, Dynarski, Agodini, and Rall, 2009",82115,export,8,1,surname;year;+3 surnames,"Campuzano, Larissa; Dynarski, Mark; Agodini, Roberto; Rall, Kristina. (2009). Effectiveness of Reading and Mathematics Software Products: Findings From Two Student Cohorts. NCEE 2009-4041. National Ce"
+197,197-cordray-2012,other,ies90,"Cordray, Pion, Brandt, Molefe, and Toby, 2012",,override-none,,,"Coder (other): matched to Smith, Cobb, Farran, Cordray, Munter 2013 math tutoring; Kraft row is the MAP report. 2026-09-18",
+484,484-kim-2011,other,bee;fryer,"Kim et al., 2011",78614,export,12,8,surname;year;+5 surnames;es 0.07,"Kim, James S.; Olson, Carol Booth; Scarcella, Robin; Kramer, Jason; Pearson, Matthew; van Dyk, David; Collins, Penny; Land, Robert E. (2011). A Randomized Experiment of a Cognitive Strategies Approach"
+505,505-konstantopoulos-2013,other,bee;fryer,"Konstantopoulos et al., 2013",,,,1,,
+564,564-mastrorilli-2014,other,i3,"Mastrorilli et al., 2014",,,,0,,
+599,599-meyers-2015,other,bee;i3,"Meyers et al., 2015",,,,2,,
+622,622-loera-2013,other,i3,"Nakamoto et al., 2013",,,,0,,
+623,623-nakamoto-2014,other,i3,"Nakamoto et al., 2014",,,,0,,
+624,624-nakamoto-2015,other,i3,"Nakamoto et al., 2015",,,,0,,
+706,706-quint-2015,other,i3,"Quint et al., 2015",,,,3,,
+719,719-randel-2011,other,ies90,"Randel, beesley, apthorp, clark, wang, cicchinelli, and williams, 2011",,,,0,,
+751,751-rockoff-2015,other,i3,"Rockoff, 2015",,,,0,,
+922,922-turner-1985,other,bee;fryer,"Turner, 1985",,,,6,,
+924,924-tuttle-2015,other,i3,"Tuttle et al., 2015",85516,export,12,4,"surname;year;+5 surnames;es 0.14,0.16,0.17,0.18,0.27","Tuttle, Christina Clark; Gleason, Philip; Knechtel, Virginia; Nichols-Barrer, Ira; Booker, Kevin; Chojnacki, Gregory; Coen, Thomas; Goble, Lisbeth. (2015). Understanding the Effect of KIPP as It Scale"
+954,954-vaughn-2013,other,bee;fryer,"Vaughn et al., 2013",,,,12,,
+986,986-west-2016,other,bee;i3,"West et al., 2016",,override-none,,,Coder (other): matched to Snipes et al. 2015 summer math; Kraft row is ANet. 2026-09-18,
+1030,1030-ysseldyke-2007,other,bee;fryer,"Ysseldyke and Bolt, 2007",14407,export,5,1,surname;year,"Ysseldyke, Jim; Tardrew, Steve. (2007). Use of a Progress Monitoring System to Enable Teachers to Differentiate Mathematics Instruction. Journal of Applied School Psychology, v24 n1 p1-28."
+1046,1046-glazerman-2010,other,ies90,"glazerman, isenberg, dolfin, bleeker, johnson, grider, and jacobus, 2010",,override-none,,,Coder (other): matched to Chicago TAP; Kraft row is the NCEE comprehensive induction RCT. 2026-09-18,
+1047,1047-gleason-2010,other,ies90,"gleason, clark, tuttle, and dwoyer, 2010",67302,export,8,5,surname;year;+3 surnames,"Gleason, Philip; Clark, Melissa; Tuttle, Christina Clark; Dwoyer, Emily. (2010). The Evaluation of Charter School Impacts: Final Report. NCEE 2010-4029. National Center for Education Evaluation and Re"
+1050,1050-hanson-2012,other,ies90,"hanson, dietsch, and zheng, 2012",,,,1,,
+1071,1071-wilkerson-2012,other,ies90,"wilkerson, shannon, styers, grant, 2012",,override-none,,,Coder (other): matched to Ukrainetz et al. 2011 preschool phonemic awareness; Kraft row is Success in Sight. 2026-09-18,
+1073,1073-wolf-2010,other,ies90,"wolf, patrick, gutmann, puma, kisida, rizzo, eissa, carr, 2010",67279,export,12,6,surname;year;+5 surnames;es 0.13,"Wolf, Patrick; Gutmann, Babette; Puma, Michael; Kisida, Brian; Rizzo, Lou; Eissa, Nada. (2009). Evaluation of the DC Opportunity Scholarship Program: Impacts after Three Years. NCEE 2009-4050. Nationa"
+32,32-ault-2017,wwc-a,wwc,"Ault, Phyllis Campbell, Roccograndi, Angela, Burke, Art. (2017). Mentoring Early Career Teachers in Urban Alaska: Impact Findings from the Investing in Innovati",86085,search,7,1,search: surname and year and co-author,"Ault, Phyllis Campbell; Roccograndi, Angela; Burke, Art. (2017). Mentoring Early Career Teachers in Urban Alaska: Impact Findings from the Investing in Innovation (i3) Evaluation of the Alaska Statewi"
+65,65-beam-2011,wwc-a,wwc,"Beam, Margaret, Faddis, Bonnie J., Hahn, Karen. (2011). Evaluation of ""System 44."" Final Report [2011]. RMC Research Corporation.",89969,override,,,"wwc-match-manual: Exact citation match: Beam, Faddis, Hahn 2011 System 44 Final Report; n 425 randomized fits Kraft n_max 340 analytic. 89","Beam, Margaret, Faddis, Bonnie J., Hahn, Karen. (2011). Evaluation of ""System 44."" Final Report [2011]. RMC Research Corporation."
+66,66-beam-2012,wwc-a,wwc,"Beam, Margaret, Faddis, Bonnie. (2012). Evaluation of ""System 44."" Final Report [2012]. RMC Research Corporation.",89968,override,,,"wwc-match-manual: Exact citation match: Beam and Faddis 2012 System 44 Final Report; 317 students received the allocated condition, equal ","Beam, Margaret, Faddis, Bonnie. (2012). Evaluation of ""System 44."" Final Report [2012]. RMC Research Corporation."
+83,83-bifulco-2009,wwc-a,wwc,"Bifulco, R., Cobb, C. D., & Bell, C. (2009). Can interdistrict choice boost student achievement? The case of Connecticutâs interdistrict magnet school program",81476,export,9,1,surname;year;+2 surnames;es 0.25,"Bifulco, Robert; Cobb, Casey D.; Bell, Courtney. (2009). Can Interdistrict Choice Boost Student Achievement? The Case of Connecticut's Interdistrict Magnet School Program. Educational Evaluation and P"
+109,109-bottge-2014,wwc-a,wwc,"Bottge, B. A., Ma, X., Gassaway, L., Toland, M.D., Butler, M., & Cho, S. (2014). Effects of blended instructional models on math performance. Exceptional Childr",87446,export,11,3,"surname;year;+4 surnames;es 0.44,0.57,1.00","Bottge, B. A., Ma, X., Gassaway, L., Toland, M.D., Butler, M., & Cho, S. (2014). Effects of blended instructional models on math performance. Exceptional Children, 80(4), 423-437."
+113,113-bradshaw-2010,wwc-a,wwc,"Bradshaw, Catherine P.,Mitchell, Mary M.,Leaf, Philip J. (2010). Examining the Effects of Schoolwide Positive Behavioral Interventions and Supports on Student O",78551,export,7,3,surname;year;+2 surnames,"Bradshaw, Catherine P.; Mitchell, Mary M.; Leaf, Philip J. (2010). Examining the Effects of Schoolwide Positive Behavioral Interventions and Supports on Student Outcomes: Results from a Randomized Con"
+117,117-brandt-2013,wwc-a,wwc,"Brandt, C., Meyers, C., & Molefe, A. (2013). The impact of eMINTS professional development on teacher instruction and student achievement: Year 1 report. Washin",87694,export,5,1,surname;+2 surnames,"Meyers, Coby V.; Molefe, Ayrin; Brandt, W. Christopher; Zhu, Bo; Dhillon, Sonica. (2016). Impact Results of the eMINTS Professional Development Validation Study: Professional Development Validation St"
+170,170-clark-2013,wwc-a,wwc,"Clark, M. A., Chiang, H. S., Silva, T., McConnell, S., Sonnenfeld, K., Erbe, A., & Puma, M. (2013). The effectiveness of secondary math teachers from Teach For ",1120,export,12,6,"surname;year;+5 surnames;es 0.07,0.08","Clark, Melissa A.; Chiang, Hanley S.; Silva, Tim; McConnell, Sheena; Sonnenfeld, Kathy; Erbe, Anastasia; Puma, Michael. (2013). The Effectiveness of Secondary Math Teachers from Teach For America and "
+171,171-clark-2015,wwc-a,wwc,"Clark, M. A., Isenberg, E., Liu, A. Y., Makowsky, L., & Zukiewicz, M. (2015). Impacts of the Teach for America Investing in Innovation scale-up. Princeton, NJ: ",1137,search,9,6,search: surname and year and co-author,"Clark, M. A., Isenberg, E., Liu, A. Y., Makowsky, L., & Zukiewicz, M. (2015). Impacts of the Teach for America Investing in Innovation scale-up. Princeton, NJ: Mathematica Policy Research. Retrieved f"
+219,219-decesare-2017,wwc-a,wwc,"DeCesare, D., McClelland, A., & Randel, B. (2017). Impacts of the Retired Mentors for New Teachers program (REL 2017-225). Washington, DC: U.S. Department of Ed",88756,search,7,1,search: surname and year and co-author,"DeCesare, D., McClelland, A., & Randel, B. (2017). Impacts of the Retired Mentors for New Teachers program (REL 2017-225). Washington, DC: U.S. Department of Education, Institute of Education Sciences"
+238,238-dolfin-2019,wwc-a,wwc,"Dolfin, Sarah,Richman, Scott,Choi, Jane,Streke, Andrei,DeSaw, Cheryl,Demers, Alicia,Poznyak, Dmitriy. (2019). Evaluation of the Teacher Potential Project. Washi",89853,search,10,1,search: surname and year and co-author,"Dolfin, Sarah,Richman, Scott,Choi, Jane,Streke, Andrei,DeSaw, Cheryl,Demers, Alicia,Poznyak, Dmitriy. (2019). Evaluation of the Teacher Potential Project. Washington D.C: Mathematica. "
+250,250-duncan-2018,wwc-a,wwc,"Duncan, T., Moeller, B., Schoeneberger, J., & Hitchcock, J. (2018). Assessing the impact of the Math for All professional development program on elementary scho",86097,search,8,9,search: surname and year and co-author,"Duncan, T., Moeller, B., Schoeneberger, J., & Hitchcock, J. (2018). Assessing the impact of the Math for All professional development program on elementary school teachers and their students. Retrieve"
+281,281-festas-2015,wwc-a,wwc,"Festas, I., Oliveira, A. L., Rebelo, J. A., DamiÃ£o, M. H., Harris, K., & Graham, S. (2015). Professional development in self-regulated strategy development: Ef",82551,export,9,1,surname;year;+4 surnames,"Festas, I., Oliveira, A. L., Rebelo, J. A., Damião, M. H., Harris, K., & Graham, S. (2015). Professional development in self-regulated strategy development: Effects on the writing performance of eight"
+284,284-fitzgerald-2008,wwc-a,wwc,"Fitzgerald, R., & Hartry, A. (2008). What works in afterschool programs: The impact of a reading intervention on student achievement in the Brockton Public Scho",82599,export,8,3,surname;year;+1 surnames;es 0.32,"Fitzgerald, R., & Hartry, A. (2008). What works in afterschool programs: The impact of a reading intervention on student achievement in the Brockton Public Schools (phase II). Berkeley, CA: MPR Associ"
+302,302-fryer-2012,wwc-a,wwc,"Fryer, R. G., Levitt, S. D., List, J., & Sadoff, S. (2012). Enhancing the efficacy of teacher incentives through loss aversion: A field experiment. Working Pape",77096,export,10,5,"surname;year;+3 surnames;es 0.15,0.22,0.27","Fryer, Roland G., Jr.; Levitt, Steven D.; List, John; Sadoff, Sally. (2012). Enhancing the Efficacy of Teacher Incentives through Loss Aversion: A Field Experiment. NBER Working Paper No. 18237. Natio"
+322,322-fuchs-2013,wwc-a,wwc,"Fuchs, L. S., Schumacher, R. F., Long, J., Namkung, J., Hamlett, C. L., Cirino, P. T., ... Changas, P. (2013). Improving at-risk learners' understanding of frac",77773,export,12,38,"surname;year;+5 surnames;es 0.92,1.82,2.50","Fuchs, Lynn S.; Schumacher, Robin F.; Long, Jessica; Namkung, Jessica; Hamlett, Carol L.; Cirino, Paul T.; Jordan, Nancy C.; Siegler, Robert; Gersten, Russell; Changas, Paul. (2013). Improving At-Risk"
+323,323-fuchs-2013,wwc-a,wwc,"Fuchs, L. S., Schumacher, R. F., Long, J., Namkung, J., Hamlett, C. L., Cirino, P. T., Jordan, N. C., Siegler, R., Gersten, R., & Changas, P. (2013). Improving ",77773,export,12,38,"surname;year;+5 surnames;es 1.03,1.09,1.87,2.49","Fuchs, Lynn S.; Schumacher, Robin F.; Long, Jessica; Namkung, Jessica; Hamlett, Carol L.; Cirino, Paul T.; Jordan, Nancy C.; Siegler, Robert; Gersten, Russell; Changas, Paul. (2013). Improving At-Risk"
+340,340-gallagher-2015,wwc-a,wwc,"Gallagher, C., Huang, K., & Van Matre, J. (2015). STEM learning opportunities providing equity: An Investing in Innovation (i3) grant final evaluation report. S",,override-none,,,Coder (wwc-a): matched to the CRWP writing record (same as 341); 340 is the C. Gallagher Algebra I STEM trial. 2026-09-18,
+341,341-gallagher-2015,wwc-a,wwc,"Gallagher, H. A., Woodworth, K. R., & Arshan, N. L. (2015). Impact of the National Writing Projectâs College-Ready Writers Program on teachers and students. M",82553,export,9,8,surname;year;+2 surnames;es 0.15,"Gallagher, H. A., Woodworth, K. R., & Arshan, N. L. (2015). Impact of the National Writing Project’s College-Ready Writers Program on teachers and students. Menlo Park, CA: SRI International. https://"
+362,362-glazerman-2012,wwc-a,wwc,"Glazerman, S., & Seifullah, A. (2012). An evaluation of the Chicago Teacher Advancement Program (Chicago TAP) after four years. Final report. Washington, DC: Ma",80567,search,6,2,search: surname and year and co-author,"Glazerman, Steven; Seifullah, Allison. (2012). An Evaluation of the Chicago Teacher Advancement Program (Chicago TAP) after Four Years. Final Report. Mathematica Policy Research, Inc."
+363,363-glazerman-2006,wwc-a,wwc,"Glazerman, S., Mayer, D., & Decker, P. (2006). Alternative routes to teaching: The impacts of Teach for America on student achievement and other outcomes. Journ",1121,export,9,6,surname;year;+2 surnames;es 0.15,"Glazerman, Steven; Mayer, Daniel; Decker, Paul. (2006). Alternative Routes to Teaching: The Impacts of Teach for America on Student Achievement and Other Outcomes. Journal of Policy Analysis and Manag"
+364,364-glazerman-2013,wwc-a,wwc,"Glazerman, S., Protik, A., Teh, B., Bruch, J., & Max, J. (2013). Transfer incentives for high-performing teachers: Final results from a multisite randomized exp",78648,export,11,6,surname;year;+4 surnames;es 0.10,"Glazerman, Steven; Protik, Ali; Teh, Bing-ru; Bruch, Julie; Max, Jeffrey. (2013). Transfer Incentives for High-Performing Teachers: Final Results from a Multisite Randomized Experiment. NCEE 2014-4003"
+404,404-heppen-2012,wwc-a,wwc,"Heppen, J. B., Walters, K., Clements, M., Faria, A., Tobey, C., Sorensen, N., & Culp, K. (2012). Access to Algebra I: The effects of online mathematics for grad",70514,export,12,2,surname;year;+5 surnames;es 0.40,"Heppen, Jessica B.; Walters, Kirk; Clements, Margaret; Faria, Ann-Marie; Tobey, Cheryl; Sorensen, Nicholas; Culp, Katherine. (2011). Access to Algebra I: The Effects of Online Mathematics for Grade 8 "
+405,405-herrera-2013,wwc-a,wwc,"Herrera, C., Grossman, J. B., & Linden, L. L. (2013). Staying on track: Testing Higher Achievementâs long-term impact on academic outcomes and high school cho",78772,export,9,3,"surname;year;+2 surnames;es 0.02,0.03,0.04,0.08,0.10,0.11","Herrera, Carla; Grossman, Jean Baldwin; Linden, Leigh L. (2013). Staying on Track: Testing Higher Achievement's Long-Term Impact on Academic Outcomes and High School Choice. MDRC."
+406,406-hill-2016,wwc-a,wwc,"Hill, D. V., & Lenard, M. A. (2016). The impact of Achieve3000 on elementary literacy outcomes: Randomized control trial evidence, 2013-14 to 2014-15 (DRA Repor",85405,override,,,"wwc-match-manual: Exact match to the Kraft citation (DRA Report No. 16.02, Wake County); 85446 is the SREE conference version of the same ",
+414,414-horner-2018,wwc-a,wwc,"Horner, R. H., Newton, J. S., Todd, A. W., Algozzine, B., Algozzine, K., Cusumano, D., & Preston, A. (2018). A randomized waitlist controlled analysis of Team-I",88818,export,10,1,surname;year;+5 surnames,"Horner, Robert H.; Newton, James S.; Todd, Anne W.; Algozzine, Bob; Algozzine, Kate; Cusumano, Dale; Preston, Angela. (2018). A Randomized Waitlist Controlled Analysis of Team-Initiated Problem Solvin"
+438,438-jacob-2015,wwc-a,wwc,"Jacob, R. T., Armstrong, C., & Willard, J. A. (2015). Mobilizing volunteer tutors to improve student literacy: Implementation, impacts, and costs of the Reading",80616,export,9,1,"surname;year;+2 surnames;es 0.09,0.10,0.11","Tepper Jacob, Robin; Armstrong, Catherine; Willard, Jacklyn Altuna. (2015). Mobilizing Volunteer Tutors to Improve Student Literacy: Implementation, Impacts, and Costs of the Reading Partners Program."
+490,490-kim-2018,wwc-a,wwc,"Kim, H. Y., Hsin, L. B., & Snow, C. E. (2018). Reducing academic inequalities for English language learners: variation in experimental effects of word generatio",,override-none,,,"Coder (wwc-a): matched to STARI (Kim, Hemphill, Troyer 2017); Kraft row is Word Generation (Kim, Hsin, Snow). 2026-09-18",
+491,491-kim-2011,wwc-a,wwc,"Kim, J. S., Capotosto, L., Hartry, A., & Fitzgerald, R. (2011). Can a mixed-method literacy intervention improve the reading achievement of low-performing eleme",89781,export,10,8,surname;year;+3 surnames;es 0.32,"Kim, James S.; Capotosto, Lauren; Hartry, Ardice; Fitzgerald, Robert. (2011). Can a Mixed-Method Literacy Intervention Improve the Reading Achievement of Low-Performing Elementary School Students in a"
+493,493-kim-2011,wwc-a,wwc,"Kim, J. S., Olson, C. B., Scarcella, R., Kramer, J., Pearson, M., van Dyk, D., Collins, P., & Land, R. E. (2011). A randomized experiment of a cognitive strateg",78614,export,12,8,"surname;year;+5 surnames;es 0.09,0.22,0.35","Kim, James S.; Olson, Carol Booth; Scarcella, Robin; Kramer, Jason; Pearson, Matthew; van Dyk, David; Collins, Penny; Land, Robert E. (2011). A Randomized Experiment of a Cognitive Strategies Approach"
+494,494-kim-2010,wwc-a,wwc,"Kim, J. S., Samson, J. F., Fitzgerald, R., & Hartry, A. (2010). A randomized experiment of a mixed-methods literacy intervention for struggling readers in grade",82600,export,10,8,surname;year;+3 surnames;es 0.12,"Kim, James S.; Samson, Jennifer F.; Fitzgerald, Robert; Hartry, Ardice. (2010). A Randomized Experiment of a Mixed-Methods Literacy Intervention for Struggling Readers in Grades 4-6: Effects on Word R"
+588,588-meisch-2011,wwc-a,wwc,"Meisch, A., Hamilton, J., Chen, E.,Â Quintanilla, P.,Â Fong, P.,Â Gray-Adams, K.,Â ...Thornton, N. (2011). Striving Readers study: Targeted and whole-school int",81694,override,,,"wwc-match-manual: Exact match to the Kraft citation (Striving Readers Year 5, Westat, 2011); 89755 is a second WWC record of the same Year",
+600,600-meyers-2016,wwc-b,wwc,"Meyers, C. V., Molefe, A., Brandt, W. C., Zhu, B., & Dhillon, S. (2016). Impact results of the eMINTS professional development validation study. Educational Eva",87694,search,9,5,search: surname and year and co-author,"Meyers, Coby V.; Molefe, Ayrin; Brandt, W. Christopher; Zhu, Bo; Dhillon, Sonica. (2016). Impact Results of the eMINTS Professional Development Validation Study: Professional Development Validation St"
+601,601-meyers-2015,wwc-b,wwc,"Meyers, C., Molefe, A., Dhillon, S., & Zhu, B. (2015). The impact of eMINTS professional development on teacher instruction and student achievement. Year 3 repo",81457,override,,,"wwc-match-manual: Year 3 report (2015), n and grades 7-8 fit. WWC lists it twice (81457 and 89417, identical citations differing by punctu","Meyers, C., Molefe, A., Dhillon, S., & Zhu, B. (2015). The impact of eMINTS professional development on teacher instruction and student achievement. Year 3 report. Washington, DC: American Institutes "
+609,609-miller-2016,wwc-b,wwc,"Miller, S., Davison, J., Yohanis, J., Sloan, S., Gildea, A., & Thurston, A. (2016). Texting Parents: Evaluation report and executive summary. London, England: E",84224,export,11,13,surname;year;+4 surnames;es 0.03,"Miller, Sarah; Davison, Jenny; Yohanis, Jamie; Sloan, Seaneen; Gildea, Aideen; Thurston, Allen. (2017). Texting Parents: Evaluation Report and Executive Summary. Education Endowment Foundation."
+619,619-usdepartmentofeducation-2015,wwc-b,wwc,N/A. (2015). U.S. Department of Education Grant Performance Report (ED-524B): CSR Colorado. U.S. Department of Education.,,search-none,,0,,
+625,625-nakamoto-2015,wwc-b,wwc,"Nakamoto, J., Sobolew-Shubin, S., & Orland, M. (2015). The Beaverton School District Arts for Learning (A4L) lessons project: An Investing in Innovation (i3) de",84094,search,7,1,search: surname and year and co-author,"Nakamoto, Jonathan; Sobolew-Shubin, Sandy; Orland, Martin. (2015). The Beaverton School District Arts for Learning (A4L) Lessons Project, an Investing in Innovation (i3) Development Grant: Student Imp"
+634,634-dumont-2012,wwc-b,wwc,"Newman, D., Finney, P. B., Bell, S., Turner, H., Jaciw, A. P., Zacamy, J. L., & Feagans Gould, L. (2012). Evaluation of the effectiveness of the Alabama Math, S",,search-none,,0,,
+650,650-olson-2020,wwc-b,wwc,"Olson, Carol Booth; Woodworth, Katrina; Arshan, Nicole; Black, Rebecca; Chung, Huy Q.; D'Aoust, Catherine; Dewar, Tim; Friedrich, Linda; Godfrey, Lauren; Land, ",89399,search,10,1,search: surname and year and co-author,"Olson, Carol Booth; Woodworth, Katrina; Arshan, Nicole; Black, Rebecca; Chung, Huy Q.; D'Aoust, Catherine; Dewar, Tim; Friedrich, Linda; Godfrey, Lauren; Land, Robert; Matuchniak, Tina; Scarcella, Rob"
+658,658-pane-2013,wwc-b,wwc,"Pane, J. F., Griffin, B. A., McCaffrey, D. F., & Karam, R. (2013). Effectiveness of Cognitive Tutor Algebra I at scale [Middle school]. Educational Evaluation a",,override-none,,,wwc-match-manual: not the study Kraft cited; see accepted row,
+661,661-park-2021,wwc-b,wwc,"Park, C., Arshan, N., Milby, A., & Goetz, R. (2021). Evaluation of the College, Career, and Community Writers Program: Findings from the i3 Scale-up Grant. Tech",90225,export,10,19,surname;year;+3 surnames;es 0.19,"Park, C., Arshan, N., Milby, A., & Goetz, R. (2021). Evaluation of the College, Career, and Community Writers Program: Findings from the i3 Scale-up Grant. Technical Report. Menlo Park, CA: SRI Intern"
+665,665-patel-2018,wwc-b,wwc,"Patel, D., Wei, X., Laguarda, K., Stites, R., Cheever, H., & Goetz, R. (2018). Evaluation of Education Connections: Supporting teachers with standards-based ins",89964,search,9,3,search: surname and year and co-author,"Patel, D., Wei, X., Laguarda, K., Stites, R., Cheever, H., & Goetz, R. (2018). Evaluation of Education Connections: Supporting teachers with standards-based instruction for English learners in mainstr"
+698,698-programevaluationgroupcollegeofeducationuniversityofgeorgia-2015,wwc-b,wwc,"Program Evaluation Group, College of Education, University of Georgia. (2015). EngageME P.L.E.A.S.E impact study results [Middle school]. Athens, GA: Author.",,search-none,,0,,
+724,724-rappaport-2017,wwc-b,wwc,"Rappaport, S., Grossman, J., Garcia, I., Zhu, P., Avila, O., & Granito, K. (2017). Group Work is Not Cooperative Learning: An Evaluation of PowerTeaching in Mid",89971,override,,,wwc-match-manual: Main i3 evaluation report (2017); Kraft n_max 26808 and eight effects fit the full report rather than the 2014-15 workin,
+755,755-roschelle-2010,wwc-b,wwc,"Roschelle, J., Shechtman, N., Tatar, D., Hegedus, S., Hopkins, B., Empson, S., Knudsen, J., & Gallagher, L. (2010). Integration of technology, curriculum, and p",86411,export,12,3,"surname;year;+5 surnames;es 0.19,0.50,0.56,0.63,0.69,0.81,0.89","Roschelle, Jeremy; Shechtman, Nicole; Tatar, Deborah; Hegedus, Stephen; Hopkins, Bill; Empson, Susan; Knudsen, Jennifer; Gallagher, Lawrence P. (2010). Integration of Technology, Curriculum, and Profe"
+778,778-sato-2010,wwc-b,wwc,"Sato, E., Rabinowitz, S., Gallagher, C., & Huang, C.-W. (2010). Accommodations for English language learner students: The effect of linguistic modification of m",71975,export,10,1,surname;year;+3 surnames;es 0.15,"Sato, Edynn; Rabinowitz, Stanley; Gallagher, Carole; Huang, Chun-Wei. (2010). Accommodations for English Language Learner Students: The Effect of Linguistic Modification of Math Test Item Sets. Final "
+788,788-rethwisch-2012,wwc-b,wwc,"Schenck, A., Jurich, S., Frye, M., Lammert, J., & Sayko, S. (2012). Evaluation report/impact study: Virginia Striving Readers Intervention Initiative (VSRII). R",,search-none,,0,,
+789,789-schenke-2014,wwc-b,wwc,"Schenke, K., Rutherford, T., & Farkas, G. (2014). Alignment of game design features and state mathematics standards: Do results reflect intentions?. Computers &",80703,export,9,1,surname;year;+2 surnames;es 0.14,"Schenke, K., Rutherford, T., & Farkas, G. (2014). Alignment of game design features and state mathematics standards: Do results reflect intentions?. Computers & Education, 76, 215–224."
+794,794-schoen-2018,wwc-b,wwc,"Schoen, R. C., LaVenia, M., & Tazaz, A. M. (2018). Effects of the first year of a three-year CGI teacher professional development program on grades 3â5 studen",86089,export,9,3,surname;year;+2 surnames;es 0.13,"Schoen, Robert C.; LaVenia, Mark; Tazaz, Amanda M. (2018). Effects of the First Year of a Three-Year CGI Teacher Professional Development Program on Grades 3-5 Student Achievement: A Multisite Cluster"
+861,861-steele-2017,wwc-b,wwc,"Steele, J. L., Slater, R. O., Zamarro, G., Miller, T., Li, J., Burkhauser, S. & Bacon, M. (2017). Effects of dual-language immersion programs on student achieve",85526,export,12,1,"surname;year;+5 surnames;es 0.13,0.22","Steele, Jennifer L.; Slater, Robert O.; Zamarro, Gema; Miller, Trey; Li, Jennifer; Burkhauser, Susan; Bacon, Michael. (2017). Effects of Dual-Language Immersion Programs on Student Achievement: Eviden"
+864,864-stevens-1991,wwc-b,wwc,"Stevens, R. J., Slavin, R. E., & Farnish, A. M. (1991). The effects of cooperative learning and direct instruction in reading comprehension strategies on main i",72451,export,7,6,surname;year;es 0.85,"Stevens, Robert J.; And Others. (1991). The Effects of Cooperative Learning and Direct Instruction in Reading Comprehension Strategies on Main Idea Identification. Journal of Educational Psychology, v"
+874,874-suppes-2013,wwc-b,wwc,"Suppes, P., Holland, P. W., Hu, Y., Vu, M. (2013). Effectiveness of an Individualized Computer-Driven Online Math K-5 Course in Eight California Title I Element",89696,search,8,1,search: surname and year and co-author,"Suppes, Patrick; Holland, Paul W.; Hu, Yuanan; Vu, Minh-thien. (2013). Effectiveness of an Individualized Computer-Driven Online Math K-5 Course in Eight California Title I Elementary Schools. Educati"
+879,879-swanlund-2012,wwc-b,wwc,"Swanlund, A., Dahlke, K., Tucker, N., Kleidon, B., Kregor, J., Davidson-Gibbs, D., & Halberg, K. (2012). Striving Readers: Impact study and project evaluation r",81700,export,12,2,surname;year;+5 surnames;es 0.14,"Swanlund, A., Dahlke, K., Tucker, N., Kleidon, B., Kregor, J., Davidson-Gibbs, D., & Halberg, K. (2012). Striving Readers: Impact study and project evaluation report—Wisconsin Department of Public Ins"
+926,926-tuttle-2015,wwc-b,wwc,"Tuttle, C. C., Gleason, P., Knechtel, V., Nichols-Barrer, I., Booker, K., Chojnacki, G., ... Goble, L. (2015). Understanding the effect of KIPP as it scales: Vo",85516,export,12,4,surname;year;+5 surnames;es 0.24,"Tuttle, Christina Clark; Gleason, Philip; Knechtel, Virginia; Nichols-Barrer, Ira; Booker, Kevin; Chojnacki, Gregory; Coen, Thomas; Goble, Lisbeth. (2015). Understanding the Effect of KIPP as It Scale"
+938,938-vadasy-2015,wwc-b,wwc,"Vadasy, P. F., Sanders, E. A., & Logan Herrera, B. (2015). Efficacy of rich vocabulary instruction in fourth- and fifth-grade classrooms. Journal of Research on",,override-none,,,Coder (wwc-b): matched to a kindergarten EL study; Kraft row is the grade 4-5 vocabulary trial. 2026-09-18,
+956,956-vaughn-2017,wwc-b,wwc,"Vaughn, S., Martinez, L. R., Wanzek, J., Roberts, G., Swanson, E., & Fall, A. (2017). Improving content knowledge and comprehension for English language learner",85559,export,11,12,surname;year;+4 surnames;es 0.40,Sharon Vaughn; Leticia R. Martinez; Jeanne Wanzek; Greg Roberts; Elizabeth Swanson; Anna-Mária Fall. (2017). Improving Content Knowledge and Comprehension for English Language Learners: Findings from 
+958,958-vaughn-2019,wwc-b,wwc,"Vaughn, S., Roberts, G. J., Miciak, J., Taylor, P., & Fletcher, J. M. (2019). Efficacy of a word- and text-based intervention for students with significant read",89466,export,9,12,surname;year;+4 surnames,"Vaughn, Sharon; Roberts, Garrett J.; Miciak, Jeremy; Taylor, Pat; Fletcher, Jack M. (2019). Efficacy of a Word- and Text-Based Intervention for Students with Significant Reading Difficulties. [Reading"
+959,959-vaughn-2016,wwc-b,wwc,"Vaughn, S., SolÃ­s, M., Miciak, J., Taylor, W. P., & Fletcher, J. M. (2016). Effects from a randomized control trial comparing researcher and school-implemented",89467,search,8,12,search: surname and year and co-author,"Vaughn, S., Solís, M., Miciak, J., Taylor, W. P., & Fletcher, J. M. (2016). Effects from a randomized control trial comparing researcher and school-implemented treatments with fourth graders with sign"
+960,960-vaughn-2013,wwc-b,wwc,"Vaughn, S., Swanson, E. A., Roberts, G., Wanzek, J., Stillman-Spisak, S. J., Solis, M., & Simmons, D. (2013). Improving reading comprehension and social studies",77772,export,12,12,"surname;year;+5 surnames;es 0.21,0.35","Vaughn, Sharon; Swanson, Elizabeth A.; Roberts, Greg; Wanzek, Jeanne; Stillman-Spisak, Stephanie J.; Solis, Michael; Simmons, Deborah. (2013). Improving Reading Comprehension and Social Studies Knowle"
+961,961-vaughn-2010,wwc-b,wwc,"Vaughn, S., Wanzek, J., Wexler, J., Barth, A., Cirino, P. T., Fletcher, J., Romain, M., Denton, C. A., Roberts, G., & Francis, D. (2010). The relative effects o",,override-none,,,Coder (wwc-b): matched to a grade 6 study n 282-326; Kraft row is the grade 7-8 group-size study n 420. 2026-09-18,
+1000,1000-wijekumar-2012,wwc-b,wwc,"Wijekumar, K., Meyer, B. J. F., & Lei, P. (2012). Large-scale randomized controlled trial with 4th graders using intelligent tutoring of the structure strategy ",77453,export,7,3,surname;year;+2 surnames,"Wijekumar, Kausalai Kay; Meyer, Bonnie J. F.; Lei, Puiwa. (2012). Large-Scale Randomized Controlled Trial with 4th Graders Using Intelligent Tutoring of the Structure Strategy to Improve Nonfiction Re"
+1017,1017-woodworth-2017,wwc-b,wwc,"Woodworth, K., Arshan, N., & Gallagher, H.A. (2017). UC Irvine Writing Projectâs Pathway to Academic Success program: An Investing in Innovation (i3) validati",89959,export,7,4,surname;year;+2 surnames,"Woodworth, K., Arshan, N., & Gallagher, H.A. (2017). UC Irvine Writing Project’s Pathway to Academic Success program: An Investing in Innovation (i3) validation grant evaluation. Technical report. Men"
+1028,1028-young-2017,wwc-b,wwc,"Young, V., Schmidt, R., Wang, H., Cassidy, L., & Laguarda, K. (2017). A comprehensive model of teacher induction: Implementation and impact on teachers and stud",86088,export,11,19,"surname;year;+4 surnames;es 0.09,0.15","Young, V., Schmidt, R., Wang, H., Cassidy, L., & Laguarda, K. (2017). A comprehensive model of teacher induction: Implementation and impact on teachers and students. Evaluation of the New Teacher Cent"

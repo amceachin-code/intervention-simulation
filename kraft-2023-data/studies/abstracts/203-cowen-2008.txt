@@ -1,0 +1,5 @@
+School Choice as a Latent Variable: Estimating the "Complier Average Causal Effect" of Vouchers in Charlotte
+https://doi.org/10.1111/j.1541-0072.2008.00268.x
+abstract source: crossref
+
+Randomized field trials of school voucher policy interventions face major statistical hurdles in the measurement of a voucher effect on student achievement. Selection bias undermines the benefits of randomization when the treatment, a random offer of a voucher, is declined by participants who systematically differ from those who accept. This article argues that the complier average causal effect (CACE) is the parameter of interest in voucher evaluations. As an example, the CACE is estimated using data from a small, one‐year field trial of vouchers in Charlotte, NC. In this estimation, voucher impacts in Charlotte are positive, but appear to be moderated by the probability of compliance. For math achievement, maximum likelihood CACE estimates are smaller and insignificant compared to intention to treat and instrumental variable estimates of mean treatment effects.

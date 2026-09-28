@@ -1,0 +1,5 @@
+Effects of a Voluntary Summer Reading Intervention on Reading Achievement: Results From a Randomized Field Trial
+https://doi.org/10.3102/01623737028004335
+abstract source: crossref
+
+The effects of a voluntary summer reading intervention were assessed in a randomized field trial involving 552 students in 10 schools. In this study, fourth-grade children received eight books to read during their summer vacation and were encouraged by their teachers to practice oral reading at home with a family member and to use comprehension strategies during independent, silent reading. Reading lessons occurred during the last month of school in June, and eight books were mailed to students biweekly during July and August. The estimated treatment effects on a standardized test of reading achievement (Iowa Test of Basic Skills) were largest for Black students (ES = .22), Latino students (ES = .14), less fluent readers (ES = .17), and students who reported owning fewer than 50 children’s books (ES = .13). The main findings suggest that a voluntary summer reading intervention may represent a scalable policy for improving reading achievement among lower performing students.

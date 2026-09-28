@@ -1,0 +1,6 @@
+Injecting Charter School Best Practices into Traditional Public Schools: Evidence from Field Experiments
+https://doi.org/10.1093/qje/qju011
+abstract source: crossref
+
+Abstract 
+                This study examines the impact on student achievement of implementing a bundle of best practices from high-performing charter schools into low-performing, traditional public schools in Houston, Texas, using a school-level randomized field experiment and quasi-experimental comparisons. The five practices in the bundle are increased instructional time, more effective teachers and administrators, high-dosage tutoring, data-driven instruction, and a culture of high expectations. The findings show that injecting best practices from charter schools into traditional Houston public schools significantly increases student math achievement in treated elementary and secondary schools—by 0.15 to 0.18 standard deviations a year—and has little effect on reading achievement. Similar bundles of practices are found to significantly raise math achievement in analyses for public schools in a field experiment in Denver and program in Chicago.

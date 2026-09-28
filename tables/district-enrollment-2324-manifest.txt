@@ -1,0 +1,9 @@
+generated: 2026-09-28 09:22:59 PDT
+R: R version 4.5.1 (2025-06-13)
+membership file: district-enrollment-data/ccd_lea_052_2324_l_1a_073124/ccd_lea_052_2324_l_1a_073124.csv
+directory file: district-enrollment-data/ccd_lea_029_2324_w_1a_073124/ccd_lea_029_2324_w_1a_073124.csv
+LEAs with a total row: 18546
+LEAs matched to directory: 18546
+regular districts (universe): 13223
+regular districts with grade 4: 12655
+regular districts with K-5: 12729

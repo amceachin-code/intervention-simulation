@@ -1,0 +1,5 @@
+Effectiveness of Cognitive Tutor Algebra I at Scale
+https://doi.org/10.3102/0162373713507480
+abstract source: crossref
+
+This article examines the effectiveness of a technology-based algebra curriculum in a wide variety of middle schools and high schools in seven states. Participating schools were matched into similar pairs and randomly assigned to either continue with the current algebra curriculum for 2 years or to adopt Cognitive Tutor Algebra I (CTAI), which uses a personalized, mastery-learning, blended-learning approach. Schools assigned to implement CTAI did so under conditions similar to schools that independently adopt it. Analysis of posttest outcomes on an algebra proficiency exam finds no effects in the first year of implementation, but finds evidence in support of positive effects in the second year. The estimated effect is statistically significant for high schools but not for middle schools; in both cases, the magnitude is sufficient to improve the median student’s performance by approximately eight percentile points.

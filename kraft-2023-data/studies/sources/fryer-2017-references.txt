@@ -1,0 +1,972 @@
+Reference list extracted from Fryer (2016/2017), NBER w22130, https://www.nber.org/system/files/working_papers/w22130/w22130.pdf
+Extracted by analysis/15-kraft-resolve.py
+
+ [1] Aaronson, Daniel. 1998. “Using Sibling Data to Estimate the Impact of Neighborhoods on Children’s
+     Educational Outcomes.” Journal of Human Resources, 33(4): 915-946.
+
+ [2] Aaronson, Daniel, Lisa Barrow, and William Sander. 2007. “Teachers and Student Achievement in the
+     Chicago Public High Schools.” Journal of Labor Economics, 25(1): 95-135.
+
+ [3] Abdulkadiroglu, Atila, Joshua Angrist, Susan Dynarski, Thomas Kane, and Parag Pathak. 2011. “Ac-
+     countability and Flexibility in Public Schools: Evidence from Boston’s Charters and Pilots.” The Quar-
+     terly Journal of Economics, 126(2): 699-748.
+
+ [4] Administration for Children and Families. 2006. “Preliminary Findings from the Early Head Start
+     Prekindergarten Followup.” Washington, D.C.: U.S. Department of Health and Human Services Re-
+     port.
+
+                                                    78
+ [5] Ainsworth, James. 2002. “Why Does It Take a Village? The Mediation of Neighborhood Effects on
+     Educational Achievement.” Social Forces, 81(1): 117-152.
+
+ [6] Akerlof, George. 1978. “The Economics of “Tagging” as Applied to the Optimal Income Tax, Welfare
+     Programs, and Manpower Planning.” The American Economic Review, 68(1): 8-19.
+
+ [7] Alexander, Karl, Doris Entwisle, and Linda Olson. 2001. “Schools, Achievement, and Inequality: A
+     Seasonal Perspective.” Educational Evaluation and Policy Analysis, 23(2): 171-191.
+
+ [8] Allington, Richard, Anne McGill-Franzen, Gregory Camilli, Lunetta Williams, Jennifer Graf, Jacque-
+     line Zeig, Courtney Zmach, and Rhonda Nowak. 2010. “Addressing Summer Reading Setback Among
+     Economically Disadvantaged Elementary Students.” Reading Psychology, 31(5): 411-427.
+
+ [9] Almond, Douglas, and Janet Currie. 2011. “Killing Me Softly: The Fetal Origins Hypothesis.” The
+     Journal of Economic Perspectives, 25(3): 153-172.
+
+[10] Angrist, Joshua, Eric Bettinger, Erik Bloom, Elizabeth King, and Michael Kremer. 2002. “Vouchers
+     for Private Schooling in Colombia: Evidence from a Randomized Natural Experiment.” American
+     Economic Review, 92(5): 1535-1558.
+
+[11] Angrist, Joshua, Eric Bettinger, and Michael Kremer. 2006. “Long-Term Educational Consequences
+     of Secondary School Vouchers: Evidence from Administrative Records in Colombia.” The American
+     Economic Association, 96(3): 847-862.
+
+[12] Angrist, Joshua, Susan Dynarski, Thomas Kane, Parag Pathak, and Christopher Walters. 2011. “Who
+     Benefits From KIPP?” IZA Discussion Paper no. 5690.
+
+[13] Angrist, Joshua, Daniel Lang, and Philip Oreopoulos. 2009. “Incentives and Services for College
+     Achievement: Evidence from a Randomized Trial.” American Economic Journal: Applied Economics,
+     1(1): 136-163.
+
+[14] Angrist, Joshua, and Victor Lavy. 2009. “The Effects of High Stakes High School Achievement
+     Awards: Evidence from a Randomized Trial.” American Economic Review, 99(4): 1384-1414.
+
+[15] Angrist, Joshua, Parag Pathak, and Christopher Walters. 2013. “Explaining Charter School Effective-
+     ness.” American Economic Journal: Applied Economics, 5(4): 1-27.
+
+
+
+
+                                                  79
+[16] Aronson, Joshua, Carrie Fried, and Catherine Good. 2002. “Reducing the Effects of Stereotype Threat
+     on African American College Students by Shaping Theories of Intelligence.” Journal of Experimental
+     Social Psychology, 38: 113-125.
+
+[17] Attewell, Paul, and Battle, Juan. 1999. “Home Computers and School Performance.” The Information
+     Society, 15: 1-10.
+
+[18] Aud, Susan, William Hussar, Grace Kena, Kevin Bianco, Lauren Frohlich, Jana Kemp, and Kim Tahan.
+     2011. “The Condition of Education 2011.” Washington, D.C.: U.S. Department of Education, National
+     Center for Education Statistics.
+
+[19] Avvisati, Francesco, Marc Gurgand, Nina Guyon, and Eric Maurin. 2014. “Getting Parents Involved:
+     A Field Experiment in Deprived Schools.” Review of Economic Studies, 81(1): 57-83.
+
+[20] Baker, George. 2002. “Distortion and Risk in Optimal Incentive Contracts.” Journal of Human Re-
+     sources, 37(4): 728-751.
+
+[21] Barlevy, Gadi, and Derek Neal. 2012. “Pay for Percentile.” American Economic Review, 102(5): 1805-
+     1831.
+
+[22] Barrera-Osorio, Felipe, Marianne Bertrand, Leigh Linden, and Francisco Perez-Calle. 2011. “Improv-
+     ing the Design of Conditional Transfer Programs: Evidence from a Randomized Education Experiment
+     in Colombia.” The American Economic Journal: Applied Economics, 3(2): 167-195.
+
+[23] Becker, Gary. 1995. “Human Capital and Poverty Alleviation.” Human Resource and Operations Pol-
+     icy, World Bank, Working Paper no. 52.
+
+[24] Behrman, Jere, Piyali Sengupta, and Petra Todd. 2001. “Progressing Through PROGRESA: An Impact
+     Assessment of a School Subsidy Experiment.” Washington, D.C.: International Food Policy Research
+     Institute.
+
+[25] Behrman, Jere, Piyali Sengupta, and Petra Todd. 2005. “Progressing through PROGRESA: An Impact
+     Assessment of a School Subsidy Experiment in Rural Mexico.” Economic Development and Cultural
+     Change, 54(1): 237-275.
+
+[26] Berger, Andrea, Turk-Bicakci, Lori, Garet, Michael, Song, Mengli, Knudson, Joel, Haxton, Clarisse,
+     Zeiser, Kristina, Hoshen, Gur, Ford, Jennifer, Stephan, Jennifer. 2013. “Early College, Early Success:
+
+
+
+                                                    80
+     Early College High School Initiative Impact Study.” Washington, D.C.: American Institutes for Re-
+     search
+
+[27] Bettinger, Eric. 2012. “Paying to Learn: The Effect of Financial Incentives on Elementary School Test
+     Scores.” The Review of Economics and Statistics, 94(3): 686-698.
+
+[28] Bifulco, Robert, Casey Cobb, and Courtney Bell. 2009. “Can Interdistrict Choice Boost Student
+     Achievement? The Case of Connecticut’s Interdistrict Magnet School Program.” Educational Eval-
+     uation and Policy Analysis, 31(4): 323-345.
+
+[29] Bill and Melinda Gates Foundation. 2014. “Teacher’s Know Best: Teachers’ Views on Professional
+     Development.” Seattle, WA: Bill and Melinda Gates Foundation.
+
+[30] Blachman, Benita. 1987. “An Alternative Classroom Reading Program for Learning Disabled and
+     Other Low-Achieving Children.” In Bowler R., editor. Intimacy with Language: A Forgotten Basic
+     in Teacher Education, Baltimore, MD: Orton Dyslexia Society.
+
+[31] Blachman, Benita, Darlene Tangel, Eileen Wynne Ball, Rochella Black, and Collen McGraw. 1999.
+     “Developing Phonological Awareness and Word Recognition Skills: A Two-Year Intervention with
+     Low-Income, Inner-City Children.” Reading and Writing, 11(3): 239-273.
+
+[32] Blachman, Benita, Christopher Schatschneider, Jack Fletcher, David Francis, Sheila Clonan, Bennett
+     Shaywitz, and Sally Shaywitz. 2004. “Effects of Intensive Reading Remediation for Second and Third
+     Graders and a 1-Year Follow-Up.” Journal of Educational Psychology, 96(3): 444-461.
+
+[33] Bloom, Nicholas, Renata Lemos, Raffaella Sadun, and John Van Reenen. 2015. “Does Management
+     Matter in Schools?” The Economic Journal, 125(584): 647-674.
+
+[34] Borman, Geoffrey, Robert Slavin, Alan Cheung, Anne Chamberlain, Nancy Madden, and Bette Cham-
+     bers. 2007. “Final Reading Outcomes of the National Randomized Field Trial of Success for All.”
+     American Education Research Journal, 44(3): 701-731.
+
+[35] Boyd, Donald, Daniel Goldhaber, Hamilton Lanjford, and James Wyckoff. 2007. “The Effect of Certi-
+     fication and Preparation on Teacher Quality.” The Future of Children, 17(1): 45-68.
+
+[36] Broh, Beckett. 2004. “Racial/Ethnic Achievement Inequality: Separating School and Non-School Ef-
+     fects Through Seasonal Comparisons.” Dissertation submitted to Ohio State University, Athens, OH.
+
+
+
+                                                   81
+[37] Brooks-Gunn, Jeanne, and Greg Duncan. 1997. “The Effects of Poverty on Children.” The Future of
+     Children, 7(2): 55-71.
+
+[38] Brooks-Gunn, Jeanne, Pamela Klebanov, Judith Smith, Greg Duncan, and Kyunghee Lee. 2003. “The
+     Black-White Test Score Gap in Young Children: Contributions of Test and Family Characteristics.”
+     Applied Developmental Science, 7(4): 239-252.
+
+[39] Brooks-Gunn, Jeanne, Fong-Ruey Liaw, and Pamela Kato Klebanov. 1992. “Effects of Early Interven-
+     tion on Cognitive Function of Low Birth Weight Preterm Infants.” The Journal of Pediatrics, 120(3):
+     350-359.
+
+[40] Campbell, Frances, and Craig Ramey. 1994. “Effects of Early Intervention on Intellectual and Aca-
+     demic Achievement: A Follow-Up Study of Children from Low-Income Families.” Child Develop-
+     ment, 65(2): 684-698.
+
+[41] Carlson, Deven, Geoffrey Borman, Michelle Robinson. 2011. “A Multistate District-Level Cluster
+     Randomized Trial of the Impact of Data-Driven Reform on Reading and Mathematics Achievement.”
+     Educational Evaluation and Policy Analysis, 33(3): 378-398.
+
+[42] Carneiro, Pedro, and James Heckman. 2003. “Human Capital Policy.” NBER Working Paper no. 9495.
+
+[43] Center for Research on Education Outcomes (CREDO). 2013. “National Charter School Study.” Stan-
+     ford, CA: Center for Research on Education Outcomes.
+
+[44] Center, Yola, Kevin Wheldall, Louella Freeman, Lynne Outhred and Margaret McNaught. 1995. “An
+     Evaluation of Reading Recovery.” Reading Research Quarterly, 30(2): 240-263.
+
+[45] Charity, Anne, Hollis Scarborough, and Darion Griffin. 2004. “Familiarity with School English in
+     African American Children and Its Relation to Early Reading Achievement.” Child Development,
+     75(5): 1340-1356.
+
+[46] Chase-Lansdale, Lindsay, and Rachel Gordon. 1996. “Economic Hardship and the Development of
+     Five-and Six-Year-Olds: Neighborhood and Regional Perspectives.” Child Development, 67(6): 3338-
+     3367.
+
+[47] Chase-Landsdale, Lindsay, Rachel Gordon, Jeanne Brooks-Gunn, and Pamela K. Klehanov. 1997.
+     “Neighborhood and Family Influences on the Intellectual and Behavioral Competence of Preschool and
+     Early School-Age Children”In: Jeanne Brooks-Gunn, Greg Duncan, and J. Lawrence Aber, editors.
+
+                                                  82
+     Neighborhood Poverty: Context and Consequences for Children, Volume 1. 79-118. New York: Russel
+     Sage.
+
+[48] Chenoweth, Karin. 2007. ““It’s Being Done”: Academic Success in Unexpected School.” Cambridge,
+     MA: Harvard Education Press.
+
+[49] Chetty, Raj, John Friedman, Nathaniel Hilger, Emmanuel Saez, Diane Whitmore Schanzenbach, and
+     Danny Yagan. 2011. “How Does Your Kindergarten Classroom Affect Your Earnings? Evidence from
+     Project STAR.” The Quarterly Journal of Economics, 126(4): 1593-1660.
+
+[50] Chetty, Raj, John Friedman, and Jonah Rockoff. 2014. “Measuring the Impacts of Teachers II: Teacher
+     Value-Added and Student Outcomes in Adulthood.” American Economic Review, 104(9): 2633-2679.
+
+[51] Chetty, Raj, Nathaniel Hendren, and Lawrence Katz. 2016. “The Effects of Exposure to Better Neigh-
+     borhoods on Children: New Evidence from the Moving to Opportunities Experiment.” American Eco-
+     nomic Review, forthcoming.
+
+[52] Clark, Melissa, Hanley Chiang, Tim Silva, Sheena McConnell, Kathy Sonnenfeld, and Anastasia Erbe.
+     2013. “The Effectiveness of Secondary Math Teachers from Teach for America and the Teaching Fel-
+     lows Programs.” Washington, D.C.: National Center for Educational Evaluation and Regional Assis-
+     tance.
+
+[53] Cohen, David, and Heather Hill. 2001. “Learning Policy: When State Education Reform Works.” New
+     Haven, CT: Yale University Press.
+
+[54] Cohen, Geoffrey, Julio Garcia, Nancy Apfel, Allison Master. 2006. “Reducing the Racial Achievement
+     Gap: A Social-Psychological Intervention.” Science, 313(5791): 1307-1310.
+
+[55] Cohen, Geoffrey, Julio Garcia, Valerie Purdie-Vaughns, Nancy Apfel, Patricia Brzustoski. 2009. “Re-
+     cursive Processes in Self-Affirmation: Intervening to Close the Minority Achievement Gap.” Science,
+     324(5925): 400-403.
+
+[56] Coleman, James, Ernest Campbell, Carol Hobson, James McPartland, Alexander Mood, Frederic We-
+     infeld, and Robert York. 1966. “Equality of Educational Opportunity.” Washington, D.C.: U.S. De-
+     partment of Health, Education, and Welfare.
+
+
+
+
+                                                   83
+[57] Constantine, Jill, Daniel Player, Tim Silva, Kristin Hallgren, Mary Grider, and John Deke. 2009. “An
+     Evaluation of Teachers Trained Through Different Routes to Certification.” Washington, D.C.: Na-
+     tional Center for Education Evaluation and Regional Assistance.
+
+[58] Cook, Philip, Kenneth Dodge, George Farkas, Roland Fryer, Jonathan Guryan, Jens Ludwig, Susan
+     Mayer, Harold Pollack, and Laurence Steinberg. 2014. “The (Surprising) Efficacy of Academic and Be-
+     havioral Intervention with Disadvantaged Youth: Results from a Randomized Experiment in Chicago.”
+     NBER Working Paper no. 19862.
+
+[59] Cooper, Harris, Barbara Nye, James Lindsay, and Scott Greathouse. 1996. “The Effects of Summer
+     Vacation on Achievement Test Scores: A Narrative and Meta-Analytic Review.” Review of Educational
+     Research, 66(3): 227-268.
+
+[60] Corcoran, Sean, William Evans, and Robert Schwab. 2004. “Changing Labor-Market Opportunities
+     for Women and the Quality of Teachers, 1957-2000.” American Economic Review, 94(2): 729-760.
+
+[61] Courtney, Mark, Andrew Zinn, Erica Zielewski, Roseana Bess, and Karin Malm. 2008. “Evaluation
+     of the Early Start to Emancipation Preparation—Tutoring Program Los Angeles County, California:
+     Final Report.” Washington, D.C.: The Urban Institute.
+
+[62] Cullen, Julie Berry, Brian Jacob, and Steven Levitt. 2006. “The Effect of School Choice on Partici-
+     pants: Evidence from Randomized Lotteries.” Econometrica, 74(5): 1191-1230.
+
+[63] Cullen, Julie Berry, Steven Levitt, Erin Robertson, and Sally Sadoff. 2013. “What Can be Done to
+     Improve Struggling High Schools?” The Journal of Economic Perspectives, 27(2): 133-152.
+
+[64] Cunha, Flavio, and James Heckman. 2007. “The Technology of Skill Formation.” The American Eco-
+     nomic Review, 97(2): 31-47.
+
+[65] Cunha, Flavio, and James Heckman. 2010. “Investing in Our Young People”NBER Working Paper no.
+     16201.
+
+[66] Currie, Janet, and Duncan Thomas. 1995. “Does Head Start Make a Difference.” The American Eco-
+     nomic Review, 85(3): 341-364.
+
+[67] Curto, Vilsa, and Roland Fryer. 2014. “The Potential of Urban Boarding Schools for the Poor.” Journal
+     of Labor Economics, 32(1): 65-93.
+
+
+
+                                                   84
+[68] Davis-Kean, Pamela. 2005. “The Influence of Parent Education and Family Income on Child Achieve-
+     ment: The Indirect Role of Parental Expectations and the Home Environment.” Journal of Family
+     Psychology 19(2): 294-304.
+
+[69] de la Rica, Sara. 2011. “Social and Labor Market Integration of Ethnic Minorities in Spain.” In: Martin
+     Kahanec, and Klaus Zimmerman, editors. Ethnic Diversity in European Labor markets: Challenges
+     and Solutions. 268-282. Cheltenham, UK: Edward Elgar Publishing.
+
+[70] Deaton, Angus. 2010. “Instruments, Randomization, and Learning about Development.” The Journal
+     of Economic Literature, 48(2): 424-455.
+
+[71] Dee, Thomas, and Brian Jacob. 2011. “The Impact of No Child Left Behind on Student Achievement.”
+     Journal of Policy Analysis and Management, 30(3): 418-446.
+
+[72] Deming, David, Sarah Cohodes, Jennifer Jennings, and Christopher Jencks. 2013. “School Account-
+     ability, Postsecondary Attainment and Earnings.” NBER Working Paper no. 19444.
+
+[73] DerSimonian, Rebecca, and Nan Laird. 1986. “Meta-analysis in Clinical Trials.” Control Clin Trials,
+     7(3): 177-188.
+
+[74] Dobbie, Will, and Roland Fryer. 2011. “Are High-Quality Schools Enough to Increase Achievement
+     Among the Poor? Evidence from the Harlem Children’s Zone.” American Economic Journal: Applied
+     Economics, 3(3): 158-187.
+
+[75] Donaldson, Morgaen, and Susan Moore Johnson. 2010. “The Price of Misassignment: The Role of
+     Teaching Assignments in Teach for America Teacher’s Exit from Low-Income Schools and the Teach-
+     ing Profession.” Educational Evaluation and Policy Analysis, 32(2): 299-323.
+
+[76] Duckworth, Angela, Teri Kirby, Anton Gollwitzer, and Gabrielle Oettingen. 2013. “From Fantasy to
+     Action: Mental Contrasting With Implementation Intentions (MCII) Improves Academic Performance
+     in Children.” Social Psychological and Personality Science, 4: 745-753.
+
+[77] Duckworth, Angela, and Martin Seligman. 2005. “Self-Discipline Outdoes IQ in Predicting Academic
+     Performance of Adolescents.” Psychological Science, 16(12): 939-944.
+
+[78] Duflo, Esther, Rema Hanna, and Stephne Ryan. 2012. “Incentives Work: Getting Teachers to Come to
+     School.” American Economic Review, 102(4): 1241-1278.
+
+
+
+                                                    85
+[79] Duncan, Greg, Jeanne Brooks-Gunn, and Pamela Kato Klebanov. 1994. “Economic Deprivation and
+     Early Childhood Development.” Child Development, 65(2): 296-318.
+
+[80] Duncan, Greg, and Katherine Magnuson. 2005. “Can Family Socioeconomic Resources Account for
+     Racial and Ethnic Test Score Gaps?” Future of Children, 15(1): 35-54.
+
+[81] Dunstan, William. 2010. “Ancient Rome.” Lanham, MD: Rowman and Littlefield.
+
+[82] Evans, Gary. 2004. “The Environment of Childhood Poverty.” American Psychologist, 59(2): 77-92.
+
+[83] Fairlie, Robert. 2005. “The Effects of Home Computers on School Enrollment.” Economics of Educa-
+     tion Review, 24(5): 533-547.
+
+[84] Fairlie, Robert, Daniel Beltran, and Kuntal Das. 2010. “Home Computers and Educational Outcomes:
+     Evidence from the NLSY97 and CPS.” Economic Inquiry, 48(3): 771-792.
+
+[85] Fairlie, Robert, and Jonathan Robinson. 2013. “Experimental Evidence on the Effects of Home Com-
+     puters on Academic Achievement among Schoolchildren.” American Economic Journal: Applied Eco-
+     nomics, 5(3): 211-240.
+
+[86] Fantuzzo, John, Gwendolyn Davis, and Marika Ginsburg. 1995. “Effects of Parent Involvement in Iso-
+     lation or in Combination with Peer Tutoring on Student Self-Concept and Mathematics Achievement.”
+     Journal of Educational Psychology, 87(2): 272-281.
+
+[87] Feng, Li. 2010. “Hire Today, Gone Tomorrow: New Teacher Classroom Assignments and Teacher
+     Mobility.” Educational Finance and Policy, 5(3): 278-316.
+
+[88] Fiorini, Mario. 2010. “The effect of home computer use on children’s cognitive and non-cognitive
+     skills.” Economics of Education Review, 29(1): 55-72.
+
+[89] Fleischman, Howard, Paul Hopstock, Marisa Pelczar, and Brooke Shelley. 2010. “Highlights from
+     PISA 2009: Performance of U.S. 15-Year-Old Students in Reading, Mathematics, and Science Literacy
+     in an International Context.” Washington, D.C.: U.S. Department of Education.
+
+[90] Fletcher, Jack, and Reid Lyon. 1998. “Reading: A Research-Based Approach”in “What’s Gone Wrong
+     in America’s Classrooms”Stanford, CA: Hoover Institution Press.
+
+[91] Foorman, Barbara, and Moats, Louisa. 2004. “Conditions for Sustaining Research-Based Practices in
+     Early Reading Instruction.” Remedial Special Education, 25(1): 51-60.
+
+                                                  86
+[92] Friedman, Milton. 1955. “The Role of Government in Public Education.” In: Robert Solo, editor.
+     Economics and the Public Interest. New Brunswick, NJ: University of Rutgers Press.
+
+[93] Fryer, Roland. 2010. “Racial Inequality in the 21st Century: The Declining Significance of Discrimi-
+     nation.” Handbook of Labor Economics, 4(B): 855-971.
+
+[94] Fryer, Roland. 2011. “Financial Incentives and Student Achievement: Evidence from Trials.” The
+     Quarterly Journal of Economics, 126(4): 1755-1798.
+
+[95] Fryer, Roland. 2013. “Information and Student Achievement: Evidence from a Cellular Phone Exper-
+     iment”NBER Working Paper no. 19113.
+
+[96] Fryer, Roland. 2013. “Teacher Incentives and Student Achievement: Evidence from New York City
+     Public Schools.” Journal of Labor Economics, 31(2): 373-427.
+
+[97] Fryer, Roland. 2014. “Injecting Charter School Nest Practices into Traditional Public Schools: Evi-
+     dence From Field Experiments.” Quarterly Journal of Economics, 129(3): 1355-1407.
+
+[98] Fryer, Roland. 2014. “Teacher Incentives and Student Achievement: Evidence from New York City
+     Public Schools.” Quarterly Journal of Economics, 129(3):1355-1407.
+
+[99] Fryer, Roland, and Will Dobbie. 2013. “Getting Beneath the Veil of Effective Schools: Evidence from
+     New York City.” American Economic Journal: Applied Economics, 5(4): 28-60.
+
+[100] Fryer, Roland, and Richard Holden. 2013. “Multitasking, Dynamic Complementaries, and Incentives:
+     A Cautionary Tale.” Working Paper.
+
+[101] Fryer, Roland, and Steven Levitt. 2004. “Understanding the Black-White Test Score Gap in the First
+     Two Years of School.” The Review of Economic and Statistics, 86(2): 447-464.
+
+[102] Fryer, Roland, and Steven Levitt. 2006. “The Black-White Test Score Gap Through Third Grade.”
+     American Law and Economic Review, 8(2): 249-281.
+
+[103] Fryer, Roland, and Steven Levitt. 2013. “Testing for Racial Differences in the Mental Ability of
+     Young Children.” American Economic Review, 103(2): 981-1005.
+
+[104] Fryer, Roland, Steven Levitt, and John List. 2015. “Parental Incentives and Early Childhood Achieve-
+     ment: A Field Experiment in Chicago Heights.” Unpublished working paper.
+
+
+
+                                                   87
+[105] Fryer, Roland, Steven Levitt, John List, and Sally Sadoff. 2015. “Enhancing the Efficacy of Teacher
+     Incentives Through Loss Aversion: A Field Experiment.” NBER Working Paper no. 18237.
+
+[106] Fuchs, Thomas, and Ludger Woessmann. 2004. “Computers and Student Learning: Bivariate and
+     Multivariate Evidence on the Availability and Use of Computers at Home and at School.” CESifo
+     Working Paper no. 1321.
+
+[107] Garber, Howard. 1988. “The Milwaukee Project: Preventing Mental Retardation in Children at Risk.”
+     Washington, D.C.: National Institute of Handicapped Research.
+
+[108] Garces, Eliana, Duncan Thomas, and Janet Currie. 2002. “Longer-Term Effects of Head Start.” The
+     American Economic Review, 92(4): 999-1012.
+
+[109] Garet, Michael, Stephanie Cronen, Marian Eaton, Anja Kurki, Wehmah Jones, Kazuaki Uekawa,
+     and Audrey Falk. 2008. “The Impact of Two Professional Development Interventions on Early Read-
+     ing Instruction and Achievement.” Washington, D.C.: National Center for Education Evaluation and
+     Regional Assistance.
+
+[110] Garet, Michael, Andrew Porter, Laura Desimone, Beatrice Birman, Kwang Suk Yoon. 2001. “What
+     Makes Professional Development Effective? Results from a National Sample of Teachers.” American
+     Educational Research Journal, 38(4): 915-945.
+
+[111] Glass, Gene, and Mary Lee Smith. 1978. “Meta-Analysis of Research on The Relationship of Class-
+     Size and Achievement.” San Francisco, CA: Far West Laboratory for Educational Research and De-
+     velopment.
+
+[112] Glazerman, Steven, Daniel Mayer, and Paul Decker. 2006. “Alternative Routes to Teaching: The Im-
+     pacts of Teach for America on Student Achievement and Other Outcomes.” Journal of Policy Analysis
+     and Management, 25(1): 75-96.
+
+[113] Glazerman, Steven, Allixon McKie, and Nancy Carey. 2009. “An Evaluation of the Teacher Ad-
+     vancement Program (TAP) in Chicago: Year One Impact Report.” Princeton, NJ: Mathematica Policy
+     Research.
+
+[114] Glazerman, Steven, Ali Protik, Bing-ru The, Julie Bruch, Jeffrey Max. 2013. “Transfer Incentives
+     for High-Performing Teachers: Final Results from a Multisite Randomized Experiment.” Washington,
+     D.C.: National Center for Education Evaluation and Regional Assistance.
+
+
+                                                   88
+[115] Gleason, Phillip, Melissa Clark, Christina Tuttle, and Emily Dwoyer. 2010. “The Evaluation of Char-
+     ter School Impacts.” Washington, D.C.: National Center for Education Evaluation and Regional As-
+     sistance.
+
+[116] Glewwe, Paul, Nauman Ilias, and Michael Kremer. 2010. “Teacher Incentives.” American Economic
+     Journal: Applied Economics, 2(3): 205-227.
+
+[117] Gray, Susan, and Rupert Klaus. 1970. “The Early Training Project: A Seventh-Year Report.” Child
+     Development, 41: 909-924.
+
+[118] Greene, Jay, Paul Peterson, and Jiangtao Du. 1999. “Effectiveness of School Choice: The Milwaukee
+     Experiment.” Education and Urban Society, 31(2) : 190-213.
+
+[119] Hahn, Andrew, Tom Leavitt, and Paul Aaron. 1994. “Evaluation of the Quantum Opportunities Pro-
+     gram (QOP) Did the Program Work?” Waltham, MA: Brandeis University Center for Human Re-
+     sources.
+
+[120] Halpern-Felsher, Bonnie, James P. Connell, Margaret Beale Spencer, J. Lawrence Aber, Greg P. Dun-
+     can, Elizabeth Clifford, Warren E. Crichlow, Peter A. Usinger, Steven P. Cole, LaRue Allen, and Ed-
+     ward Seidman. 1997. “Neighborhood and Family Factors Predicting Educational Risk and Attainment
+     in African American and White Children and Adolescents.” In: Jeanne Brooks-Gunn, Greg Duncan,
+     and Lawrence Aber, editors. Neighborhood Poverty, Volume I: Context and Consequences for Chil-
+     dren. New York: Russel Sage Foundation.
+
+[121] Hamilton, Gayle, Stephen Freedman, Lisa Gennetian, Charles Michalopoulos, Johanna Walter, Diana
+     Adams-Ciardullo, Anna Gassman-Pines. 2001. “National Evaluation of Welfare-to-Work Strategies.”
+     Washington, D.C.: U.S. Department of Health and Human Services.
+
+[122] Hanushek, Eric. 1979. “Conceptual and Empirical Issues in the Estimation of Educational Production
+     Functions.” The Journal of Human Resources, 14(3): 351-388.
+
+[123] Harrington, Michael. 1982. “The Other America: Poverty in the United States.” New York, NY:
+     Touchstone.
+
+[124] Harrison, Glenn, and John List. 2004. “Field Experiments.” The Journal of Economic Literature,
+     42(4): 1009-1055.
+
+
+
+
+                                                   89
+[125] Hatton, Timothy. 2011. “The Social and Labor Market Outcomes of Ethnic Minorities in the UK.”
+     In: Martin Kahanec, and Klaus Zimmerman, editors. Ethnic Diversity in European Labor markets:
+     Challenges and Solutions. 283-306. Cheltenham, UK: Edward Elgar Publishing.
+
+[126] Heckman, James. 2008. “Role of Income and Family Influence on Child Outcomes.” Annals of the
+     New York Academy of Sciences, 1136: 307-323.
+
+[127] Heckman, James, Seong Hyeok Moon, Rodrigo Pinto, Peter Savelyev, and Adam Yavitz. 2009. “A
+     Reanalysis of the High/Scope Perry Preschool Program.” University of Chicago, Department of Eco-
+     nomics. Unpublished Manuscript.
+
+[128] Heckman, James, Seong Hyeok Moon, Rodrigo Pinto, Peter Savelyev, and Adam Yavitz. 2010. “The
+     Rate of Return to the High/Scope Perry Preschool Program.” Journal of Public Economics, 94(1-2):
+     114-128.
+
+[129] Heckman, James, and Yona Rubenstein. 2001. “The Importance of Noncognitive Skills: Lessons
+     from the GED Testing Program.” The American Economic Review, 91(2): 145-149.
+
+[130] Heckman, James, Jora Stixrud, and Sergio Urzua. 2006. “The Effects of Cognitive and Noncognitive
+     Abilities on Labor Market Outcomes and Social Behavior.” Journal of Labor Economics, 24(3): 411-
+     482.
+
+[131] Heckman, James, and Tim Kautz. 2013. “Fostering and Measuring Skills: Interventions That Improve
+     Character and Cognition.” NBER Working Paper no. 19656.
+
+[132] Hedges, Larry. 1981. “Distribution Theory for Glass’s Estimator of Effect Sizes and Related Estima-
+     tors.” Journal of Educational and Behavioral Statistics, 6(2): 107-128.
+
+[133] Heyns, Barbara. 1978. “Summer Learning and the Effects of Schooling.” Orlando, FL: Academic
+     Press.
+
+[134] Heyns, Barbara. 1987. “Schooling and Cognitive Development.” Child Development, 58(5): 1151-
+     1160.
+
+[135] Hill, Hillary. 2007. “Learning in the Teaching Workforce.” The Future of Children, 17(1): 111-127.
+
+[136] Hirst, Lois Trimble. 1972. “An Investigation of the Effects of Daily, Thirty-Minute Home Practice
+     Sessions upon Reading Achievement with Second Year Elementary Pupils.” Dissertation submitted to
+     the University of Kentucky, Lexington, KY.
+
+                                                    90
+[137] Holmes, Thomas, and Barbara McConnell. 1990. “Full-Day Versus Half-Day Kindergarten: An Ex-
+     perimental Study.” Paper presented at the annual meeting of the Educational Research Association,
+     Boston, MA.
+
+[138] Holmstrom, Bengt, and Paul Milgrom. 1991. “Multitask Principal-Agent Analyses: Incentive Con-
+     tracts, Asset Ownership, and Job Design.” Journal of Law, Economics, & Organization, 7: 24-52.
+
+[139] Hopkins, Kenneth, and Glenn Bracht. 1975. “Ten-Year Stability of Verbal and Nonverbal IQ Scores.”
+     American Education Research Journal, 12(4): 469-477.
+
+[140] Hoxby, Caroline. 2002. “School Choice and School Productivity.” NBER Working Paper no. 8873.
+
+[141] Hoxby, Caroline, and Andrew Leigh. 2004. “Pulled Away or Pushed Out? Explaining the Decline of
+     Teacher Aptitude in the United States.” American Economic Review, 94(2): 236-240.
+
+[142] Hoxby, Caroline, and Sonali Murarka. 2009. “Charter Schools in New York City: Who Enrolls and
+     How They Affect Their Students’ Achievement.” NBER Working Paper no. 14852.
+
+[143] Jackson, Clement. 2010. “A Stitch in Time: The Effects of a Novel Incentive-Based High-School
+     Intervention on College Outcomes.” NBER Working Paper no. w15722.
+
+[144] Jacob, Brian. 2004. “Remedial Education and Student Achievement: A Regression-Discontinuity
+     Analysis.” The Review of Economics and Statistics, 86(1): 226-244.
+
+[145] Jeynes, William. 2005. “Parental Involvement and Student Achievement: A Meta-Analysis.” Cam-
+     bridge, MA: Harvard Family Research Project.
+
+[146] Jeynes, William. 2007. “The Relationship Between Parental Involvement and Urban Secondary
+     School Student Academic Achievement: A Meta-Analysis.” Urban Education, 42(1): 82-110.
+
+[147] Joyce, Bruce and Beverly Showers. 1988. “Student Achievement Through Staff Development.” White
+     Plains, NY: Longman.
+
+[148] Kántor, Zoltán. 2011. “Ethnic or Social Integration? The Roma in Hungary.” In: Martin Kahanec, and
+     Klaus Zimmerman, editors. Ethnic Diversity in European Labor markets: Challenges and Solutions.
+     137-162. Cheltenham, UK: Edward Elgar Publishing.
+
+[149] Kane, Thomas, and Douglas Staiger. 2008. “Estimating Teacher Impacts on Student Achievement:
+     An Experimental Evaluation.” NBER Working Paper no. 14607.
+
+                                                    91
+[150] Kautz, Tim, James Heckman, Ron Diris, Bas ter Weel, and Lex Borghans. 2014. “Fostering and Mea-
+     suring Skills: Improving Cognitive and Non-Cognitive Skills to Promote Lifetime Success.” NBER
+     Working Paper no. 20749.
+
+[151] Kim, James. 2005. “Project READS (Reading Enhances Achievement During Summer): Results from
+     a Randomized Field Trial of a Voluntary Summer Reading Intervention.” Paper presented at Princeton
+     University, Education Research Section, Princeton, NJ.
+
+[152] Klibanoff, Leonard, and Sue Haggart. “Summer Growth and the Effectiveness of Summer School.”
+     Mountainview, CA: RMC Research Corporation.
+
+[153] Kling, Jeffrey, Jeffrey Liebman, and Lawrence Katz. 2007. “Experimental Analysis of Neighborhood
+     Effects.” Econometrica, 75(1): 83-119.
+
+[154] Knudson, Eric, James Heckman, Judy Cameron, and Jack Shonkoff. “Economic, Neurobiological,
+     and Behavioral Perspectives on Building America’s Future Workforce.” Proceedings of the National
+     Academy of Sciences, 103(27): 10155-10162.
+
+[155] Kohen, Dafna, Jeanne Brooks-Gunn, Tama Leventhal, and Clyde Hertzman. 2002. “Neighborhood
+     Income and Physical and Social Disorder in Canada: Associations with Young Children’s Competen-
+     cies.” Child Development 73(6): 1844-1860.
+
+[156] Kremer, Michael, Edward Miguel, Rebecca Thornton. 2009. “Incentives to Learn.” The Review of
+     Economics and Statistics, 91(3): 437-456.
+
+[157] Krueger, Alan. 1999. “Experimental Estimates of Education Production Functions.” The Quarterly
+     Journal of Economics, 114(2): 497-532.
+
+[158] Layton, Lyndsey. 2015. “Study: Billions of Dollars in Annual Teacher Training is Largely A Waste.”
+     The Washington Post. August 04, 2015.
+
+[159] Layzer, Jean, Carolyn Layzer, Barbara Goodson, and Cristofer Price. 2007. “Evaluation of Child
+     Care Subsidy Strategies: Findings From Project Upgrade in Miami-Dade County.” Cambridge, MA:
+     Abt Associates.
+
+[160] Levitt, Steven, and John List. 2009. “Field experiments in economics: The past, the present, and the
+     future.” The European Economic Review, 53(1): 1-18.
+
+
+
+                                                   92
+[161] Lipsey, Mark, and David Wilson. 2000. “Practical Meta Analysis.” Thousand Oaks, California: Sage
+     Publications.
+
+[162] Loucks-Horsley, Susan, Susan Mundry, Peter Hewson, Nancy Love, and Katherine Stiles. 1998. “De-
+     signing Professional Development for Teachers of Mathematics and Science.” Thousand Oaks, CA:
+     Corwin Press.
+
+[163] Ludwig, Jens, Greg Duncan, Lisa Gennetian, Lawrence Katz, Ronald Kessler, Jeffrey Kling, and Lisa
+     Sanbonmatsu. 2012. “Neighborhood Effects on the Long-Term Well-Being of Low-Income Adults.”
+     Science, 337(6101): 1505-1510.
+
+[164] Ludwig, Jens, Lisa Sanbonmatsu, Lisa Gennetian, Emma Adam, Greg Duncan, Lawrence Katz,
+     Ronald Kessler, Jeffrey Kling, Stacy Tessler Lindau, Robert Whitaker, and Thomas McDade. 2011.
+     “Neighborhoods, Obesity, and Diabetes—A Randomized Social Experiment.” The New England Jour-
+     nal of Medicine, 365(16): 1509-1519.
+
+[165] Magnuson, Katherine and Greg Duncan. 2002. “Parents in Poverty.” In: Marc Bornstein, editor.
+     Handbook of Parenting: Second Edition. Mahwah, NJ: Lawrence Erlbaum Associates.
+
+[166] Malamud, Ofer, and Cristian Pop-Eleches. 2011. “Home Computer Use and the Development of
+     Human Capital.” The Quarterly Journal of Economics, 126(2): 987-1027.
+
+[167] Marshall, Helen, and Lucille Magruder. 1960. “Relations between Parent Money Education Practices
+     and Children’s Knowledge and Use of Money.” Child Development, 31(2): 253-284.
+
+[168] Mathes, Patricia, and Allison Babyak. 2001. “The Effects of Peer-Assisted Learning Strategies for
+     First-Grade Readers With and Without Additional Mini-Skills Lessons.” Learning Disabilities Re-
+     search and Practice, 16(1): 28-44.
+
+[169] May, Henry, Abigail Gray, Jessica Gillespie, Philip Sirinides, Cecile Sam, Heather Goldsworthy,
+     Michael Armijo, and Manrata Tognatta. 2013. “Evaluation of the i3 Scale-up of Reading Recovery.”
+     Philadelphia, PA: CPRE.
+
+[170] Mayer, Daniel, Paul Peterson, David Myers, Christina Clark Tuttle, William Howell. 2002. “School
+     Choice in New York City After Three Years: An Evaluation of the School Choice Scholarships Pro-
+     gram. Final Report.” Princeton, NJ: Mathematica Policy Research.
+
+
+
+
+                                                  93
+[171] Maynard, Rebecca, and Richard Murnane. 1979. “The Effects of a Negative Income Tax on School
+     Performance: Results of an Experiment.” The Journal of Human Resources, 14(4): 463-476.
+
+[172] McCall, William. 1923. “How to Experiment in Education.” New York: Macmillan.
+
+[173] McLoyd, Vonnie. 1998. “Socioeconomic Disadvantage and Child Development.” American Psychol-
+     ogist, 53(2): 185-204.
+
+[174] Meyer, Erik, and Chris Van Klaveren. 2013. “The Effectiveness of Extended Day Programs: Evidence
+     from a Randomized Field Experiment in the Netherlands.” Economics of Education Review, 36(C): 1-
+     11.
+
+[175] Meyers, Coby, Ayrin Molefe, Sonica Dhillion, and Bo Zhu. 2015. “The Impact of eMINTS Profes-
+     sional Development on Teacher Instruction and Student Achievement.” Washington, D.C.: American
+     Institutes for Research.
+
+[176] Michalopoulous, Charles, Dough Tattrie, Cynthia Miller, Philip K. Robins, Pamela Morris, David
+     Gyarmati, Cindy Redcross, Kelly Foley, and Rueben Ford. 2002. “Making Work Pay: Final Report on
+     the Self-Sufficiency Project for Long-Term Welfare Recipients.” Ottowa, Canada: Social Research and
+     Demonstration Corporation.
+
+[177] Mischel, Walter, Ebbe Ebbesen, Antonette Raskoff Zeiss. 1972. “Cognitive and Attentional Mecha-
+     nisms in Delay of Gratification.” Journal of Personality and Social Psychology, 21(2): 204-218.
+
+[178] Miyake, Akira, Lauren Kost-Smith, Noah Finkelstein, Steven Pollock, Geoffrey Cohen, and Tiffany
+     Ito. 2010. “Reducing the Gender Achievement Gap in College Science: A Classroom Study of Values
+     Affirmation.” Science, 330(60008): 1234-1237.
+
+[179] Morais de Sá e Silva, Michelle. 2008. “Opportunity NYC: A Performance-based Conditional Cash
+     Transfer Programme.” International Poverty Centre Working Paper no. 49.
+
+[180] Mosteller, Frederick, and Robert Boruch. 2002. “Evidence Matters: Randomized Trials in Education
+     Research.” Washington, D.C.: Brookings Institution Press.
+
+[181] Moynihan, Daniel. 1969. “On Understanding Poverty: Perspectives from the Social Sciences.” New
+     York, NY: Basic Books.
+
+[182] Muralidharan, Karthik, and Venkatesh Sundararaman. 2011. “Teacher Performance Pay: Experimen-
+     tal Evidence from India.” Journal of Political Economy, 119(1): 39-77.
+
+                                                   94
+[183] Murnane, Richard. 1975. “The Impact of School Resources on the Learning of Inner City Children.”
+     Cambridge, MA: Ballinger Publishing.
+
+[184] National Alliance for Public Charter Schools. 2009. Public Charter Schools Dashboard, Charter
+     School Market Share.
+
+[185] National Telecommunication and Information Administration. 2011. “Exploring the Digital Nation:
+     Computer and Internet Use at Home.” Washington, D.C.: National Telecommunications and Informa-
+     tion Administration, U.S. Department of Commerce.
+
+[186] Neal, Derek and William Johnson. 1996. “The Role of Premarket Factors in Black-White Wage Dif-
+     ferences.” The Journal of Political Economy, 104(5): 869-895.
+
+[187] Neal, Derek. 2011. “The Design of Performance Pay Systems in Education.” NBER Working Paper
+     no. 16710.
+
+[188] Nelson, Charles. 2000. “Neural Plasticity and Human Development: The Role of Early Experience
+     in Sculpting Memory Systems.” Developmental Science, 3(2): 115-136.
+
+[189] Nelson, Richard. 1959. “An Experiment with Class Size in the Teaching of Elementary Economics.”
+     Educational Record, 4: 330-241.
+
+[190] Nelson-Royes, Andrea. 2015. “Why Tutoring?: A Way to Achieve Success in School.” Lanham, MD:
+     Rowman and Littlefield.
+
+[191] Newport, Elissa. 1990. “Maturational Constraints on Language Learning.” Cognitive Science, 14(11):
+     11-28.
+
+[192] Nordin, Martin and Dan-Olof Rooth. 2007. “Income Gap Between Natives and Second Generation
+     Immigrants in Sweden: Is Skill the Explanation?” IZA Discussion Paper no. 2759.
+
+[193] Nye, Chad, Herb Turner, and Jamie Schwartz. 2006. “Approaches to Parental Involvement for Im-
+     proving the Academic Performance of Elementary School Children in Grades K-6.” Cambridge, MA:
+     Harvard Family Research Project.
+
+[194] O‘Neill, June. 1990. “The Role of Human Capital in Earnings Differences Between Black and White
+     Men.” The Journal of Economic Perspectives, 4(4): 25-45.
+
+
+
+
+                                                  95
+[195] Olds, David, Charles Henderson, and Robert Cole. 1998. “Long-Term Effects of Nurse Home Visita-
+     tion on Children’s Criminal and Antisocial Behavior: 15-Year Follow-up of a Randomized Controlled
+     Trial.” JAMA, 280: 1238-1244.
+
+[196] Olds, David, JoAnn Robinson, and Roth O’Brien. 2002. “Home Visiting by Paraprofessionals and
+     Nurses: A Randomized, Controlled Trial.” Pediatrics, 100: 486-496.
+
+[197] Oreopoulos, Phillip. 2003. “The Long-Run Consequences of Living in a Poor Neighborhood.” The
+     Quarterly Journal of Economics, 118(4): 1533-1575.
+
+[198] Parsad, Basmat, Laurie Lewis, and Elizabeth Farris. 2001. “Teacher Preparation and Professional
+     Development: 2000.” Washington, D.C.: U.S. Department of Education, National Center for Education
+     Statistics.
+
+[199] Parsons, Craig, and Timothy Smeeding. 2008. “Immigration and the Transformation of Europe.”
+     Cambridge, U.K.: Cambridge University Press.
+
+[200] Phillips, Deborah, and Jack Shonkoff. 2000. “From Neurons to Neighborhoods: The Science of Early
+     Childhood Development.” Washington, D.C.: National Academies Press.
+
+[201] Phillips, Meredith, Jeanne Brooks-Gun, Greg Duncan, Pamel Klebanov, and Jonathan Crane. 1998.
+     “Family Background, Parenting Practices, and the Black-White Test Score Gap.” In: Christopher
+     Jenks, and Meredith Phillips, editors. The Black-White Test Score Gap. 102-145. Washington, D.C.:
+     Brookings Institution Press.
+
+[202] Pinkner, Steven. “The Language Instinct.” New York, NY: Harper Perennial Modern Classics.
+
+[203] Porwell, P.J. 1978. “Class size: A summary of research.” Arlington, VA: Educational Research Ser-
+     vice.
+
+[204] Powell-Smith, Kelly, Gary Stoner, Mark Shinn, Roland Good III. 2000. “Parent Tutoring in Read-
+     ing Using Literature and Curriculum Materials: Impact on Student Reading Achievement.” School
+     Psychology Review, 29(1): 5-27.
+
+[205] Puma, Michael, Stephen Bell, Ronna Cook, and Camilla Heid. 2010. “Head Start Impact Study Fi-
+     nal Report.” Washington, D.C.: U.S. Department of Health and Human Services, Administration for
+     Children and Families.
+
+
+
+                                                  96
+[206] Randel, Bruce, Andrea Beesley, Helen Apthorp, Tedra Clark, Xin Wang, Louis Cicchinelli, and Jean
+     Williams. 2011. “Classroom Assessment for Student Learning: Impact on Elementary School Math-
+     ematics in the Central Region.” Washington, D.C.: National Center for Educational Evaluation and
+     Regional Assistance.
+
+[207] Riccio, James, Nadine Dechausay, Cynthia Miller, Stephen Nuñez, Nandita Verma, and Edith Yang.
+     2013. “Conditional Cash Transfers in New York City: The Continuing Story of the Opportunity NYC-
+     Family Rewards Demonstration.” New York: MDRC.
+
+[208] Rickford, John. 1999. “African American Vernacular English: Features, Evolution, Educational Im-
+     plication.” Malden, MA: Blackwell Publishers.
+
+[209] Rivkin, Steven, Eric Hanushek, and John Kain. 2005. “Teachers, Schools, and Academic Achieve-
+     ment.” Econometrica, 73(2): 417-458.
+
+[210] Rockoff, Jonah. 2004. “The Impact of Individual Teachers on Student Achievement: Evidence from
+     Panel Data.” The American Economic Review, 94(2): 247-252.
+
+[211] Rockoff, Jonah, Douglas Staiger, Thomas Kane, and Eric Taylor. 2012. “Information and Employee
+     Evaluation: Evidence from a Randomized Intervention in Public Schools.” American Economic Re-
+     view, 102(7): 3184-3213.
+
+[212] Rosenbaum, James. 1995. “Changing the Geography of Opportunity by Expanding Residential
+     Choice: Lessons from the Gautreaux Program.” Housing Policy Debate, 6(1): 231-269.
+
+[213] Rothstein, Jesse and Till von Wachter. 2016. “Social Experiments in the Labor Market.” Handbook
+     of Economic Experiments, forthcoming.
+
+[214] Rouse, Cecilia Elena. 1998. “Private School Vouchers and Student Achievement: An Evaluation of
+     the Milwaukee Parental Choice Program.” The Quarterly Journal of Economics, 113(2): 553-602.
+
+[215] Ryan, Elizabeth McIntyre. 1964. “A Comparative Study of the Reading Achievement of Second
+     Grade Pupils in Programs Characterized by a Contrasting Degree of Parent Participation.” Disserta-
+     tion submitted to the School of Education, Indiana University, Bloomington, IN.
+
+[216] Ryan, Richard. 1982. “Control and Information in the Intrapersonal Sphere: An Extension of Cogni-
+     tive Evaluation Theory.” Journal of Personality and Social Psychology, 63: 397-427.
+
+
+
+                                                   97
+[217] Sanbonmatsu, Lisa, Jens Ludwig, Larry Katz, Lisa Gennetian, Greg Duncan, Ronald Kessler, Emma
+     Adam, Thomas McDade, and Stacy Tessler Lindau. 2011. “Moving to Opportunity for Fair Housing
+     Demonstration Program: Final Impacts Evaluation.” Washington, D.C.: U.S. Department of Housing
+     and Urban Development.
+
+[218] Schmitt, John, and Jonathan Wadsworth. 2006. “Changing Patterns in the Relative Economic Perfor-
+     mance of Immigrants to Great Britain and the U.S., 1980-2000.” Cambridge, MA: CEPR.
+
+[219] Schultz, T. Paul. 2000. “Final Report: The Impact of PROGRESA on School Enrollments.” Washing-
+     ton, D.C.: International Food Policy Research Institute.
+
+[220] Schwartz, Robert. 2005. “Literacy Learning of At-Risk First-Grade Students in the Reading Recovery
+     Early Intervention.” Journal of Educational Psychology, 97(2): 257-267.
+
+[221] Schweinhart, Lawrence, H. Barnes, and D.P. Weikart. 1993. “Significant Benefits: The HighScope
+     Perry Preschool Study Through Age 27.” Ypsilanti, MI: HighScope Press.
+
+[222] Schweinhart, Lawrence, Jeanne Montie, Zongping Xiang, William Barnett, Clive Belfield, and Mi-
+     lagros Nores. 2005. “Lifetime Effects: The High/Scope Perry Preschool Study Through Age 40.”
+     Ypsilanti, MI: HighScope Press.
+
+[223] Skoufias, Emmanuel. 2005. “PROGRESA and Its Impacts on the Welfare of Rural Households in
+     Mexico.” Washington, D.C.: International Food Policy Research Institute.
+
+[224] Slavin, Robert. 2010. “Can Financial Incentives Enhance Educational Outcomes? Evidence from
+     International Experiments.” Educational Research Review, 5(1): 68-80.
+
+[225] Slavin, Robert, Marshall Leavey, and Nancy Madden. 1984. “Combining Cooperative Learning and
+     Individualized Instruction: Effects on Student Mathematics Achievement, Attitudes, and Behaviors.”
+     The Elementary School Journal, 84(4): 409-422.
+
+[226] Springer, Matthew, Dale Ballou, Laura Hamilton, Vi-Nhuan Le, J.R. Lockwood, Daniel F. McCaffrey,
+     Matthew Pepper, and Brian M. Stecher. 2010. “Teacher Pay for Performance.” Nashville, TN: NCPI.
+
+[227] Springer, Matthew, John Pane, Vi-Nhuan Le, Daniel F. McCaffrey, Susan Burns, Laura Hamilton, and
+     Brian M. Stecher. 2012. “Team Pay for Performance.” Educational Evaluation and Policy Analysis,
+     34(4): 367-390.
+
+
+
+                                                    98
+[228] St. Pierre, Robert, Jean Layzer, Barbara Goodson, and Lawrence Bernstein. 1997. “National Impact
+     Evaluation of the Comprehensive Child Development Program.” Cambridge, MA: Abt Associates.
+
+[229] Sumi, W., Michelle Woodbridge, Harold Javitz, Patrick Thornton, Mary Wagner, Kristen Rouspil,
+     Jennifer Yu, John Seeley, Hill Walker, Annemieke Golly, Jason Small, Edward Feil, and Herbert Sev-
+     erson. “Assessing the Effectiveness of First Step to Success: Are Short-Term Results the First Step to
+     Long-Term Behavioral Improvements?” Journal of Emotional and Behavioral Disorders, 21(1): 1-14.
+
+[230] Taylor, Eric, and John Tyler. 2012. “The Effect of Evaluation on Teacher Performance.” The American
+     Economic Review, 102(7): 3628-3651.
+
+[231] The New Teacher Project (TNTP). 2015. “The Mirage: Confronting the Hard Truth About Our Quest
+     for Teacher Development.” Brooklyn, NY: The New Teacher Project.
+
+[232] Todd, Petra, and Kenneth Wolpin. 2003. “On the Specification and Estimation of the Production
+     Function for Cognitive Achievement.” The Economic Journal, 113(485): F3-F33.
+
+[233] Tucker, Marc. 2011. “Teacher Quality: What’s Wrong with U.S. Strategy?” Educational Leadership,
+     49(4): 42-46.
+
+[234] Tuttle, Christina, Brian Gill, Phillip Gleason, Virginia Knechtel, Ira Nichols-Barrer, and Alexandra
+     Resch. 2013. “KIPP Middle Schools: Impacts on Achievement and Other Outcomes. Final Report.”
+     Princeton, NJ: Mathematica Policy Research.
+
+[235] U.S. Department of Education. 2009. “State and Local Implementation of the No Child Left Behind
+     Act.” Washington, D.C.: U.S. Department of Education.
+
+[236] U.S. Department of Education. 2014. “Fiscal Year 2015 Education Budget Summary and Background
+     Information.” Washington, D.C.: U.S. Department of Education.
+
+[237] U.S. Department of Education. 2015. Institute of Education Sciences, National Center for Education
+     Evaluation and Regional Assistance, What Works Clearinghouse.
+
+[238] U.S. Government Accountability Office. 2014. “K-12 Education: Characteristics of the Investing in
+     Innovation Fund.” Washington, D.C.: U.S. Government Accountability Office.
+
+[239] United Nations Development Programme. “Human Development Report 2010.” New York.: United
+     Nations.
+
+
+                                                    99
+[240] Vigdor, Jacob, and Helen Ladd. 2010. “Scaling the Digital Divide: Home Computer Technology and
+     Student Achievement.” NBER Working Paper no. 16078.
+
+[241] von Loeffelholz, Hans Dietrich. 2011. “Social and Labor Market Integration of Ethnic Minorities in
+     Germany.” In: Martin Kahanec, and Klaus Zimmerman, editors. Ethnic Diversity in European Labor
+     markets: Challenges and Solutions. 109-136. Cheltenham, UK: Edward Elgar Publishing.
+
+[242] Weikart, David, Dennis Deloria, Sarah Lawser, and Ronald Wiegerink. 1970. “Longitudinal Results
+     of the Ypsilanti Perry Preschool Project.” Ypsilanti, MI: High/Scope Educational Research Founda-
+     tion.
+
+[243] Wilson, Timothy, Patricia Linville. 1982. “Improving the Academic Performance of College Fresh-
+     men: Attribution Therapy Revisited.” Journal of Psychology and Social Psychology. 42(2): 367-376.
+
+[244] Winship, Scott, and Stephanie Owen. 2013. “The Brookings Social Genome Model.” Washington,
+     D.C.: Brookings.
+
+[245] Witte, John. 1997. “Achievement Effects of the Milwaukee Voucher Program.” Paper presented at the
+     1997 American Economics Association Annual Meeting, New Orleans, LA.
+
+[246] Witte, John, Troy Sterr, and Christopher Thorn. 1995. “Fifth-Year Report Milwaukee Parental Choice
+     Program.” LaFollette School Working Paper no. 1995-001.
+
+[247] Wolf, Patrick, Babette Gutmann, Michael Puma, Brian Kisida, Lou Rizzo, Nada Elissa, and Matthew
+     Carr. 2010. “Evaluation of the DC Opportunity Scholarship Program.” Washington, D.C.: National
+     Center for Education Evaluation and Regional Assistance.
+
+[248] Worrall, John. 2007. “Evidence in Medicine and Evidence-Based Medicine.” The Philosophy Com-
+     pass, 2(6): 981-1022.
+
+[249] Yeager, David, and Gregory Walton. 2011. “Social-Psychological Interventions in Education.” Review
+     of Educational Research, 81(2): 267-301.
+
+[250] Yeates, Kieth, David MacPhee, Frances Campbell, and Craig Ramey. “Maternal IQ and Home En-
+     vironment as Determinants of Early Childhood Intellectual Competence: A Developmental Analysis.”
+     Developmental Psychology, 19: 731-739.
+
+[251] York, Benjamin, and Susanna Loeb. “One Step at a Time: The Effects of an Early Literacy Text
+     Messaging Program for Parents and Preschoolers.” NBER Working Paper no. 20659.
+
+                                                  100
+[252] Zvoch, Keith, and John Stevens. 2012. “Summer School Effects in a Randomized Field Trial.” Early
+     Childhood Research Quarterly, 28(1): 24-32.
+
+
+
+
+                                                   101
+                                                     Figure 1
+                                              Reviewed WWC Studies
+
+
+
+
+Notes: This figure presents the number of reviewed studies in the What Works Clearinghouse (WWC) by publication year of the
+studies. The shaded histogram is the sample of all studies in WWC. The clear histogram is the sample of studies that met WWC’s
+standards without reservation.
+
+
+
+
+                                                           102
+                                                     Figure 2
+                                          Number of Students in “Charters”
+
+
+
+
+Notes: This figure presents the number of students enrolled in charter schools (U.S.) and academies (England) for the 1999-00
+to 2014-15 school years. Academies are publicly funded independent schools. Similar to the U.S. charter schools, academies
+don’t have to follow the national curriculum and term lengths. The U.S. data comes from the National Alliance for Public Charter
+Schools (NAPCS) and the data for England comes from the U.K. Department of Education. Note that the U.S. 2014-2015 number
+is estimated (NAPCS 2015).
+
+
+
+
+                                                            103
+                                                      Figure 3
+                            Correlation of Effect Size and Average Age of Intervention
+
+
+
+
+Notes: This figures plots annual effect sizes versus average age of students in an intervention by subject. The sample includes
+all studies that passed our selection criteria for the meta-analysis. Each binned scatter plot was created by separating the data for
+the given subject into 8 equal-sized bins, computing the mean of the average age and effect sizes within each bin, then creating a
+scatter plot of these data points. The solid lines shows the best linear fit estimated on the underlying unbinned data estimated using
+a simple OLS regression.
+
+
+
+
+                                                              104

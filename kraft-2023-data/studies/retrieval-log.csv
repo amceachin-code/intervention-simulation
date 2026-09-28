@@ -1,0 +1,255 @@
+study_id,key,status,url,service,bytes,sha256,pages,has_text,fetched_at,note
+1,1-abdulkadiroglu-2011,pdf,https://www.nber.org/system/files/working_papers/w15549/w15549.pdf,nber-twin,753788,64441535c7076a2b,52,1,2026-09-18 14:03,NBER version 10.3386/w15549 of the accepted work
+19,19-abdulkadiroglu-2011,pdf,https://www.nber.org/system/files/working_papers/w15549/w15549.pdf,nber-twin,753788,64441535c7076a2b,52,1,2026-09-18 14:03,NBER version 10.3386/w15549 of the accepted work
+31,31-augustine-2016,pdf,https://www.rand.org/content/dam/rand/pubs/research_reports/RR1500/RR1557/RAND_RR1557.pdf,unpaywall,1189180,581956641d259480,111,1,2026-09-18 13:56,
+32,32-ault-2017,pdf,https://files.eric.ed.gov/fulltext/ED607173.pdf,eric,2084935,d8e9cc1b0006a513,140,1,2026-09-18 13:59,
+49,49-barlow-2015,abstract-only,https://doi.org/10.1016/j.jsp.2016.07.002,semanticscholar,2220,,,0,2026-09-18 13:57,no open full text found
+53,53-barrow-2009,pdf,https://www.nber.org/system/files/working_papers/w14240/w14240.pdf,nber,159276,5ab94b88e30fb0b7,62,1,2026-09-18 13:58,
+54,54-barrow-2009,pdf,https://www.nber.org/system/files/working_papers/w14240/w14240.pdf,nber,159276,5ab94b88e30fb0b7,62,1,2026-09-18 13:56,
+65,65-beam-2011,pdf,https://files.eric.ed.gov/fulltext/ED613693.pdf,eric,2105665,05039be7ea17488a,160,1,2026-09-18 13:59,
+66,66-beam-2012,pdf,https://files.eric.ed.gov/fulltext/ED613692.pdf,eric,1441235,1fa8d9fe4fdfa114,158,1,2026-09-18 13:59,
+70,70-becker-1994,abstract-only,https://doi.org/10.1016/0883-0355(94)90024-8,hand-supplied,1389,,,0,2026-09-18 15:57,no open full text found; abstract supplied by hand
+76,76-bettinger-2012,pdf,https://www.nber.org/system/files/working_papers/w16333/w16333.pdf,nber-twin,238829,21f0c29cf5ab217e,37,1,2026-09-18 14:03,NBER version 10.3386/w16333 of the accepted work
+82,82-bifulco-2009,abstract-only,https://doi.org/10.3102/0162373709340917,crossref,1000,,,0,2026-09-18 13:58,no open full text found
+83,83-bifulco-2009,abstract-only,https://doi.org/10.3102/0162373709340917,crossref,1000,,,0,2026-09-18 13:59,no open full text found
+88,88-black-2009,pdf,https://files.eric.ed.gov/fulltext/ED506725.pdf,eric,5347940,6240260ea7429b84,345,1,2026-09-18 13:58,
+89,89-black-2009,pdf,https://files.eric.ed.gov/fulltext/ED506725.pdf,eric,5347940,6240260ea7429b84,345,1,2026-09-18 13:59,
+95,95-borman-2008,abstract-only,https://doi.org/10.3102/0162373708326283,crossref,1012,,,0,2026-09-18 13:58,no open full text found
+98,98-borman-2007,abstract-only,https://eric.ed.gov/?id=EJ951752,eric,1055,,,0,2026-09-18 13:54,no open full text found
+106,106-bosetal-2012,pdf,https://files.eric.ed.gov/fulltext/ED529843.pdf,eric,1513590,4e08ab9d792b4a7a,204,1,2026-09-18 13:58,
+108,108-bos-2012,pdf,https://files.eric.ed.gov/fulltext/ED529843.pdf,eric,1513590,4e08ab9d792b4a7a,204,1,2026-09-18 13:59,
+109,109-bottge-2014,abstract-only,https://doi.org/10.1177/0014402914527240,crossref,664,,,0,2026-09-18 13:59,no open full text found
+112,112-boylan-2018,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/ScratchMaths.pdf,direct,3463324,b5c9a36a9ac2d240,122,1,2026-09-18 13:57,
+113,113-bradshaw-2010,abstract-only,https://doi.org/10.1177/1098300709334798,crossref,993,,,0,2026-09-18 13:59,no open full text found
+116,116-brandt-2013,pdf,https://emints.org/wp-content/uploads/2022/03/The-Impact-of-eMINTS-Professional-Development-on-Teacher-Instruction-and-Student-Achievement-%E2%80%93-Year-1-Report-January-2013.pdf,direct,656752,cde20ad458be7e6e,103,1,2026-09-18 13:58,
+117,117-brandt-2013,pdf,https://emints.org/wp-content/uploads/2022/03/The-Impact-of-eMINTS-Professional-Development-on-Teacher-Instruction-and-Student-Achievement-%E2%80%93-Year-1-Report-January-2013.pdf,direct,656752,cde20ad458be7e6e,103,1,2026-09-18 13:59,
+128,128-cabalo-2007,abstract-only,https://eric.ed.gov/?id=ED538963,eric,1625,,,0,2026-09-18 13:56,no open full text found
+137,137-campbell-2011,abstract-only,https://doi.org/10.1086/657654,eric EJ963689,1008,,,0,2026-09-18 22:54,no open full text found
+139,139-campuzano-2009,pdf,https://files.eric.ed.gov/fulltext/ED504657.pdf,eric,1585591,2d6c9ed28f0e8024,111,1,2026-09-18 13:59,
+140,140-campuzano-2009,pdf,https://files.eric.ed.gov/fulltext/ED504657.pdf,eric,1585591,2d6c9ed28f0e8024,111,1,2026-09-18 13:59,
+141,141-campuzano-2009,pdf,https://files.eric.ed.gov/fulltext/ED504657.pdf,eric,1585591,2d6c9ed28f0e8024,111,1,2026-09-18 13:54,
+144,144-cantrell-2008,pdf,https://www.nber.org/system/files/working_papers/w14608/w14608.pdf,nber,352301,3906b02e059db871,64,1,2026-09-18 13:58,
+150,150-carlson-2011,abstract-only,https://doi.org/10.3102/0162373711412765,crossref,918,,,0,2026-09-18 13:58,no open full text found
+168,168-clark-2013,pdf,https://www.mathematica.org/-/media/publications/pdfs/education/effective-teachers.pdf,semanticscholar,306579,7d44f9779dcc0ea0,52,1,2026-09-18 13:58,
+170,170-clark-2013,pdf,https://files.eric.ed.gov/fulltext/ED544171.pdf,eric,1941056,d7bd9e2cc5b83ee6,264,1,2026-09-18 13:59,
+171,171-clark-2015,pdf,https://results4america.org/wp-content/uploads/2015/10/TFA_Investing_Innovation.pdf,direct,1417902,2654b2306ea55d65,106,1,2026-09-18 14:12,
+184,184-cole-1992,unresolved,,,,,,0,2026-09-18 22:55,"Fryer Appendix Table: Cole 1992, 1 school, 12 teachers, N = 268, grade 4, Mississippi, math and reading; Kraft n_max 268 matches. Study identified as a 1992 University of Mississippi doctoral dissertation (Cole, D. C.; UMI 9232258, as cited by Kennedy 2016), but no DOI, ERIC record, or URL was found in Crossref, ERIC, or the web; OpenAlex was rate-limited. None of the resolver's candidates is this study."
+193,193-constantine-2009,pdf,https://files.eric.ed.gov/fulltext/ED504313.pdf,eric-title,1402691,aa427341a5fd7c3c,142,1,2026-09-18 14:03,matched ERIC ED504313 by title
+195,195-cook-1999,manual-pdf,hand-supplied,manual,2980914,d99b0af32b6c62c5,55,1,2026-09-18 14:34,hand-supplied file
+197,197-cordray-2012,pdf,https://files.eric.ed.gov/fulltext/ED537982.pdf,eric,2355509,6621e2446425103f,210,1,2026-09-18 13:59,
+202,202-courtney-2008,pdf,https://files.eric.ed.gov/fulltext/ED502639.pdf,eric-title,1178486,90a700449d2790d9,129,1,2026-09-18 13:58,matched ERIC ED502639 by title
+203,203-cowen-2008,abstract-only,https://doi.org/10.1111/j.1541-0072.2008.00268.x,crossref,875,,,0,2026-09-18 13:58,no open full text found
+206,206-craig-2013,manual-pdf,hand-supplied,manual,492825,fe131b6e26edeb80,41,1,2026-09-18 14:34,hand-supplied file
+212,212-cullen-2006,pdf,https://www.nber.org/system/files/working_papers/w10113/w10113.pdf,nber-twin,390304,de55a21616b98cf9,53,1,2026-09-18 14:03,NBER version 10.3386/w10113 of the accepted work
+213,213-culliney-2019,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/Integrating_English.pdf,direct,1828359,8df9a01887f0d520,91,1,2026-09-18 13:57,
+219,219-decesare-2017,pdf,https://files.eric.ed.gov/fulltext/ED573097.pdf,eric,534438,51f020db6a3d8261,45,1,2026-09-18 13:59,
+225,225-denverpublicschools-2016,unresolved,,,,,,0,2026-09-18 22:55,"Work identified but no copy or identifier found. BEE secondary reading (Baye, Lake, Inns, Slavin 2019) cites Denver Public Schools (2016), Final report to the U.S. Department of Education on Collaborative Strategic Reading, Denver, CO: Author; its table gives 16 middle schools, 5,660 students (3,101 E, 2,559 C), grades 6-8, GMRT +0.03, matching n_max and grades. The i3 grant is U396B100143 (DPS with CU Boulder). Not in ERIC, Crossref, WWC, Evidence for ESSA, or on the DPS site; all five candidates were unrelated."
+226,226-deussen-2012,pdf,https://files.eric.ed.gov/fulltext/ED565842.pdf,eric,3211582,ce43daf1e6713561,94,1,2026-09-18 13:54,
+237,237-dobbie-2011,abstract-only,https://doi.org/10.1257/app.3.3.158,crossref,741,,,0,2026-09-18 13:58,no open full text found
+238,238-dolfin-2019,pdf,https://files.eric.ed.gov/fulltext/ED604655.pdf,eric,3867785,d473f1bcc7a905b1,318,1,2026-09-18 13:59,
+239,239-dominguez-2006,pdf,https://files.eric.ed.gov/fulltext/ED510045.pdf,eric,235237,87b9c5249ccbb2a7,13,1,2026-09-18 13:54,
+249,249-watts-2018,abstract-only,https://ies.ed.gov/use-work/awards/math-all-assessing-efficacy-professional-development-program-elementary-school-teachers?ID=1516,landing-page,1222,,,0,2026-09-18 13:56,no open full text found
+250,250-duncan-2018,manual-pdf,hand-supplied,manual,1242073,edb6d2c65490352e,44,1,2026-09-18 14:37,hand-supplied file
+252,252-campuzano-2007,pdf,https://files.eric.ed.gov/fulltext/ED496015.pdf,eric,789838,4692a72db9d9cde8,140,1,2026-09-18 13:56,
+253,253-dynarski-2007,pdf,https://files.eric.ed.gov/fulltext/ED496015.pdf,eric,789838,4692a72db9d9cde8,140,1,2026-09-18 13:57,
+254,254-dynarski-2007,pdf,https://files.eric.ed.gov/fulltext/ED496015.pdf,eric,789838,4692a72db9d9cde8,140,1,2026-09-18 13:56,
+264,264-eddy-2011,pdf,http://donaldrbear.com/wp-content/uploads/2019/10/wtw-final-report-revised.pdf,direct,1738396,9368f383d9affb59,74,1,2026-09-18 13:56,
+265,265-eddy-2010,pdf,https://ies.ed.gov/ncee/wwc/docs/interventionreports/wwc_pearson_112117.pdf,direct,777381,31a5ef1d7ad866b6,24,1,2026-09-18 22:54,
+271,271-faddis-2011,pdf,https://files.eric.ed.gov/fulltext/ED600852.pdf,eric,497649,1651968ef03287f5,152,1,2026-09-18 13:56,
+273,273-fairlie-2013,pdf,https://files.eric.ed.gov/fulltext/ED539512.pdf,eric-title,284348,b516859ff3ae89ca,43,1,2026-09-18 13:58,matched ERIC ED539512 by title
+281,281-festas-2015,abstract-only,https://doi.org/10.1016/j.cedpsych.2014.05.004,hand-supplied,1421,,,0,2026-09-18 15:44,no open full text found; abstract supplied by hand
+284,284-fitzgerald-2008,abstract-only,https://doi.org/10.3102/0162373711399148,crossref,894,,,0,2026-09-18 22:54,no open full text found
+290,290-fogarty-2014,abstract-only,https://doi.org/10.1007/s10648-014-9270-6,eric EJ1040794,1594,,,0,2026-09-18 14:03,no open full text found
+297,297-fryer-2015,pdf,https://www.nber.org/system/files/working_papers/w18237/w18237.pdf,direct,445829,588bab585dfc7d4f,36,1,2026-09-18 22:54,
+298,298-fryer-2011,pdf,https://www.nber.org/system/files/working_papers/w15898/w15898.pdf,unpaywall,1716148,f5ee5ea6aed138f7,91,1,2026-09-18 13:58,
+300,300-fryer-2013,pdf,https://files.eric.ed.gov/fulltext/ED544193.pdf,eric-title,110765,5a7eaacf5ed03ec5,8,1,2026-09-18 13:58,matched ERIC ED544193 by title
+301,301-fryer-2014,abstract-only,https://doi.org/10.1093/qje/qju011,crossref,962,,,0,2026-09-18 13:58,no open full text found
+302,302-fryer-2012,pdf,https://www.nber.org/system/files/working_papers/w18237/w18237.pdf,nber,445829,588bab585dfc7d4f,36,1,2026-09-18 13:59,
+322,322-fuchs-2013,abstract-only,https://doi.org/10.1037/a0032446,hand-supplied,1426,,,0,2026-09-18 15:45,no open full text found; abstract supplied by hand
+323,323-fuchs-2013,abstract-only,https://doi.org/10.1037/a0032446,hand-supplied,1426,,,0,2026-09-18 15:45,no open full text found; abstract supplied by hand
+339,339-gallagher-2017,abstract-only,https://doi.org/10.1080/19345747.2017.1300361,hand-supplied,1181,,,0,2026-09-18 15:47,no open full text found; abstract supplied by hand
+340,340-gallagher-2015,pdf,https://files.eric.ed.gov/fulltext/ED565472.pdf,eric,3167572,36ac85c8004ed596,88,1,2026-09-18 14:00,
+341,341-gallagher-2015,manual-pdf,hand-supplied,manual,254481,5f4b4433ae77556f,4,1,2026-09-18 15:47,hand-supplied file
+347,347-gatti-2008,pdf,https://ies.ed.gov/ncee/wwc/Docs/InterventionReports/wwc_investigations_021213.pdf,direct,392508,608771ee3ba3c1a3,20,1,2026-09-18 22:54,
+357,357-glassman-1989,pdf,https://files.eric.ed.gov/fulltext/ED294926.pdf,eric,568660,5bfa5e2d6d4dda0b,63,1,2026-09-18 13:58,
+359,359-glazerman-2006,abstract-only,https://doi.org/10.1002/pam.20157,crossref,966,,,0,2026-09-18 13:58,no open full text found
+360,360-glazerman-2009,pdf,https://files.eric.ed.gov/fulltext/ED507502.pdf,eric,929577,c9f60e72e5a44449,71,1,2026-09-18 22:54,
+361,361-glazerman-2013,pdf,https://files.eric.ed.gov/fulltext/ED544269.pdf,eric,2658666,93da63b30951f1e9,243,1,2026-09-18 22:54,
+362,362-glazerman-2012,pdf,https://files.eric.ed.gov/fulltext/ED530098.pdf,eric,1006428,20112e7863e6f4fb,106,1,2026-09-18 14:00,
+363,363-glazerman-2006,abstract-only,https://doi.org/10.1002/pam.20157,crossref,966,,,0,2026-09-18 14:00,no open full text found
+364,364-glazerman-2013,pdf,https://files.eric.ed.gov/fulltext/ED544268.pdf,eric,473015,4bac1cd550d43002,25,1,2026-09-18 14:00,
+365,365-gleason-2010,abstract-only,,semanticscholar,354,,,0,2026-09-18 14:04,no open full text found
+373,373-gorard-2016,pdf,https://files.eric.ed.gov/fulltext/ED581107.pdf,eric,4285468,6c11a0daba9071b5,90,1,2026-09-18 13:57,
+374,374-gorard-2014,pdf,https://files.eric.ed.gov/fulltext/ED581128.pdf,eric,641423,5dd097b0e4491862,35,1,2026-09-18 13:57,
+375,375-gorard-2015,pdf,https://files.eric.ed.gov/fulltext/ED581147.pdf,eric,731640,d945a2ea70f6862d,45,1,2026-09-18 13:57,
+376,376-gorard-2017,pdf,https://files.eric.ed.gov/fulltext/ED581159.pdf,eric,3355563,c958e7c01eb23bc0,77,1,2026-09-18 13:57,
+381,381-greenwood-1989,abstract-only,https://doi.org/10.1037/0022-0663.81.3.371,eric EJ399801,370,,,0,2026-09-18 14:04,no open full text found
+386,386-kim-2016,pdf,https://www.nber.org/system/files/working_papers/w20918/w20918.pdf,direct,739729,7b5aa4633a89e41d,49,1,2026-09-18 22:55,
+404,404-heppen-2012,pdf,https://files.eric.ed.gov/fulltext/ED527394.pdf,eric,2638978,76a64b744df8e497,185,1,2026-09-18 14:00,
+405,405-herrera-2013,pdf,https://wallacefoundation.org/sites/default/files/2024-10/testing-higher-achievements-long-term-impact-on-academic-outcomes-and-high-school-choice.doi_.10.59656%252FYD-G0463.001.pdf,unpaywall,300716,590d96440ab9cfd8,23,1,2026-09-18 14:00,
+406,406-hill-2016,pdf,https://files.eric.ed.gov/fulltext/ED581879.pdf,eric,577931,b473eb77d0621403,28,1,2026-09-18 14:00,
+411,411-hodgen-2019,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/Catch_Up_Numeracy.pdf,direct,1714738,4252e20c30238b5a,95,1,2026-09-18 14:12,
+414,414-horner-2018,pdf,https://files.eric.ed.gov/fulltext/EJ1185345.pdf,eric-title,352584,26c89729f786b34e,13,1,2026-09-18 14:00,matched ERIC EJ1185345 by title
+417,417-hoxby-2009,pdf,https://www.nber.org/system/files/working_papers/w14852/w14852.pdf,nber,834524,3bb04d572aca41de,64,1,2026-09-18 13:58,
+422,422-humphrey-2020,manual-pdf,hand-supplied,manual,2862453,ac37311a47862e3d,140,1,2026-09-18 15:49,hand-supplied file
+425,425-husain-2016,pdf,https://files.eric.ed.gov/fulltext/ED581143.pdf,eric,970087,bd5c76dfaf36d365,62,1,2026-09-18 13:58,
+431,431-isenberg-2009,pdf,https://files.eric.ed.gov/fulltext/ED511788.pdf,eric,2889047,13a86c9189a43e13,233,1,2026-09-18 13:58,
+432,432-jaciw-2016,pdf,https://files.eric.ed.gov/fulltext/ED562089.pdf,direct,557030,a360aa20ca70a4b6,9,1,2026-09-18 13:56,
+435,435-jacob-2015,pdf,https://static1.squarespace.com/static/583b86882e69cfc61c6c26dc/t/595a36d24402439a88194a47/1499084499015/RP_JREE.pdf,semanticscholar,684321,ab4fedce06ce8363,27,1,2026-09-18 13:57,
+438,438-jacob-2015,pdf,https://files.eric.ed.gov/fulltext/ED558508.pdf,eric,3466880,e0c465f3a1ed5005,160,1,2026-09-18 14:00,
+441,441-james-burdumy-2005,pdf,https://files.eric.ed.gov/fulltext/ED485162.pdf,eric,493688,3a60acf41292dbce,130,1,2026-09-18 14:05,
+443,443-jay-2017,pdf,http://shura.shu.ac.uk/17014/1/Dialogic_Teaching_Evaluation_Report.pdf,direct,2451366,1fb4d2021d9f2702,78,1,2026-09-18 14:12,
+447,447-jerrim-2016,abstract-only,https://doi.org/10.3368/jhr.53.4.0516.7952r,landing-page,642,,,0,2026-09-18 14:03,no open full text found
+464,464-jordan-2009,unresolved,,,,,,0,2026-09-18 22:55,"Work identified but no copy or identifier found. BEE elementary math cites Jordan, J. (2009), Cincinnati, OH: University of Cincinnati Evaluation Services Center; its table gives 139 teachers, 1,897 students (844 E, 1,053 C), grades 2 and 4, TerraNova, grade 2 +0.08 and grade 4 -0.04, an exact match to n_max 1,897 and Kraft's ES. Not in ERIC, Crossref, WWC, or on the web; all five candidates were other Jordans."
+470,470-karper-1993,manual-pdf,hand-supplied,manual,107287,6e85128cf4d76dff,6,1,2026-09-18 15:51,hand-supplied file
+473,473-kemple-2000,pdf,https://files.eric.ed.gov/fulltext/ED441075.pdf,eric,2429736,00fcbe3d96fc427d,175,1,2026-09-18 13:58,
+476,476-kim-2010,abstract-only,https://doi.org/10.1037/a0017270,semanticscholar,1050,,,0,2026-09-18 13:57,no open full text found
+477,477-kim-2008,abstract-only,https://doi.org/10.1080/10888430701746849,semanticscholar,1016,,,0,2026-09-18 13:57,no open full text found
+479,479-kim-2006,abstract-only,https://doi.org/10.3102/01623737028004335,crossref,988,,,0,2026-09-18 13:57,no open full text found
+481,481-kim-2008,abstract-only,https://doi.org/10.1080/10888430701746849,semanticscholar,1016,,,0,2026-09-18 13:58,no open full text found
+482,482-kim-2010,abstract-only,https://doi.org/10.1007/s11145-009-9198-2,semanticscholar,1681,,,0,2026-09-18 13:57,no open full text found
+483,483-kim-2011,abstract-only,https://doi.org/10.3102/0162373711399148,crossref,894,,,0,2026-09-18 13:57,no open full text found
+484,484-kim-2011,pdf,https://files.eric.ed.gov/fulltext/ED534781.pdf,eric-title,155231,58ac487e953d17c7,7,1,2026-09-18 13:59,matched ERIC ED534781 by title
+485,485-olson-2012,abstract-only,https://doi.org/10.3102/0002831212439434,crossref,850,,,0,2026-09-18 13:57,no open full text found
+486,486-kim-2016,abstract-only,https://doi.org/10.1002/rrq.171,crossref,1629,,,0,2026-09-18 13:57,no open full text found
+487,487-kim-2006,abstract-only,https://doi.org/10.3102/01623737028004335,crossref,988,,,0,2026-09-18 13:58,no open full text found
+488,488-kim-2007,abstract-only,https://doi.org/10.1037/0022-0663.99.3.505,eric EJ772024,1198,,,0,2026-09-18 22:54,no open full text found
+490,490-kim-2018,abstract-only,https://doi.org/10.1080/13670050.2018.1535574,semanticscholar,1039,,,0,2026-09-18 14:00,no open full text found
+491,491-kim-2011,abstract-only,https://eric.ed.gov/?id=EJ927617,eric,939,,,0,2026-09-18 14:00,no open full text found
+493,493-kim-2011,pdf,https://files.eric.ed.gov/fulltext/ED534781.pdf,eric-title,155231,58ac487e953d17c7,7,1,2026-09-18 14:00,matched ERIC ED534781 by title
+494,494-kim-2010,abstract-only,https://eric.ed.gov/?id=EJ898468,eric,1681,,,0,2026-09-18 14:00,no open full text found
+505,505-konstantopoulos-2013,abstract-only,https://doi.org/10.3102/0162373713498930,crossref,663,,,0,2026-09-18 13:59,no open full text found
+506,506-konstantopoulos-2016,abstract-only,https://doi.org/10.1080/19345747.2015.1116031,eric EJ1115334,767,,,0,2026-09-18 22:54,no open full text found
+507,507-kozlow-2004,pdf,https://educationnorthwest.org/sites/default/files/resources/Student_Achievement_in_Writing.pdf,direct,566839,9bcfd207982235f9,80,1,2026-09-18 13:57,
+521,521-lin-2016,abstract-only,https://doi.org/10.1080/00933104.2016.1203852,hand-supplied,1435,,,0,2026-09-18 15:52,no open full text found; abstract supplied by hand
+526,526-lenard-2019,failed,https://www.semanticscholar.org/paper/ae0f69d3032ff5325e289af1fdd5b82faf466f29,,,,,0,2026-09-18 22:54,no open copy and no abstract found
+534,534-little-2014,abstract-only,https://doi.org/10.1177/1932202x14549250,crossref,1148,,,0,2026-09-18 13:57,no open full text found
+536,536-lloyd-2015,pdf,https://dera.ioe.ac.uk/id/eprint/31487/1/Paired_Reading.pdf,direct,1826977,5495a01664a95fb5,129,1,2026-09-18 14:12,
+537,537-lloyd-2015,manual-pdf,hand-supplied,manual,1837740,eb152eed8beefa8e,91,1,2026-09-18 15:56,hand-supplied file
+551,551-mie-2015,pdf,https://files.eric.ed.gov/fulltext/ED581278.pdf,eric,755097,3707d85db627d87f,46,1,2026-09-18 13:57,
+552,552-madden-2011,unresolved,,,,,,0,2026-09-18 22:55,"No work fits all constraints. The only 2011 publication by Madden, Slavin, Calderon, Chamberlain, and Hennessy is the transitional bilingual education RCT (EEPA 2011, EJ918010; CRRE 2010 report ED539723, Slavin first), but the BEE ELL review gives it 247 students at kindergarten entry and 115 at grade 4 with negative English reading effects, which cannot produce n_max 922 in grades 3-4 with ES 0.17, 0.08, 0.12; no Madden-first 2011 entry appears in the BEE struggling readers (2011, 2019, 2021), elementary reading (2009), ELL (2012), technology-reading (2012), or secondary reading (2019) reference lists; ERIC, Crossref, and OpenAlex searches on the author set return only the TBE study; resolver candidates are the 2011 struggling readers review, a first-grade tutoring study, and a grade 4-5 writing study, none of which fit."
+564,564-mastrorilli-2014,pdf,https://escholarship.org/content/qt6c81239d/qt6c81239d.pdf?t=pkq4gf,unpaywall,863881,aaf6ad6837162c18,44,1,2026-09-18 13:59,
+574,574-mayer-2002,manual-pdf,hand-supplied,manual,369716,2dab49a657ee7e9e,113,1,2026-09-18 15:55,hand-supplied file
+576,576-maynard-1979,abstract-only,https://doi.org/10.2307/145317,eric EJ219276,341,,,0,2026-09-18 14:04,no open full text found
+588,588-meisch-2011,pdf,https://files.eric.ed.gov/fulltext/ED601086.pdf,eric,3148086,8fdfcec1c5768a22,228,1,2026-09-18 14:00,
+592,592-menzies-2016,pdf,https://files.eric.ed.gov/fulltext/ED581257.pdf,eric,3213243,ba3a116f4c0c68ff,103,1,2026-09-18 13:58,
+595,595-mertes-2013,abstract-only,https://eric.ed.gov/?id=ED556586,eric,1675,,,0,2026-09-18 13:58,no open full text found
+599,599-meyers-2015,abstract-only,https://doi.org/10.3102/0162373716638446,crossref,894,,,0,2026-09-18 13:59,no open full text found
+600,600-meyers-2016,abstract-only,https://doi.org/10.3102/0162373716638446,crossref,894,,,0,2026-09-18 14:00,no open full text found
+601,601-meyers-2015,abstract-only,https://doi.org/10.3102/0162373716638446,crossref,894,,,0,2026-09-18 14:00,no open full text found
+605,605-miller-2007,abstract-only,https://eric.ed.gov/?id=ED539939,eric,1081,,,0,2026-09-18 13:59,no open full text found
+607,607-miller-2016,pdf,https://files.eric.ed.gov/fulltext/ED581121.pdf,eric,840330,86d67a27b3cd7c65,85,1,2026-09-18 13:58,
+609,609-miller-2016,pdf,https://files.eric.ed.gov/fulltext/ED581121.pdf,eric,840330,86d67a27b3cd7c65,85,1,2026-09-18 14:00,
+619,619-usdepartmentofeducation-2015,unresolved,,,,,,0,2026-09-18 22:55,"Kraft cites an ED-524B grant performance report with no author, no public identifier, and no copy in ERIC, Crossref, or web search. CSR Colorado is the Collaborative Strategic Reading i3 validation grant to Denver Public Schools (U396B100143; project narrative at ed.gov/media/document/u396b100143pdf-103950.pdf). The related published evaluation, Boardman et al. 2015, 10.1007/s11145-015-9570-3, is a different document and its sample was not checked against n_max 6146, so it is not accepted."
+622,622-loera-2013,pdf,https://files.eric.ed.gov/fulltext/ED560945.pdf,eric,667946,a12411ed98dd6ac5,45,1,2026-09-18 13:59,
+623,623-nakamoto-2014,pdf,https://files.eric.ed.gov/fulltext/ED560945.pdf,eric,667946,a12411ed98dd6ac5,45,1,2026-09-18 13:59,
+624,624-nakamoto-2015,pdf,https://files.eric.ed.gov/fulltext/ED560945.pdf,eric,667946,a12411ed98dd6ac5,45,1,2026-09-18 13:59,
+625,625-nakamoto-2015,pdf,https://files.eric.ed.gov/fulltext/ED560945.pdf,eric,667946,a12411ed98dd6ac5,45,1,2026-09-18 14:00,
+632,632-dumont-2012,pdf,https://files.eric.ed.gov/fulltext/ED529587.pdf,eric,2601813,5e77bfefcc615702,314,1,2026-09-18 13:57,
+633,633-dumont-2012,pdf,https://files.eric.ed.gov/fulltext/ED529587.pdf,eric,2601813,5e77bfefcc615702,314,1,2026-09-18 13:59,
+634,634-dumont-2012,pdf,https://files.eric.ed.gov/fulltext/ED529587.pdf,eric,2601813,5e77bfefcc615702,314,1,2026-09-18 22:54,
+642,642-nunnery-2006,abstract-only,https://doi.org/10.1207/s15327671espr1101_1,eric EJ733705,1133,,,0,2026-09-18 14:04,no open full text found
+643,643-nussbaum-2010,abstract-only,https://eric.ed.gov/?id=ED517276,eric,2594,,,0,2026-09-18 13:59,no open full text found
+650,650-olson-2020,pdf,https://escholarship.org/content/qt4b14h6j4/qt4b14h6j4.pdf?t=rhhk5l,unpaywall,2604984,cbe534c8a463c47c,73,1,2026-09-18 14:00,
+653,653-ohare-2019,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/Reciprocal_Reading.pdf,direct,2688893,9e37778387ca409b,106,1,2026-09-18 14:12,
+658,658-pane-2013,abstract-only,https://doi.org/10.3102/0162373713507480,crossref,927,,,0,2026-09-18 14:00,no open full text found
+661,661-park-2021,pdf,https://files.eric.ed.gov/fulltext/ED611837.pdf,eric,1177352,1359175378b2d67a,33,1,2026-09-18 14:00,
+662,662-hamm-2019,abstract-only,https://doi.org/10.1080/19345747.2019.1571653,semanticscholar,989,,,0,2026-09-18 13:57,no open full text found
+665,665-patel-2018,pdf,https://www.sri.com/wp-content/uploads/2021/12/evaluation_of_edconx_final_report_3-22-18_final.pdf,open-host,805394,14d5890fd619d47d,63,1,2026-09-18 14:00,
+694,694-prast-2018,abstract-only,https://doi.org/10.1016/j.learninstruc.2018.01.009,semanticscholar,993,,,0,2026-09-18 13:57,no open full text found
+698,698-programevaluationgroupcollegeofeducationuniversityofgeorgia-2015,pdf,https://www.ed.gov/media/document/investing-innovation-i3-grantee-results-survey-forsyth-county-schools-engageme-please-2010-2015-6567.pdf,direct,337129,bd187ffd0cfcd9aa,8,1,2026-09-18 14:00,
+706,706-quint-2015,pdf,https://files.eric.ed.gov/fulltext/ED579089.pdf,eric,2624136,3ebc0c851b9a4590,273,1,2026-09-18 13:59,
+712,712-ragosta-1983,abstract-only,https://eric.ed.gov/?id=EJ290190,eric,424,,,0,2026-09-18 13:57,no open full text found
+717,717-randel-2011,abstract-only,https://doi.org/10.1080/00220671.2014.992581,eric EJ1105445,1122,,,0,2026-09-18 14:04,no open full text found
+719,719-randel-2011,pdf,https://files.eric.ed.gov/fulltext/ED517969.pdf,eric,1183137,486024d48aa091b8,153,1,2026-09-18 13:59,
+724,724-rappaport-2017,pdf,https://files.eric.ed.gov/fulltext/ED575643.pdf,eric,446522,4ff53053bcc42399,39,1,2026-09-18 14:00,
+728,728-reis-2008,abstract-only,https://doi.org/10.3200/joer.101.5.299-315,eric EJ794313,915,,,0,2026-09-18 14:04,no open full text found
+729,729-reis-2008,abstract-only,https://doi.org/10.3200/joer.101.5.299-315,eric EJ794313,915,,,0,2026-09-18 14:03,no open full text found
+733,733-resendez-2005,pdf,https://ies.ed.gov/ncee/wwc/Docs/InterventionReports/wwc_sfaw_052913.pdf,direct,181747,906d008f403a77f1,18,1,2026-09-18 22:54,
+734,734-resendez-2009,unresolved,,,,,,0,2026-09-18 22:55,"Identified but no persistent identifier or URL found: Resendez, Azin, and Strobel 2009, PRES Associates (Jackson, WY); BEE elementary math table lists Resendez et al. (2009) with 44 teachers, 659 students in grades 2-3 and 4-5, MAT and GRADE ES -0.13, +0.06, -0.06, -0.04, exact match to n_max 659 and the four effect sizes; the WWC enVisionMATH report cites it as an additional source for Resendez and Azin 2008."
+735,735-resendez-2009,unresolved,,,,,,0,2026-09-18 22:55,"Same report as row 734 (Resendez, Azin, and Strobel 2009): the two-year enVisionMATH RCT's final sample was 708 students (330 treatment, 378 control) per the WWC review, matching n_max 708 and grades 2-5; Kraft therefore appears to have entered this report twice, once with the BEE analytic sample (659) and once with the full two-year sample; the ES 0.35 does not match any BEE table value and should be checked; no DOI, ERIC record, or URL found."
+736,736-resendez-2005,unresolved,,,,,,0,2026-09-18 22:55,"Identified but no identifier or URL found: PRES Associates 2005 evaluation of Prentice Hall Algebra 1, cited in the BEE middle and high school math review as both Resendez and Azin (2005a) and Resendez and Sridharan (2005a), which explains Kraft's merged author string; table lists 731 students taught by 24 teachers at 7 schools, grades 8-9 with some 10-12, ETS Algebra +0.05, TerraNova Algebra -0.04, unstructured-response test -0.22, exact match to n_max 731 and the effect sizes."
+740,740-riccio-2010,pdf,https://www.mdrc.org/sites/default/files/FamRewards2010ONYC%20FULL%20Report%20REd%202-18-16.pdf,open-host,3889454,3297c6469fc7f1a4,398,1,2026-09-18 13:59,
+741,741-rienzo-2016,pdf,https://files.eric.ed.gov/fulltext/ED581274.pdf,eric,783117,32dd973f18753f38,56,1,2026-09-18 13:58,
+742,742-rimm-kaufman-2014,pdf,https://files.eric.ed.gov/fulltext/ED555293.pdf,eric-title,73607,1672b6b444fe7af4,4,1,2026-09-18 13:57,matched ERIC ED555293 by title
+744,744-ritter-2000,abstract-only,https://www.proquest.com/openview/a21ec816a85293d8edeade98919b6aca/1,hand-supplied,2337,,,0,2026-09-18 15:59,no open full text found; abstract supplied by hand
+750,750-rockoff-2012,abstract-only,https://doi.org/10.1257/aer.102.7.3184,crossref,753,,,0,2026-09-18 13:59,no open full text found
+751,751-rockoff-2015,pdf,https://www.classsizematters.org/wp-content/uploads/2019/02/Rockoff-evaluation-of-the-school-of-one-Sept.-2015.pdf,direct,246149,6f3a43eceb80eb8c,40,1,2026-09-18 13:59,
+755,755-roschelle-2010,abstract-only,https://doi.org/10.3102/0002831210367426,crossref,939,,,0,2026-09-18 14:00,no open full text found
+760,760-rouse-1998,pdf,https://www.nber.org/system/files/working_papers/w5964/w5964.pdf,semanticscholar,2673788,e41ffbb00b6eb9ee,64,0,2026-09-18 13:59,
+761,761-roy-2019,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/Catch_Up_Literacy.pdf,direct,1807485,0237660d03207b88,87,1,2026-09-18 14:12,
+762,762-roy-2019,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/Stop_and_Think.pdf,direct,2259553,d88ccda1331611c8,105,1,2026-09-18 13:58,
+765,765-rudd-2017,pdf,https://files.eric.ed.gov/fulltext/ED581151.pdf,eric,529833,2546c6335ff8dbdb,56,1,2026-09-18 13:58,
+775,775-sallis-1999,manual-pdf,hand-supplied,manual,1188021,6034c0c5ebbb281b,8,1,2026-09-18 16:00,hand-supplied file
+776,776-sanbonmatsu-2006,pdf,https://www.nber.org/system/files/working_papers/w11909/w11909.pdf,nber,278766,6113bd0c7f60deaa,52,1,2026-09-18 13:59,
+778,778-sato-2010,pdf,https://files.eric.ed.gov/fulltext/ED510556.pdf,eric,2105869,c21344652ce3551c,204,1,2026-09-18 14:00,
+786,786-schenckjr-2011,pdf,https://peer.asee.org/20867.pdf,semanticscholar,307689,c39070c804fa9b9e,21,1,2026-09-18 13:57,
+787,787-rethwisch-2012,pdf,https://peer.asee.org/20867.pdf,unpaywall,307689,c39070c804fa9b9e,21,1,2026-09-18 13:57,
+788,788-rethwisch-2012,pdf,https://files.eric.ed.gov/fulltext/ED600907.pdf,eric,2488609,9eafffe8a45f764e,86,1,2026-09-18 14:00,
+789,789-schenke-2014,abstract-only,https://doi.org/10.1016/j.compedu.2014.03.019,hand-supplied,1339,,,0,2026-09-18 16:03,no open full text found; abstract supplied by hand
+790,790-schiller-2012,pdf,https://files.eric.ed.gov/fulltext/ED600883.pdf,eric,401346,d4af69be06bb7d6a,51,1,2026-09-18 13:57,
+794,794-schoen-2018,pdf,https://repository.lib.fsu.edu/islandora/object/fsu%3A684415/datastream/PDF/view,landing-page,1806495,bae223503304fe7b,19,1,2026-09-18 14:04,
+800,800-seeetal-2018,abstract-only,https://doi.org/10.1080/13803611.2019.1686031,semanticscholar,956,,,0,2026-09-18 13:57,no open full text found
+801,801-see-2018,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/Maths_Counts.pdf,direct,1984496,6ec197fff340b45a,88,1,2026-09-18 13:58,
+802,802-serveminnesota-2017,failed,https://minnesotamathcorps.org/sites/default/files/Math%20Corps%20White%20Paper.pdf,,,,,0,2026-09-18 14:03,no open copy and no abstract found
+806,806-shanoski-1986,unresolved,,,,,,0,2026-09-18 22:55,"Identified but no identifier or URL found: Shanoski 1986, unpublished doctoral dissertation, Indiana University of Pennsylvania, cited in the BEE technology-math review; Slavin and Lake's synthesis describes it as a rural Pennsylvania courseware study in grades 2-6 with 4 schools, 32 classes, and 832 students, exact match to n_max 832; not in ProQuest search results, Crossref, or ERIC."
+815,815-simmons-2014,abstract-only,https://doi.org/10.1080/19345747.2013.836766,eric EJ1041353,1396,,,0,2026-09-18 14:03,no open full text found
+816,816-simon-2011,pdf,https://files.eric.ed.gov/fulltext/ED600938.pdf,eric,6898264,d17120552b6b6a71,970,1,2026-09-18 13:57,
+822,822-sivin-kachala-2012,unresolved,,,,,,0,2026-09-18 22:55,"Identified but no identifier or URL found: Sivin-Kachala and Bialo 2012, Interactive Educational Systems Design (New York); BEE secondary reading table lists 276 students (137E, 139C) in grades 6-8 in one urban New Jersey middle school with ES +0.15, +0.18, +0.20, +0.22, exact match to n_max 276 and four of the six effect sizes; not in ERIC, Crossref, or on Scholastic's site."
+825,825-slavin-1984,pdf,https://files.eric.ed.gov/fulltext/ED535811.pdf,eric-title,220663,f824525572638974,8,1,2026-09-18 13:57,matched ERIC ED535811 by title
+826,826-slavin-1985,abstract-only,https://doi.org/10.3102/00028312022003351,crossref,898,,,0,2026-09-18 13:59,no open full text found
+854,854-springer-2010,pdf,https://files.eric.ed.gov/fulltext/ED624372.pdf,eric-title,374716,b9764d1ae5859b10,48,1,2026-09-18 13:59,matched ERIC ED624372 by title
+855,855-springer-2012,pdf,https://files.eric.ed.gov/fulltext/ED518379.pdf,eric-title,125272,1d92694418279b9a,8,1,2026-09-18 13:59,matched ERIC ED518379 by title
+861,861-steele-2017,pdf,https://files.eric.ed.gov/fulltext/EJ1155308.pdf,eric-title,1016124,42f3102310760f86,25,1,2026-09-18 14:00,matched ERIC EJ1155308 by title
+864,864-stevens-1991,pdf,https://files.eric.ed.gov/fulltext/ED328902.pdf,eric-title,1499758,16b9094b528a5deb,30,1,2026-09-18 14:00,matched ERIC ED328902 by title
+866,866-sun-2017,unresolved,,,,,,0,2026-09-18 22:55,"Identified but no identifier or URL found: Strobel, Resendez, and DuBose 2017, Strobel Consulting (Thayne, WY); BEE elementary math table lists Strobel et al. (2017) with 33 teachers, 495 students (285E, 210C) in grades 1-2 and 4-5, TerraNova ES +0.02, exact match; the study-list surnames (Sun, Strobel, Newby) belong to an unrelated teacher-technology paper and look like a parsing error."
+873,873-suppes-2013,abstract-only,https://doi.org/10.1080/10627197.2013.814516,eric EJ1023953,809,,,0,2026-09-18 14:03,no open full text found
+874,874-suppes-2013,abstract-only,https://doi.org/10.1080/10627197.2013.814516,eric EJ1023953,809,,,0,2026-09-18 14:04,no open full text found
+876,876-sutherland-2019,abstract-only,https://doi.org/10.7249/rr4208,semanticscholar,385,,,0,2026-09-18 13:58,no open full text found
+879,879-swanlund-2012,pdf,https://files.eric.ed.gov/fulltext/ED595200.pdf,eric,1017110,c597e719d805848c,107,1,2026-09-18 14:00,
+888,888-thurston-2016,pdf,https://files.eric.ed.gov/fulltext/ED581531.pdf,eric,984977,c64e84f90b0e6981,73,1,2026-09-18 13:58,
+896,896-torgerson-2018,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/IPEELL_1.pdf,direct,3165022,ac1ce5db0873e8d6,124,1,2026-09-18 13:58,
+898,898-torgerson-2018,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/IPEELL_1.pdf,direct,3165022,ac1ce5db0873e8d6,124,1,2026-09-18 22:54,
+899,899-torgerson-2018,pdf,https://d2tic4wvo1iusb.cloudfront.net/production/documents/projects/IPEELL_1.pdf,direct,3165022,ac1ce5db0873e8d6,124,1,2026-09-18 13:58,
+922,922-turner-1985,pdf,https://files.eric.ed.gov/fulltext/ED527642.pdf,direct,2092424,88d87bef6c9465fb,113,1,2026-09-18 13:59,
+923,923-tuttle-2013,abstract-only,https://doi.org/10.1162/edfp_a_00119,crossref,1083,,,0,2026-09-18 13:59,no open full text found
+924,924-tuttle-2015,pdf,https://files.eric.ed.gov/fulltext/ED560079.pdf,eric,3391568,768646cfd5014384,222,1,2026-09-18 13:59,
+926,926-tuttle-2015,pdf,https://files.eric.ed.gov/fulltext/ED560079.pdf,eric,3391568,768646cfd5014384,222,1,2026-09-18 14:00,
+938,938-vadasy-2015,abstract-only,https://doi.org/10.1080/19345747.2014.933495,eric EJ1068559,1211,,,0,2026-09-18 14:04,no open full text found
+942,942-sullivan-2015,pdf,https://files.eric.ed.gov/fulltext/ED567630.pdf,eric,887449,97faae2ae6c73ec1,12,1,2026-09-18 13:57,
+945,945-vandusen-1994,abstract-only,https://doi.org/10.1016/0883-0355(94)90020-5,hand-supplied,1202,,,0,2026-09-18 16:06,no open full text found; abstract supplied by hand
+947,947-vaughan-2006,unresolved,,,,,,0,2026-09-18 22:55,"Citation identified as Vaughan, J., Serido, J., and Wilhelm, M. (2006), The effects of My Reading Coach on reading achievement of elementary education students, Phoenix, AZ: Arizona Board of Regents (unpublished report cited in Slavin et al. 2009 BEE synthesis, ERIC ED527637). No DOI, ERIC record, or hosted copy found (WWC 2007 intervention report lists no eligible study), so the n_max 284 and grades 2-4 could not be checked against the source. Same study as 1069. Not an EEF report despite the source tag"
+948,948-vaughan-2006,unresolved,,,,,,0,2026-09-18 22:55,"Identified but no identifier or URL found: Vaughan, Serido, and Wilhelm 2006, Arizona Board of Regents (Phoenix); BEE upper elementary reading review table lists a randomized study in 4 schools in 3 states with 284 students (127E, 157C) in grades 2-4, ES +0.24 and +0.22, exact match to n_max 284 and both effect sizes; not in ERIC or Crossref."
+949,949-vaughn-2011,abstract-only,https://doi.org/10.3102/0002831211410305,crossref,1072,,,0,2026-09-18 13:58,no open full text found
+952,952-vaughn-2019,pdf,https://files.eric.ed.gov/fulltext/ED586763.pdf,eric-title,482631,55f4eb0c2759c0e6,49,1,2026-09-18 13:57,matched ERIC ED586763 by title
+953,953-vaughn-2011,abstract-only,https://doi.org/10.3102/0002831211410305,crossref,1072,,,0,2026-09-18 13:57,no open full text found
+954,954-vaughn-2013,abstract-only,https://doi.org/10.1080/19345747.2012.741661,eric EJ998840,1344,,,0,2026-09-18 22:54,no open full text found
+956,956-vaughn-2017,pdf,https://files.eric.ed.gov/fulltext/ED652174.pdf,eric,395357,1a4e138206642009,14,1,2026-09-18 22:54,
+958,958-vaughn-2019,abstract-only,https://doi.org/10.1177/0022219418775113,crossref,1185,,,0,2026-09-18 14:00,no open full text found
+959,959-vaughn-2016,abstract-only,https://doi.org/10.1080/19345747.2015.1126386,semanticscholar,1236,,,0,2026-09-18 14:00,no open full text found
+960,960-vaughn-2013,pdf,https://files.eric.ed.gov/fulltext/ED544200.pdf,eric-title,110417,fee826316e222cfa,8,1,2026-09-18 14:00,matched ERIC ED544200 by title
+961,961-vaughn-2010,abstract-only,https://eric.ed.gov/?id=EJ893981,eric,983,,,0,2026-09-18 14:00,no open full text found
+970,970-wang-2011,pdf,https://files.eric.ed.gov/fulltext/ED528686.pdf,eric,361437,2007dcb9384db1e1,17,1,2026-09-18 13:57,
+974,974-wanzek-2017,pdf,https://files.eric.ed.gov/fulltext/ED581509.pdf,eric,376441,b20a934cbb8cc8d5,55,1,2026-09-18 22:54,
+985,985-mitchem-2001,abstract-only,https://doi.org/10.2139/ssrn.320253,crossref,1607,,,0,2026-09-18 13:59,no open full text found
+986,986-west-2016,pdf,https://files.eric.ed.gov/fulltext/ED565458.pdf,eric,1919335,deb7c75d996b3bac,81,1,2026-09-18 13:59,
+992,992-wigelsworth-2018,pdf,https://pure.manchester.ac.uk/ws/files/82889819/FRIENDS.pdf,direct,3002438,e9758e683345700a,132,1,2026-09-18 22:54,
+994,994-wiggins-2019,pdf,https://discovery.ucl.ac.uk/id/eprint/10115663/1/RISE_Report_final.pdf,direct,2087056,a2182e9f4bc60f62,118,1,2026-09-18 13:58,
+995,995-wiggins-2017,abstract-only,https://doi.org/10.3368/jhr.53.4.0516.7952r,landing-page,642,,,0,2026-09-18 14:03,no open full text found
+997,997-wijekumar-2012,failed,https://doi.org/10.1007/s11423-012-9263-4,,,,,0,2026-09-18 22:54,no open copy and no abstract found
+999,999-wijekumar-2009,pdf,https://files.eric.ed.gov/fulltext/ED507314.pdf,eric,1987507,7eb411c44cd03785,91,1,2026-09-18 13:57,
+1000,1000-wijekumar-2012,failed,https://doi.org/10.1007/s11423-012-9263-4,,,,,0,2026-09-18 22:54,no open copy and no abstract found
+1010,1010-wolf-2010,abstract-only,https://doi.org/10.1002/pam.21691,crossref,1902,,,0,2026-09-18 13:59,no open full text found
+1017,1017-woodworth-2017,pdf,https://www.sri.com/wp-content/uploads/2021/12/pathway_i3_sri_technical_report_21dec17_final_in_jan.pdf,direct,455447,d421511be91bacaf,31,1,2026-09-18 22:54,
+1028,1028-young-2017,pdf,https://www.sri.com/wp-content/uploads/2021/12/NTC_i3-Validation-eval-brief_062017_final.pdf,open-host,217849,22cf85efb3795e3e,6,1,2026-09-18 14:00,
+1029,1029-ysseldkye-2006,abstract-only,https://doi.org/10.1080/02796015.2007.12087933,eric EJ788347,919,,,0,2026-09-18 14:03,no open full text found
+1030,1030-ysseldyke-2007,abstract-only,https://doi.org/10.1080/02796015.2007.12087933,eric EJ788347,919,,,0,2026-09-18 14:04,no open full text found
+1040,1040-campuzano-2009,pdf,https://files.eric.ed.gov/fulltext/ED504657.pdf,eric,1585591,2d6c9ed28f0e8024,111,1,2026-09-18 13:58,
+1044,1044-dynarski-2008,pdf,https://files.eric.ed.gov/fulltext/ED504657.pdf,eric,1585591,2d6c9ed28f0e8024,111,1,2026-09-18 13:58,
+1046,1046-glazerman-2010,pdf,https://files.eric.ed.gov/fulltext/ED565837.pdf,eric,3849676,0e03013d5578b026,272,1,2026-09-18 22:54,
+1047,1047-gleason-2010,pdf,https://files.eric.ed.gov/fulltext/ED510573.pdf,eric,1805064,345263fc3eab7997,259,1,2026-09-18 13:59,
+1050,1050-hanson-2012,pdf,https://files.eric.ed.gov/fulltext/ED530370.pdf,eric,2117485,200a6d287c87d92c,169,1,2026-09-18 13:59,
+1062,1062-rouse-2004,pdf,https://www.nber.org/system/files/working_papers/w10315/w10315.pdf,nber,367633,58a7c6ca03a6b0ae,50,1,2026-09-18 13:58,
+1069,1069-vaughn-2006,unresolved,,,,,,0,2026-09-18 22:55,"Duplicate of study 947 (Kraft spells the first author vaughn here): Vaughan, Serido, and Wilhelm (2006), My Reading Coach report, Arizona Board of Regents. No persistent identifier or hosted copy found; n_max 284 and grades 2-4 unchecked. Not an EEF report despite the source tag"
+1071,1071-wilkerson-2012,pdf,https://files.eric.ed.gov/fulltext/ED530416.pdf,eric,2252023,2ace46bc1d2760ce,234,1,2026-09-18 13:59,
+1073,1073-wolf-2010,pdf,https://files.eric.ed.gov/fulltext/ED510451.pdf,eric,2172835,0fb0544deab0a75b,214,1,2026-09-18 13:59,

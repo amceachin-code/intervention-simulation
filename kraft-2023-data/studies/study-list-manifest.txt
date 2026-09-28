@@ -1,0 +1,25 @@
+generated: 2026-09-18 11:25:28 PDT
+git: f644941
+studies: 254  effects: 698
+batches:
+  bee-a     35
+  bee-b     35
+  eef       39
+  fryer-a   29
+  fryer-b   28
+  other     25
+  wwc-a     32
+  wwc-b     31
+citation type by source:
+  bee        author-year  70
+  bee;eef    author-year   1
+  bee;fryer  author-year   5
+  bee;i3     author-year   2
+  eef        author-year  27
+  eef        title        12
+  fryer      author-year  57
+  i3         author-year   7
+  ies90      author-year   7
+  ies90      title         3
+  wwc        full         14
+  wwc        title        49

@@ -1,0 +1,11 @@
+# Simulation run manifest
+generated: 2026-09-28 09:22:44 PDT
+script: analysis/01-simulations.R
+git_sha: not-a-repo
+R: R version 4.5.1 (2025-06-13)
+jurisdiction: NT
+api: https://www.nationsreportcard.gov/DataService/GetAdhocData.aspx
+cells_ok: Reading G4, Reading G8, Reading G12, Math G4, Math G8, Math G12
+cells_failed: none
+cache_dir: analysis/.cache (delete to force refresh)
+inputs: public NAEP Data Service API only; NO restricted-use data

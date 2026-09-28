@@ -1,0 +1,5 @@
+Effects of Whole Class, Ability Grouped, and Individualized Instruction on Mathematics Achievement
+https://doi.org/10.3102/00028312022003351
+abstract source: crossref
+
+Achievement and attitudinal effects of three mathematics instruction methods directed in varying degrees toward accommodating diversity in student performance levels were compared in two randomized field experiments. Treatments included an individualized model, Team Assisted Individualization (TAI); an ability grouped model, Ability Grouped Active Teaching (AGAT); a group-paced model, the Missouri Mathematics Program (MMP); and, in Experiment 2 only, untreated Control classes. Analysis of Comprehensive Test of Basic Skills (CTBS) Computations scores adjusted for pretests indicated that in both experiments, TAI and AGAT exceeded MMP. TAI, AGAT, and MMP also exceeded Control. No effects on CTBS Concepts and Applications were found, and there were no treatment by prior achievement interactions on either scale. Effects on Liking of Math Class and Self-Concept in Math generally favored TAI.

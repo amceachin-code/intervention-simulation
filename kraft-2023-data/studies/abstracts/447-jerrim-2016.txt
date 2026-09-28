@@ -1,0 +1,5 @@
+Does Teaching Children How to Play Cognitively Demanding Games Improve Their Educational Attainment?
+https://doi.org/10.3368/jhr.53.4.0516.7952r
+abstract source: landing-page
+
+<p>A number of studies suggest that teaching children how to play chess may have an impact on their educational attainment. Yet the strength of this evidence is undermined by limitations with research design. This paper attempts to overcome these limitations by presenting evidence from a randomized controlled trial (RCT) involving more than 4,000 children in England. In contrast to much of the existing literature, we find no evidence of an effect of chess instruction on children’s mathematics, reading, or science test scores. Our results provide a timely reminder of the need for social scientists to employ robust research designs.</p>

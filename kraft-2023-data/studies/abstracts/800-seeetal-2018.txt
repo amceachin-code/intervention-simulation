@@ -1,0 +1,5 @@
+Evaluation of the impact of Maths Counts delivered by teaching assistants on primary school pupils' attainment in maths
+https://doi.org/10.1080/13803611.2019.1686031
+abstract source: semanticscholar
+
+ABSTRACT This paper presents the findings of a 1-year efficacy trial of Maths Counts (MC), an intensive, individualised programme delivered by trained teaching assistants. The programme was delivered 3 times a week over 10 weeks. The sample included 291 Year 3 to Year 6 pupils (age 7 to 11) from 35 primary schools in England. Pupils were individually randomised within school to receive MC or business as usual. The results suggest that MC is effective for children struggling with basic maths skills (ES = +0.12 for general maths skills and +0.18 for maths attitude), but there is no evidence that it is particularly effective for children eligible for free school meals. Staff and pupil absences, and other social-emotional and behavioural difficulties may have prevented some pupils from getting the most from the programme. In general, the trial shows that trained teaching assistants can be effectively deployed to support children’s maths learning.

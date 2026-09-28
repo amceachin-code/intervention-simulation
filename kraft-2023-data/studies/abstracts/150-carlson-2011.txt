@@ -1,0 +1,5 @@
+A Multistate District-Level Cluster Randomized Trial of the Impact of Data-Driven Reform on Reading and Mathematics Achievement
+https://doi.org/10.3102/0162373711412765
+abstract source: crossref
+
+Analyzing mathematics and reading achievement outcomes from a district-level random assignment study fielded in over 500 schools within 59 school districts and seven states, the authors estimate the 1-year impacts of a data-driven reform initiative implemented by the Johns Hopkins Center for Data-Driven Reform in Education (CDDRE). CDDRE consultants work with districts to implement quarterly student benchmark assessments and provide district and school leaders with extensive training on interpreting and using the data to guide reform. Relative to a control condition, in which districts operated as usual without CDDRE services, the data-driven reform initiative caused statistically significant districtwide improvements in student mathematics achievement. The CDDRE intervention also had a positive effect on reading achievement, but the estimates fell short of conventional levels of statistical significance.

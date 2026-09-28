@@ -1,0 +1,5 @@
+Integration of Technology, Curriculum, and Professional Development for Advancing Middle School Mathematics
+https://doi.org/10.3102/0002831210367426
+abstract source: crossref
+
+The authors present three studies (two randomized controlled experiments and one embedded quasi-experiment) designed to evaluate the impact of replacement units targeting student learning of advanced middle school mathematics. The studies evaluated the SimCalc approach, which integrates an interactive representational technology, paper curriculum, and teacher professional development. Each study addressed both replicability of findings and robustness across Texas settings, with varied teacher characteristics (backgrounds, knowledge, attitudes) and student characteristics (demographics, levels of prior mathematics knowledge). Analyses revealed statistically significant main effects, with student-level effect sizes of .63, .50, and .56. These consistent gains support the conclusion that SimCalc is effective in enabling a wide variety of teachers in a diversity of settings to extend student learning to more advanced mathematics.

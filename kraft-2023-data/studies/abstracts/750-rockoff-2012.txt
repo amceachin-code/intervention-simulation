@@ -1,0 +1,5 @@
+Information and Employee Evaluation: Evidence from a Randomized Intervention in Public Schools
+https://doi.org/10.1257/aer.102.7.3184
+abstract source: crossref
+
+We examine how employers learn about worker productivity in a randomized pilot experiment which provided objective estimates of teacher performance to school principals. We test several hypotheses that support a simple Bayesian learning model with imperfect information. First, the correlation between performance estimates and prior beliefs rises with more precise objective estimates and more precise subjective priors. Second, new information exerts greater influence on posterior beliefs when it is more precise and when priors are less precise. Employer learning affects job separation and productivity in schools, increasing turnover for teachers with low performance estimates and producing small test score improvements. (JEL D83, I21, J24, J45)

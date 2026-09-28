@@ -1,0 +1,5 @@
+A Multisite Cluster Randomized Field Trial of Open Court Reading
+https://doi.org/10.3102/0162373708326283
+abstract source: crossref
+
+In this article, the authors report achievement outcomes of a multisite cluster randomized field trial of Open Court Reading 2005 (OCR), a K–6 literacy curriculum published by SRA/McGraw-Hill. The participants are 49 first-grade through fifth-grade classrooms from predominantly minority and poor contexts across the nation.Blocking by grade level within schools, the trial includes 27 classrooms receiving the OCR curricular materials and professional development and 22 "business-as-usual" control classrooms. Multilevel analyses of classroom-level effects of assignment to OCR reveal statistically significant treatment effects on all three of the Comprehensive Test of Basic Skills, 5th edition, Terra Nova literacy posttests. The OCR effect sizes are d = 0.16 for the Reading Composite, d = 0.19 for Vocabulary, and d = 0.12 for Reading Comprehension. These effects achieved across 27 classrooms and 5 schools demonstrate the potential for replicating improved literacy outcomes through the scale-up of OCR.

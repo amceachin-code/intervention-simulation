@@ -1,0 +1,5 @@
+Evaluation of a Technology-based Intervention for Reading in UK Classroom Settings
+https://doi.org/10.7249/rr4208
+abstract source: semanticscholar
+
+RAND Europe found in a UK randomised controlled trial that classes of 8 and 9 year-old primary school children randomly allocated to receive a technology-based education intervention using Microsoft's Immersive Reader performed as well as business-as-usual classes. Schools did not implement the intervention as expected, and many left the trial, citing difficulties in implementation.

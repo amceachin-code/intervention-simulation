@@ -1,0 +1,5 @@
+Effectiveness of an Individualized Computer-Driven Online Math K-5 Course in Eight California Title I Elementary Schools
+https://doi.org/10.1080/10627197.2013.814516
+abstract source: eric EJ1023953
+
+Stanford University's Education Program for Gifted Youth (EPGY) conducted a randomized-treatment experiment during the 2006-2007 school year to test the efficacy, for Title I students, of the technological and individualized EPGY Kindergarten through Grade 5 Mathematics Course Sequence, modified for the Title I schools. Restricting attention to students who were in the top half of the distribution of correct first-exercise attempts (a measure of work and engagement), we found substantial and statistically significant improvements in the 2007 California Standard Math Tests (CST07) scores compared to those of matched control students. Gains in second grade were larger than those in Grades 3 to 5. Less able students, as measured by their 2006 CST mathematics scores, also had, on average, larger gains.

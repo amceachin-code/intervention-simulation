@@ -1,0 +1,5 @@
+Evaluation of a Math Intervention Program Implemented With Community Support
+https://doi.org/10.1080/19345747.2019.1571653
+abstract source: semanticscholar
+
+Abstract Evidence-based interventions exist for improving multiple fundamental math competencies, but delivering interventions with fidelity and within a data-driven, tiered framework is a practical challenge faced by most schools. The current study evaluated a math intervention program delivered with community-based resources via AmeriCorps. At the beginning of the school year, students in Grades 4–8 (n = 550) were randomly assigned to receive math support via the program or to a waitlist control group. Outcomes were measured with a broad-based assessment of math achievement in the winter. Results from intent-to-treat analyses showed a significant and positive effect (d = .17) for the program that increased slightly under optimal dosage conditions (d = .24). The observed results extend existing literature on math interventions in schools by illustrating the potential for partnerships between community-based organizations and schools to improve outcomes for at-risk students.
