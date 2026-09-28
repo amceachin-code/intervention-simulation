@@ -1,7 +1,7 @@
 # Simulation run manifest
-generated: 2026-09-28 09:22:44 PDT
+generated: 2026-09-28 09:26:14 PDT
 script: analysis/01-simulations.R
-git_sha: not-a-repo
+git_sha: 0f70131
 R: R version 4.5.1 (2025-06-13)
 jurisdiction: NT
 api: https://www.nationsreportcard.gov/DataService/GetAdhocData.aspx

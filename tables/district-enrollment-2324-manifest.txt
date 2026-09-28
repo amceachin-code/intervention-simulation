@@ -1,4 +1,5 @@
-generated: 2026-09-28 09:22:59 PDT
+generated: 2026-09-28 09:26:16 PDT
+git: 0f70131
 R: R version 4.5.1 (2025-06-13)
 membership file: district-enrollment-data/ccd_lea_052_2324_l_1a_073124/ccd_lea_052_2324_l_1a_073124.csv
 directory file: district-enrollment-data/ccd_lea_029_2324_w_1a_073124/ccd_lea_029_2324_w_1a_073124.csv
