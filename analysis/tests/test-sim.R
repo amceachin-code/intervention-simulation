@@ -18,7 +18,7 @@ if (!file.exists(qd_path)) stop("Run analysis/01-simulations.R first.")
 qd <- read.csv(qd_path, stringsAsFactors=FALSE)
 bd <- if (file.exists(bd_path)) read.csv(bd_path, stringsAsFactors=FALSE) else NULL
 
-cat("\n1. Validation against the manuscript's restricted-use analysis\n")
+cat("\n1. Validation against the companion article's restricted-use analysis\n")
 ## The single most important test: public data must reproduce Table 2 col (a).
 ## If NCES revises, or a subscale/jurisdiction is wrong, this breaks first.
 table2a <- c("Reading G4"=8.7, "Reading G8"=7.0, "Reading G12"=1.5,

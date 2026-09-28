@@ -1,5 +1,7 @@
 <!-- summary v1, 2026-09-18; sources: the three files in this folder, read in full; spreadsheet profiled with pandas (xlrd); percentiles are type-7 linear-interpolation quantiles -->
 
+> **Copy note (2026-09-28).** This folder is a copy of the one in `naep-aera-open`, which also uses it. File names below are that project's: `05-simulations.R`, `12-district-enrollment.R`, and `13-kraft-benchmarks.R` are `01-`, `08-`, and `09-` here; `rq3-*` files are `sim-*`; `RQ3-memo.md` is `manuscript/simulation-memo.md`.
+
 # Kraft (2023) effect-size benchmark data: summary and use in this project
 
 This folder holds three author-supplied resources from Matthew Kraft's 2023 *Educational Researcher* follow-up to Kraft (2020). Together they give the project a public, reproducible distribution of effect sizes from education RCTs, which RQ3 uses to benchmark the effect an intervention would need to deliver to restore the 2019 score distribution.

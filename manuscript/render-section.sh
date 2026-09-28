@@ -2,17 +2,15 @@
 # Render a Markdown section draft to paste-ready APA (author-date) text.
 #
 # USAGE (run from the project root, e.g. ~/projects/intervention-simulation):
-#   manuscript/render-section.sh manuscript/02-1-declines.md         # writes 02-1-declines.rendered.md
-#   manuscript/render-section.sh manuscript/02-1-declines.md docx    # also writes 02-1-declines.docx
+#   manuscript/render-section.sh manuscript/simulation-memo.md        # writes simulation-memo.rendered.md
+#   manuscript/render-section.sh manuscript/simulation-memo.md docx   # also writes simulation-memo.docx
 #
-# The first argument (the section's .md file) is REQUIRED. Running the script
-# with no argument fails with "source .md required". Any section works the same
-# way: manuscript/render-section.sh manuscript/02-2-composition.md
+# The first argument (the .md file) is REQUIRED. Running the script with no
+# argument fails with "source .md required".
 #
 # Writes <name>.rendered.md next to the source; add "docx" to also write <name>.docx
 # (the .docx carries ==highlights== as real Word highlighting).
 # Bibliographies: references/references.bib (the subset this project cites)
-# (entries for sources cited in drafts that the library does not yet hold).
 # Highlighting: wrap text in ==double equals== in the source. The .docx gets native Word (yellow)
 # highlighting; the .rendered.md keeps the == markers so they stay visible and searchable.
 # Needs pandoc >= 3.0 (built-in --citeproc and the `mark` extension). On the Mac, Homebrew pandoc qualifies.

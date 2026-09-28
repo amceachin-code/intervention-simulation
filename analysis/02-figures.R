@@ -185,7 +185,7 @@ f9 <- ggplot(qd, aes(q19, d)) +
   scale_x_continuous("2019 quantile value (NAEP scale)") +
   labs(title="The decline is concentrated at the bottom of every distribution",
        subtitle="Quantile-difference curves, national. Upward slope = larger losses at the bottom.\nBands are 95% intervals from published NAEP standard errors.",
-       caption="Public NAEP Data Service API. Differential change (p90 minus p10) reproduces Table 2 column (a) of the\nmanuscript to the reported precision (within 0.05) in all six cells: 8.7, 7.0, 1.5, 7.9, 6.4, 4.5.") +
+       caption="Public NAEP Data Service API. Differential change (p90 minus p10) reproduces the restricted-use Table 2 column (a) of the\ncompanion AERA Open article to the reported precision (within 0.05) in all six cells: 8.7, 7.0, 1.5, 7.9, 6.4, 4.5.") +
   theme_sim
 ggsave(file.path(OUT,"fig9-qd-curves.png"), f9, width=11, height=6.4, dpi=200)
 message("wrote ", file.path(OUT,"fig9-qd-curves.png"))

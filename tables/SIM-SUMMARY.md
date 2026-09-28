@@ -1,6 +1,6 @@
 # Simulation results: benchmarking the recovery requirement
 
-Rebuilt from an empty cache on 2026-09-28. Public NAEP data only; no restricted-use inputs.
+Built on 2026-09-28 from the NAEP Data Service API (responses cached in analysis/.cache/). Public NAEP data only; no restricted-use inputs.
 The quantile differences and restoration requirements were computed independently in R
 and Stata and agree to 1e-14 across all 30 cell-percentile pairs. The participation
 adjustment and the bottom-decile decomposition below have a single implementation, in R.
@@ -8,7 +8,7 @@ adjustment and the bottom-decile decomposition below have a single implementatio
 ## 1. Validation: public data reproduces the restricted-use analysis
 
 The differential change (p90 difference minus p10 difference) computed from public
-percentiles, against Table 2 column (a) of the manuscript, which was computed from
+percentiles, against Table 2 column (a) of the companion AERA Open article, computed from
 restricted-use microdata. This is what licenses using public data for the simulations.
 
 | Cell | Public | Table 2(a) | Delta | SE of diff. change |

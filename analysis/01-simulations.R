@@ -6,7 +6,7 @@
 ##
 ##   A. Observed quantile differences D(p) = Q2024(p) - Q2019(p) with SEs, and
 ##      the differential change D(.90) - D(.10). Reproduces Table 2 column (a)
-##      of the manuscript, which came from restricted-use microdata. 
+##      of the companion AERA Open article (naep-aera-open), which came from restricted-use microdata. 
 ##   B. Restoration requirement g*(p) = -D(p)/S in 2019 national SD units.
 ##   C. Participation-adjusted requirement: required g = g*(p10)/c.
 ##   D. Share of the p10 deficit closed, by program and coverage.
@@ -243,7 +243,7 @@ cells <- if (!is.null(cfg$cells)) cfg$cells else list(
   ## grade 12 math is MWPCM on a 0-300 scale; MRPCM returns HTTP 400 there
   list(subject="mathematics", grade=12, subscale="MWPCM", label="Math G12"))
 
-## Manuscript Table 2 column (a), for the validation check.
+## The companion article's Table 2 column (a), for the validation check.
 table2a <- if (!is.null(cfg$table2a_diff_change)) unlist(cfg$table2a_diff_change) else
   c("Reading G4"=8.7, "Reading G8"=7.0, "Reading G12"=1.5,
     "Math G4"=7.9,    "Math G8"=6.4,    "Math G12"=4.5)
@@ -281,7 +281,7 @@ L <- c("# Simulation outputs: benchmarking the recovery requirement", "",
        "no restricted-use microdata is used or required.", "",
        "## Table A. Observed quantile differences, 2024 minus 2019", "",
        "Validation: the differential change should reproduce Table 2 column (a)",
-       "of the manuscript, computed from restricted-use microdata.", "",
+       "of the companion AERA Open article, computed from restricted-use microdata.", "",
        paste0("| Cell | ", paste(sprintf("D(p%s)", PS), collapse=" | "),
               " | Diff. change | Table 2(a) | 2019 SD | 2024 SD |"),
        paste0("|---|", strrep("---|", 8)))
@@ -452,8 +452,7 @@ if (!is.null(cflat))
 ## system2() does not throw on a non-zero exit (git outside a repo, or `git`
 ## missing) -- it warns and returns the captured output with a `status`
 ## attribute -- so tryCatch(error=) here never fires. Check the status
-## explicitly, and flag an uncommitted tree, since analysis/ is untracked as
-## of this writing and a bare SHA would otherwise imply a correspondence
+## explicitly, and flag an uncommitted tree, since a bare SHA would otherwise imply a correspondence
 ## between the recorded commit and the code that actually ran that does not
 ## exist.
 git_sha <- suppressWarnings(system2("git", c("rev-parse","--short","HEAD"),

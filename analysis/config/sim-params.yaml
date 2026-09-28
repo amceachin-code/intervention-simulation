@@ -48,7 +48,7 @@ kraft2020_effect_percentiles:
   p90:  0.47
   source: "kraft-2020 Table 1, 1942 effects from 747 RCTs"
 
-# Manuscript Table 2 column (a): differential change from the restricted-use
+# Table 2 column (a) of the companion AERA Open article (naep-aera-open): differential change from the restricted-use
 # analysis. Used only as a validation target -- the script must reproduce these
 # from public data, which is what licenses using public data for the simulations.
 table2a_diff_change:

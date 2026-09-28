@@ -36,7 +36,7 @@ BINS <- list(
 PLOT_BINS <- setdiff(names(BINS), "All sizes")
 PROBS <- c(0.10, 0.25, 0.50, 0.75, 0.90)
 
-## The four NAEP cells featured in the manuscript, in panel order.
+## The four NAEP cells featured in the analysis, in panel order.
 CELLS_FEAT <- c("Reading G4", "Math G4", "Reading G8", "Math G8")
 cell_grade   <- function(cl) sub(".* G", "", cl)
 cell_subject <- function(cl) sub(" G.*", "", cl)

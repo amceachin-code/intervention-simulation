@@ -6,7 +6,7 @@ no restricted-use microdata is used or required.
 ## Table A. Observed quantile differences, 2024 minus 2019
 
 Validation: the differential change should reproduce Table 2 column (a)
-of the manuscript, computed from restricted-use microdata.
+of the companion AERA Open article, computed from restricted-use microdata.
 
 | Cell | D(p10) | D(p25) | D(p50) | D(p75) | D(p90) | Diff. change | Table 2(a) | 2019 SD | 2024 SD |
 |---|---|---|---|---|---|---|---|---|

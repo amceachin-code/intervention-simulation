@@ -4,7 +4,7 @@
 *! Pulls the 10/25/50/75/90th percentiles and SD, national, 2019 and 2024, for
 *! six grade-subject cells from the public NAEP Data Service API, then computes:
 *!   A. D(p) = Q2024(p) - Q2019(p) with SEs, and the differential change
-*!      D(.90) - D(.10).  This reproduces the manuscript's Table 2 column (a),
+*!      D(.90) - D(.10).  This reproduces the companion AERA Open article's Table 2 column (a),
 *!      which came from restricted-use microdata -- the validation that licenses
 *!      using public data for the simulations.
 *!   B. The restoration requirement g*(p) = -D(p)/S in 2019 national SD units.
@@ -248,7 +248,7 @@ label var g_star "Restoration requirement, 2019 national SD"
 
 *------------------------------------------------------------- validation
 di as text _n "{hline 78}"
-di as text "Table A. Validation against the manuscript's restricted-use analysis"
+di as text "Table A. Validation against the companion article's restricted-use analysis"
 di as text "{hline 78}"
 di as text %-14s "Cell" %12s "Diff.change" %10s "Table 2(a)" %10s "Delta" %10s "SE"
 local nbad = 0
