@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 ## Run every test in analysis/tests/ and summarize.
 ##
-##   bash analysis/tests/run-all.sh           every tests/test-*.R (fast, no network)
+##   bash analysis/tests/run-all.sh           every tests/test-*.R and, when node is
+##                                            installed, tests/test-*.mjs (no network)
 ##   bash analysis/tests/run-all.sh --regen   the same, then test-regen.sh, which
 ##                                            reruns the pipeline from the committed
 ##                                            cache and cmp's tables/*.csv
@@ -19,6 +20,10 @@ if [ ! -d analysis/tests ]; then
   echo "Run from the project root (analysis/tests not found)." >&2
   exit 2
 fi
+
+## An unmatched glob expands to nothing rather than to the literal pattern,
+## which would otherwise run as a nonexistent test and report a false FAIL.
+shopt -s nullglob
 
 REGEN=0
 for a in "$@"; do
@@ -48,6 +53,14 @@ echo "R tests:"
 for t in analysis/tests/test-*.R; do
   run_one "$t" Rscript "$t"
 done
+## The explorer's engine test needs Node. It is optional tooling, so a machine
+## without node skips it with a note instead of failing the whole run.
+echo "JavaScript tests:"
+if command -v node >/dev/null 2>&1; then
+  for t in analysis/tests/test-*.mjs; do run_one "$t" node "$t"; done
+else
+  for t in analysis/tests/test-*.mjs; do echo "  SKIP  $t (node not found)"; done
+fi
 if [ "$REGEN" -eq 1 ]; then
   echo "Regeneration test:"
   run_one analysis/tests/test-regen.sh bash analysis/tests/test-regen.sh

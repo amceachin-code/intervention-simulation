@@ -5,7 +5,102 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: MOVE THE SIMULATIONS OUT OF NAEP-AERA-OPEN (2026-09-28)
+# CURRENT TASK: INTERACTIVE HTML MOCKUP TOOL (2026-09-28, closed)
+
+**Status:** all plan steps complete. Nothing for this task is committed;
+committing is Andrew's call.
+
+## Objective
+
+Build a simple, static, interactive HTML mockup tool in `docs/` (for GitHub
+Pages) that starts from the restoration requirement g\*(p) and lets the user
+choose:
+
+1. Effect size.
+2. Share treated.
+3. Participation-by-prior-achievement gradient (five levels, strong negative
+   to strong positive).
+4. Effect-by-prior-achievement gradient (same five-level scale).
+5. Outcome view: **group** (follow the students who start at p:
+   Q(p) + pi(p) delta(p)) or **distributional** (the exact treated/untreated
+   mixture, as in `analysis/mixture.R`).
+
+## Plan
+
+- [x] 1. `analysis/10-export-tool-data.R` writes `docs/cells.js` from
+      `tables/sim-quantiles.csv` and `analysis/config/sim-params.yaml`.
+- [x] 2. `docs/engine.js`: qnorm; monotone Hermite quantile function with
+      normal tails (a port of `make_quantile_fn`); water-fill; linear tilt
+      w(u) = 1 + k(u - 50)/40 with k in {-0.6, -1/3, 0, 1/3, 0.6}; group and
+      mixture quantiles with the calibration offset; summary.
+- [x] 3. `docs/index.html`: controls; SVG charts (decline curve, gain,
+      remaining requirement; participation and effect profiles); summary
+      table; 90-10 gap.
+- [x] 4. `docs/README.md`.
+- [x] 5. `analysis/tests/test-tool-engine.mjs`, verified against the
+      Proportional rule in `tables/sim-seat-allocation-*.csv`; hooked into
+      `analysis/tests/run-all.sh`.
+- [x] 6. Add step 10 to `analysis/README.md`.
+- [x] 7. Browser check, code review, final README and PROGRESS updates.
+
+## Step details
+
+- **Step 1.** `10-export-tool-data.R` drops the unused `sd2024` and
+  `diff_change` fields. It records source MD5s instead of a date, so the
+  output is deterministic (verified byte-identical on rerun).
+- **Step 2.** `engine.js` was verified against R. The spline matches to
+  1e-10. qnorm uses Acklam plus a Halley step with West's double-precision
+  CDF. The seat-allocation CSVs agree to 1.7e-13 points. After review, the
+  engine evaluates the curve and knots in one pass and caches the no-program
+  baseline per cell, which cut render time from 30 ms to about 2 ms.
+- **Step 3.** At Andrew's request, the main chart shows D(p)/S (negative,
+  the decline) rather than g\*(p). The program lifts the curve toward zero,
+  and above zero means above the 2019 level. The table and tiles use the same
+  sign. The URL hash stores settings, clamped, with unknown keys ignored.
+  Parameters have no hand-typed fallbacks. The 90-10 verdict covers every
+  case.
+- **Step 5.** `test-tool-engine.mjs` has 2061 checks, including qnorm
+  against R and the knots. `run-all.sh` runs `*.mjs` tests when node exists
+  and uses nullglob. All 6 tests pass.
+- **Step 7.** Headless Chrome screenshots at desktop width and a 500px
+  viewport (the headless minimum) show no overflow. The Chrome extension was
+  not connected, so a true 390px check was not done. A code review was run
+  and all findings were applied.
+
+## Key decisions
+
+- Input 5 is the group versus distributional choice.
+- Gradients are a linear tilt with the mean held fixed, so the gradient
+  reshapes who is treated (or how much they gain) without changing the
+  overall share treated or the average effect.
+- The effect input is the population-average treated effect, in 2019 SD
+  units.
+- The main chart plots D(p)/S (the decline, negative) rather than g\*(p), per
+  Andrew.
+- Hosting is GitHub Pages from a new repository that Andrew will create.
+
+## Open items for Andrew
+
+- (a) `make_quantile_fn`'s normal tail meets the spline at p90 (and p10)
+  with a slope about twice the spline's end slope, so the implied density
+  halves at the knot. The mixture carries that kink into the curve near p85
+  to p90, and the committed R p90 results include it. Worth a methods look
+  alongside `07-tail-sensitivity`.
+- (b) Create the GitHub repo and enable Pages from `/docs`.
+- (c) Nothing is committed.
+
+## Files
+
+- **Created:** `analysis/10-export-tool-data.R`,
+  `analysis/tests/test-tool-engine.mjs`, `docs/index.html`,
+  `docs/engine.js`, `docs/cells.js`, `docs/README.md`.
+- **Modified:** `analysis/tests/run-all.sh`, `analysis/README.md`,
+  `README.md`, `PROGRESS.md`.
+- **Deleted:** none.
+
+---
+
+# PREVIOUS TASK: MOVE THE SIMULATIONS OUT OF NAEP-AERA-OPEN (2026-09-28, closed)
 
 **Status:** all plan steps complete. The review-fix changes from step 9 are
 applied but uncommitted; committing them is Andrew's call.

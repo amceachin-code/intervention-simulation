@@ -1,0 +1,534 @@
+<!doctype html>
+<!-- draft v1, 2026-09-28; sources: tables/sim-quantiles.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intervention Explorer</title>
+<meta name="description" content="How much of the 2019-to-2024 NAEP score decline a hypothetical program would undo, by percentile.">
+<style>
+  /* Colors are role tokens. Light is the default; dark is its own set of
+     steps (not an automatic inversion), applied for an OS dark preference
+     unless the page is stamped light, or when stamped dark. */
+  :root {
+    color-scheme: light;
+    --surface-0: #f5f4f1;
+    --surface-1: #fcfcfb;
+    --border: #dddcd7;
+    --grid: #ebeae6;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #77766f;
+    --accent: #2a78d6;
+    --accent-soft: #cde2fb;
+    --series-before: #77766f;   /* D(p)/S: the neutral reference */
+    --series-after: #2a78d6;    /* position after the program */
+    --series-part: #2a78d6;
+    --series-effect: #eb6834;
+    --closed-fill: rgba(42, 120, 214, 0.16);
+    --over-fill: rgba(235, 104, 52, 0.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-0: #121211;
+      --surface-1: #1a1a19;
+      --border: #383835;
+      --grid: #2a2a28;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a998f;
+      --accent: #3987e5;
+      --accent-soft: #1c3a5e;
+      --series-before: #9a998f;
+      --series-after: #3987e5;
+      --series-part: #3987e5;
+      --series-effect: #d95926;
+      --closed-fill: rgba(57, 135, 229, 0.22);
+      --over-fill: rgba(217, 89, 38, 0.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-0: #121211;
+    --surface-1: #1a1a19;
+    --border: #383835;
+    --grid: #2a2a28;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a998f;
+    --accent: #3987e5;
+    --accent-soft: #1c3a5e;
+    --series-before: #9a998f;
+    --series-after: #3987e5;
+    --series-part: #3987e5;
+    --series-effect: #d95926;
+    --closed-fill: rgba(57, 135, 229, 0.22);
+    --over-fill: rgba(217, 89, 38, 0.25);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface-0); color: var(--text-primary);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1rem; margin: 0 0 8px; }
+  .lede { color: var(--text-secondary); margin: 0 0 20px; max-width: 70ch; }
+  .layout { display: grid; grid-template-columns: 330px 1fr; gap: 20px; align-items: start; }
+  /* minmax(0, 1fr) and min-width: 0 let a wide table scroll inside its own
+     box instead of stretching the whole page past a phone's width. */
+  .layout > * { min-width: 0; }
+  @media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
+  .stack > * + * { margin-top: 16px; }
+
+  /* Controls */
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend, .ctl-label { font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 6px; display: block; }
+  .ctl-help { color: var(--text-muted); font-size: 0.8rem; margin: 4px 0 0; }
+  .ctl-row { display: flex; align-items: center; gap: 10px; }
+  .ctl-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
+  .ctl-value { font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600; }
+  select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface-1); color: var(--text-primary);
+           border: 1px solid var(--border); border-radius: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; cursor: pointer;
+          border: 1px solid var(--border); background: transparent; color: var(--text-secondary); }
+  .chip:hover { border-color: var(--accent); color: var(--text-primary); }
+  .seg { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .seg.two { grid-template-columns: repeat(2, 1fr); }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg label { text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; cursor: pointer;
+               color: var(--text-secondary); border-left: 1px solid var(--border); }
+  .seg label:first-of-type { border-left: 0; }
+  .seg input:checked + label { background: var(--accent-soft); color: var(--text-primary); font-weight: 600; }
+  .seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  /* Headline tiles */
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } }
+  .tile .k { color: var(--text-secondary); font-size: 0.8rem; }
+  .tile .v { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .tile .s { color: var(--text-muted); font-size: 0.78rem; }
+
+  /* Charts */
+  .chart { position: relative; width: 100%; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .axis text { fill: var(--text-muted); font-size: 11px; }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .zero { stroke: var(--text-muted); stroke-width: 1; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
+  .sw.dash { border-top-style: dashed; }
+  .sw.box { height: 10px; border: 0; border-radius: 2px; }
+  .small-multiples { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .small-multiples { grid-template-columns: 1fr; } }
+  .tip { position: absolute; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border);
+         border-radius: 6px; padding: 6px 8px; font-size: 0.78rem; box-shadow: 0 2px 8px rgba(0,0,0,.12);
+         white-space: nowrap; display: none; z-index: 2; }
+  .tip b { font-variant-numeric: tabular-nums; }
+
+  /* Table */
+  .tbl-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--text-secondary); font-weight: 600; font-size: 0.78rem; }
+  .note { color: var(--text-muted); font-size: 0.8rem; max-width: 80ch; }
+  .note p { margin: 0 0 6px; }
+  code { font-size: 0.9em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Intervention explorer</h1>
+  <p class="lede">
+    The dashed line is the 2019-to-2024 NAEP score decline at each percentile, D(p)/S: the 2024
+    score minus the 2019 score, in 2019 SD units. It is negative where scores fell. Set a program
+    below and the solid line shows where each percentile ends up; zero is the 2019 level. The
+    restoration requirement g*(p) is the same curve with its sign flipped.
+  </p>
+
+  <div class="layout">
+    <!-- Controls -->
+    <form class="card stack" id="controls" onsubmit="return false">
+      <div>
+        <label class="ctl-label" for="cell">Subject and grade</label>
+        <select id="cell"></select>
+      </div>
+
+      <div>
+        <label class="ctl-label" for="effect">1. Program effect</label>
+        <div class="ctl-row">
+          <input type="range" id="effect" min="0" max="0.5" step="0.005">
+          <span class="ctl-value" id="effect-v"></span>
+        </div>
+        <p class="ctl-help">Treated effect in 2019 SD units, averaged over all percentiles.</p>
+        <div class="chips" id="effect-chips"></div>
+      </div>
+
+      <div>
+        <label class="ctl-label" for="share">2. Share of students treated</label>
+        <div class="ctl-row">
+          <input type="range" id="share" min="0" max="100" step="0.1">
+          <span class="ctl-value" id="share-v"></span>
+        </div>
+        <div class="chips" id="share-chips"></div>
+      </div>
+
+      <fieldset>
+        <legend>3. Participation and prior achievement</legend>
+        <div class="seg" id="kPart"></div>
+        <p class="ctl-help" id="kPart-help"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>4. Effect and prior achievement</legend>
+        <div class="seg" id="kEffect"></div>
+        <p class="ctl-help" id="kEffect-help"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>5. Outcome read on</legend>
+        <div class="seg two" id="mode"></div>
+        <p class="ctl-help" id="mode-help"></p>
+      </fieldset>
+    </form>
+
+    <!-- Results -->
+    <div class="stack">
+      <div class="tiles">
+        <div class="card tile"><div class="k">Decline undone at p10</div><div class="v" id="t-p10"></div><div class="s" id="t-p10-s"></div></div>
+        <div class="card tile"><div class="k">Decline undone at p50</div><div class="v" id="t-p50"></div><div class="s" id="t-p50-s"></div></div>
+        <div class="card tile"><div class="k">90-10 gap after the program</div><div class="v" id="t-gap"></div><div class="s" id="t-gap-s"></div></div>
+      </div>
+
+      <section class="card">
+        <h2 id="main-title">Decline by percentile</h2>
+        <div class="legend">
+          <span><i class="sw dash" style="border-color:var(--series-before)"></i>Before the program: D(p)/S</span>
+          <span><i class="sw" style="border-color:var(--series-after)"></i>After the program</span>
+          <span><i class="sw box" style="background:var(--closed-fill)"></i>Undone by the program</span>
+          <span><i class="sw box" style="background:var(--over-fill)"></i>Above the 2019 level</span>
+        </div>
+        <div class="chart" id="main-chart"><div class="tip"></div></div>
+      </section>
+
+      <section class="card">
+        <h2>Who takes part, and how much they gain</h2>
+        <div class="small-multiples">
+          <div><div class="legend"><span><i class="sw" style="border-color:var(--series-part)"></i>Participation rate</span></div>
+               <div class="chart" id="part-chart"><div class="tip"></div></div></div>
+          <div><div class="legend"><span><i class="sw" style="border-color:var(--series-effect)"></i>Effect for treated students (SD)</span></div>
+               <div class="chart" id="eff-chart"><div class="tip"></div></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>At the published percentiles</h2>
+        <div class="tbl-wrap"><table id="tbl"></table></div>
+        <div class="tbl-wrap" style="margin-top:12px"><table id="gap-tbl"></table></div>
+      </section>
+
+      <section class="card note">
+        <p><b>How this is computed.</b> The 2019 and 2024 distributions are rebuilt from the five
+        published percentiles with monotone interpolation. Participation and the treated effect vary
+        linearly with prior rank; the average across all students stays at the values set above, and
+        participation is capped at 100 percent with the excess seats handed to percentiles below the cap.</p>
+        <p><b>Group</b> follows the students who started at percentile p. A share of them is treated,
+        so the group gains that share times the effect. <b>Distribution</b> asks where whoever stands at
+        percentile p after the program is. Treated students pass untreated neighbors, so a partial
+        program spreads the distribution and the two readings differ. The two agree when everyone or no
+        one at a percentile is treated.</p>
+        <p>Assumptions: within a percentile, who takes part is unrelated to how much they would gain; the
+        chart covers p10 to p90, the range the published percentiles support. Share undone above 100
+        percent means the percentile ends above its 2019 level. Scores are NAEP scale
+        points, and requirements and effects are 2019 SD units. The R pipeline in
+        <code>analysis/</code> is the reference implementation; <code>analysis/tests/test-tool-engine.mjs</code>
+        checks this page's engine against it.</p>
+        <p id="provenance"></p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="cells.js"></script>
+<script src="engine.js"></script>
+<script>
+"use strict";
+const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const PS = D.percentiles;
+const CURVE_P = Array.from({ length: 81 }, (_, i) => 10 + i);   // p10 to p90
+
+// ---------------------------------------------------------------- state
+// Defaults: the pipeline's treated effect, the district tutoring share,
+// neutral gradients, the distributional reading (the paper's estimand).
+// Look up a config entry by id and fail loudly if it is missing, rather than
+// falling back to a hand-typed number (parameters live only in the config).
+function configValue(list, id) {
+  const hit = list.find((x) => x.id === id);
+  if (!hit) throw new Error(`cells.js has no config entry '${id}'; rerun analysis/10-export-tool-data.R`);
+  return hit;
+}
+const defaults = {
+  cell: D.cells[0].label,
+  effect: configValue(D.benchmarks, D.treated_effect).g,
+  share: configValue(D.participation, "hdt_dist").c,
+  kPart: "neutral", kEffect: "neutral", mode: "distributional",
+};
+const state = Object.assign({}, defaults, readHash());
+
+// The state lives in the URL hash so a configuration can be shared as a link.
+function readHash() {
+  const out = {};
+  try {
+    new URLSearchParams(location.hash.slice(1)).forEach((v, k) => {
+      if (!(k in defaults)) return;            // ignore keys the page does not own
+      if (k === "effect" || k === "share") {
+        // Clamp to the slider's own range so a hand-edited link cannot show
+        // a value the controls cannot (share is stored 0-1, the slider 0-100).
+        const n = Number(v), inp = document.getElementById(k);
+        const scale = k === "share" ? 100 : 1;
+        if (Number.isFinite(n)) out[k] = Math.min(Number(inp.max), Math.max(Number(inp.min), n * scale)) / scale;
+      } else out[k] = v;
+    });
+  } catch (e) { /* malformed hash: ignore and use defaults */ }
+  if (out.cell && !D.cells.some((c) => c.label === out.cell)) delete out.cell;
+  for (const k of ["kPart", "kEffect"]) if (out[k] && !E.TILT_LEVELS.some((l) => l.id === out[k])) delete out[k];
+  if (out.mode && !["group", "distributional"].includes(out.mode)) delete out.mode;
+  return out;
+}
+function writeHash() {
+  const q = new URLSearchParams({ ...state, effect: state.effect.toFixed(3), share: state.share.toFixed(3) });
+  history.replaceState(null, "", "#" + q.toString());
+}
+
+// ---------------------------------------------------------------- controls
+const $ = (id) => document.getElementById(id);
+const cellSel = $("cell");
+D.cells.forEach((c) => cellSel.add(new Option(c.label, c.label)));
+
+function chip(parent, text, title, onClick) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.textContent = text; b.title = title;
+  b.addEventListener("click", onClick); parent.appendChild(b);
+}
+D.benchmarks.forEach((b) => chip($("effect-chips"), `${b.g.toFixed(3)} ${b.label}`, b.source,
+  () => { state.effect = b.g; sync(); }));
+D.participation.forEach((p) => chip($("share-chips"), `${fmtPct(p.c)} ${p.label}`, p.source,
+  () => { state.share = p.c; sync(); }));
+
+function segmented(id, options, key) {
+  const root = $(id);
+  options.forEach((o) => {
+    const inp = document.createElement("input");
+    inp.type = "radio"; inp.name = id; inp.id = `${id}-${o.id}`; inp.value = o.id;
+    inp.addEventListener("change", () => { state[key] = o.id; sync(); });
+    const lab = document.createElement("label");
+    lab.htmlFor = inp.id; lab.innerHTML = o.html;
+    root.append(inp, lab);
+  });
+}
+const tiltOpts = E.TILT_LEVELS.map((l) => ({ id: l.id, html: l.label.replace(" ", "<br>") }));
+segmented("kPart", tiltOpts, "kPart");
+segmented("kEffect", tiltOpts, "kEffect");
+segmented("mode", [{ id: "distributional", html: "Distribution" }, { id: "group", html: "Group" }], "mode");
+
+// Plain-language reading of each gradient level, using its p90:p10 ratio.
+function tiltHelp(levelId, what) {
+  const l = E.TILT_LEVELS.find((x) => x.id === levelId);
+  const [a, b] = l.ratio.split(":").map(Number);   // p90:p10
+  if (a === b) return `The same ${what} at every percentile.`;
+  const hi = a > b ? "p90" : "p10", lo = a > b ? "p10" : "p90";
+  return `${what[0].toUpperCase() + what.slice(1)} at ${hi} is ${Math.max(a, b) / Math.min(a, b)} times that at ${lo}.`;
+}
+const MODE_HELP = {
+  distributional: "Whoever stands at percentile p after the program. The estimand the rest of the paper uses.",
+  group: "The students who started at percentile p, followed through the program.",
+};
+
+cellSel.addEventListener("change", () => { state.cell = cellSel.value; sync(); });
+$("effect").addEventListener("input", (e) => { state.effect = Number(e.target.value); sync(); });
+$("share").addEventListener("input", (e) => { state.share = Number(e.target.value) / 100; sync(); });
+
+// Push state into the controls, then schedule one render per frame so
+// dragging a slider does not queue a render for every input event.
+let pending = false;
+function sync() {
+  cellSel.value = state.cell;
+  $("effect").value = state.effect; $("effect-v").textContent = state.effect.toFixed(3);
+  $("share").value = (state.share * 100).toFixed(1); $("share-v").textContent = fmtPct(state.share);
+  for (const k of ["kPart", "kEffect", "mode"]) $(`${k}-${state[k]}`).checked = true;
+  $("kPart-help").textContent = tiltHelp(state.kPart, "participation rate");
+  $("kEffect-help").textContent = tiltHelp(state.kEffect, "effect");
+  $("mode-help").textContent = MODE_HELP[state.mode];
+  if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; render(); }); }
+}
+
+// ---------------------------------------------------------------- format
+function fmtPct(x) { const v = x * 100; return (Math.abs(v - Math.round(v)) < 0.05 ? v.toFixed(0) : v.toFixed(1)) + "%"; }
+const f2 = (x) => x.toFixed(2), f3 = (x) => x.toFixed(3), f1 = (x) => x.toFixed(1);
+function shareClosed(k) { return k.gStar > 0 ? k.gain / k.gStar : NaN; }
+function fmtShare(s) { return Number.isFinite(s) ? Math.round(s * 100) + "%" : "n/a"; }
+
+// ---------------------------------------------------------------- render
+function render() {
+  writeHash();
+  const cell = D.cells.find((c) => c.label === state.cell);
+  const k = (id) => E.TILT_LEVELS.find((l) => l.id === id).k;
+  const res = E.scenario(cell, PS, {
+    effect: state.effect, share: state.share, kPart: k(state.kPart), kEffect: k(state.kEffect), mode: state.mode,
+  }, CURVE_P);
+  const at = (p) => res.knots.find((r) => r.p === p);
+
+  // Tiles
+  for (const p of [10, 50]) {
+    const r = at(p);
+    $(`t-p${p}`).textContent = fmtShare(shareClosed(r));
+    $(`t-p${p}-s`).textContent = `${f3(r.gain)} of a ${f3(r.gStar)} SD decline`;
+  }
+  const g = res.gap9010;
+  const widen = g.y2024 - g.y2019;
+  $("t-gap").textContent = f1(g.post) + " pts";
+  // Say which way the program moved the gap rather than printing a negative
+  // share: a program that favors higher scorers can widen it further.
+  const moved = g.y2024 - g.post;
+  let verdict = "";
+  if (Math.abs(moved) < 0.05) verdict = "About the same as in 2024.";
+  else if (moved < 0) verdict = `${f1(-moved)} points wider than in 2024.`;
+  else if (widen > 0) verdict = `${fmtShare(moved / widen)} of the 2019-to-2024 widening undone.`;
+  else verdict = `${f1(moved)} points narrower than in 2024.`;
+  $("t-gap-s").textContent = `2019: ${f1(g.y2019)}, 2024: ${f1(g.y2024)}. ${verdict}`;
+
+  $("main-title").textContent = `Decline by percentile, ${cell.label} (2019 SD units, 2024 minus 2019)`;
+  drawMain(res.curve);
+  drawProfile("part-chart", res.curve, (r) => r.part, [0, 1], (v) => fmtPct(v), "var(--series-part)", "Participation");
+  const effMax = Math.max(0.05, ...res.curve.map((r) => r.effect)) * 1.1;
+  drawProfile("eff-chart", res.curve, (r) => r.effect, [0, effMax], (v) => f2(v), "var(--series-effect)", "Effect (SD)");
+  drawTable(res, cell);
+
+  $("provenance").textContent = `Data: ${D.sources.map((f) => `${f.path} (md5 ${f.md5.slice(0, 8)})`).join(", ")}. ` +
+    `Mean participation across all percentiles: ${fmtPct(res.meanPart)}.`;
+}
+
+// Shared chart frame. Returns scales and an SVG element to draw into.
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [a, v] of Object.entries(attrs)) e.setAttribute(a, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function frame(containerId, W, H, yDom, yFmt, nTicks) {
+  const box = $(containerId);
+  box.querySelector("svg")?.remove();
+  const m = { l: 44, r: 12, t: 8, b: 26 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
+  box.prepend(svg);
+  const x = (p) => m.l + (p - 10) / 80 * (W - m.l - m.r);
+  const y = (v) => m.t + (yDom[1] - v) / (yDom[1] - yDom[0]) * (H - m.t - m.b);
+  const ax = el("g", { class: "axis" }, svg);
+  niceTicks(yDom[0], yDom[1], nTicks).forEach((t) => {
+    el("line", { class: "gridline", x1: m.l, x2: W - m.r, y1: y(t), y2: y(t) }, ax);
+    el("text", { x: m.l - 6, y: y(t) + 4, "text-anchor": "end" }, ax).textContent = yFmt(t);
+  });
+  PS.forEach((p) => {
+    el("text", { x: x(p), y: H - 8, "text-anchor": "middle" }, ax).textContent = "p" + p;
+    el("line", { class: "gridline", x1: x(p), x2: x(p), y1: m.t, y2: H - m.b }, ax);
+  });
+  if (yDom[0] < 0 && yDom[1] > 0) el("line", { class: "zero", x1: m.l, x2: W - m.r, y1: y(0), y2: y(0) }, svg);
+  return { svg, x, y, m, W, H, box };
+}
+function niceTicks(lo, hi, n) {
+  const span = hi - lo, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map((s) => s * mag).find((s) => span / s <= n) || 10 * mag;
+  const out = [];
+  for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-12; t += step) out.push(Math.abs(t) < 1e-12 ? 0 : t);
+  return out;
+}
+const path = (pts) => pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join("");
+
+function drawMain(curve) {
+  // The chart plots the decline, not the requirement: D(p)/S is 2024 minus
+  // 2019 in 2019 SD units, negative where scores fell, and the program lifts
+  // it toward zero. It is the requirement with its sign flipped
+  // (D/S = -g*), so before = -gStar and after = -remaining.
+  const before = (r) => -r.gStar, after = (r) => -r.remaining;
+  const vals = curve.flatMap((r) => [before(r), after(r)]);
+  const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals);
+  const pad = (hi - lo) * 0.08;
+  const F = frame("main-chart", 720, 320, [lo - pad, hi > 0 ? hi + pad : 0], f2, 6);
+  const { svg, x, y } = F;
+  // Area between the decline and the post-program position, split at zero
+  // so the part above zero (a percentile lifted past its 2019 level) reads
+  // as overshoot rather than as more of the decline undone.
+  const base = curve.map((r) => [x(r.p), y(before(r))]);
+  const closedTop = curve.map((r) => [x(r.p), y(Math.min(0, after(r)))]);
+  el("path", { d: path(base) + path(closedTop.slice().reverse()).replace("M", "L") + "Z", fill: "var(--closed-fill)" }, svg);
+  if (curve.some((r) => after(r) > 0)) {
+    const z = curve.map((r) => [x(r.p), y(0)]);
+    const pos = curve.map((r) => [x(r.p), y(Math.max(0, after(r)))]);
+    el("path", { d: path(z) + path(pos.slice().reverse()).replace("M", "L") + "Z", fill: "var(--over-fill)" }, svg);
+  }
+  el("path", { d: path(base), fill: "none", stroke: "var(--series-before)", "stroke-width": 2, "stroke-dasharray": "5 4" }, svg);
+  el("path", { d: path(curve.map((r) => [x(r.p), y(after(r))])), fill: "none", stroke: "var(--series-after)", "stroke-width": 2 }, svg);
+  // Markers at the published percentiles, where the numbers are data rather
+  // than interpolation.
+  curve.filter((r) => PS.includes(r.p)).forEach((r) => {
+    el("circle", { cx: x(r.p), cy: y(after(r)), r: 4, fill: "var(--series-after)", stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+    el("circle", { cx: x(r.p), cy: y(before(r)), r: 4, fill: "var(--series-before)", stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+  });
+  hover(F, curve, (r) => y(after(r)),
+    (r) => `<div>p${r.p}</div><div>D(p)/S: <b>${f3(before(r))}</b> SD</div><div>After program: <b>${f3(after(r))}</b> SD</div>` +
+           `<div>Undone: <b>${f3(r.gain)}</b> SD (${fmtShare(shareClosed(r))})</div>`);
+}
+
+function drawProfile(id, curve, acc, yDom, yFmt, color, name) {
+  const F = frame(id, 340, 180, yDom, yFmt, 4);
+  el("path", { d: path(curve.map((r) => [F.x(r.p), F.y(acc(r))])), fill: "none", stroke: color, "stroke-width": 2 }, F.svg);
+  hover(F, curve, (r) => F.y(acc(r)), (r) => `<div>p${r.p}</div><div>${name}: <b>${yFmt(acc(r))}</b></div>`);
+}
+
+// Crosshair and tooltip: snap to the nearest whole percentile.
+function hover(F, curve, yOf, html) {
+  const { svg, x, m, W, H, box } = F;
+  const tip = box.querySelector(".tip");
+  const cross = el("line", { x1: 0, x2: 0, y1: m.t, y2: H - m.b, stroke: "var(--text-muted)", "stroke-width": 1, visibility: "hidden" }, svg);
+  const dot = el("circle", { r: 5, fill: "none", stroke: "var(--text-primary)", "stroke-width": 2, visibility: "hidden" }, svg);
+  const hit = el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent" }, svg);
+  function move(ev) {
+    const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+    const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const p = Math.round(10 + (loc.x - m.l) / (W - m.l - m.r) * 80);
+    const r = curve.find((c) => c.p === Math.min(90, Math.max(10, p)));
+    cross.setAttribute("x1", x(r.p)); cross.setAttribute("x2", x(r.p));
+    dot.setAttribute("cx", x(r.p)); dot.setAttribute("cy", yOf(r));
+    cross.setAttribute("visibility", "visible"); dot.setAttribute("visibility", "visible");
+    tip.innerHTML = html(r); tip.style.display = "block";
+    const bb = box.getBoundingClientRect(), px = ev.clientX - bb.left;
+    tip.style.left = Math.min(px + 12, bb.width - tip.offsetWidth - 4) + "px";
+    tip.style.top = "8px";
+  }
+  function leave() { cross.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); tip.style.display = "none"; }
+  hit.addEventListener("pointermove", move);
+  hit.addEventListener("pointerdown", move);
+  hit.addEventListener("pointerleave", leave);
+}
+
+function drawTable(res, cell) {
+  const rows = res.knots.map((r) => `<tr><td>p${r.p}</td><td>${f3(-r.gStar)}</td><td>${fmtPct(r.part)}</td>` +
+    `<td>${f3(r.effect)}</td><td>${f3(r.gain)}</td><td>${f3(-r.remaining)}</td><td>${fmtShare(shareClosed(r))}</td></tr>`).join("");
+  $("tbl").innerHTML = `<thead><tr><th>Percentile</th><th>D(p)/S, SD</th><th>Participation</th><th>Effect, SD</th>` +
+    `<th>Undone, SD</th><th>After program, SD</th><th>Share undone</th></tr></thead><tbody>${rows}</tbody>`;
+  const g = res.gap9010;
+  $("gap-tbl").innerHTML = `<thead><tr><th>90-10 gap, NAEP points</th><th>2019</th><th>2024</th><th>After program</th></tr></thead>` +
+    `<tbody><tr><td>${cell.label}</td><td>${f1(g.y2019)}</td><td>${f1(g.y2024)}</td><td>${f1(g.post)}</td></tr></tbody>`;
+}
+
+sync();
+</script>
+</body>
+</html>
