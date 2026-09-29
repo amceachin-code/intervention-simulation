@@ -125,6 +125,39 @@ make_quantile_fn <- function(pct, vals) {
   function(u) inner(pmin(pmax(u, 0), 100))
 }
 
+## Quantile points for one economic-disadvantage group in one cell and year,
+## through the group's published score distribution alone (no knots: the
+## group percentiles are not in a committed table). `edist` is
+## tables/sim-distribution-econdis.csv. Shared by 06-seat-allocation.R and
+## 10-export-tool-data.R so the explorer and the R reference build the same
+## group curves.
+group_quantile_points <- function(edist, cell, year, group) {
+  h <- edist[edist$cell == cell & edist$year == year & edist$group == group, ]
+  if (!nrow(h)) stop("no ECONDIS distribution for ", cell, " ", year, " ", group, call.=FALSE)
+  quantile_points(h, numeric(0), numeric(0), paste(cell, year, group))
+}
+
+## National rank (0-100) of each score in x under a strictly increasing
+## quantile function: the inverse read off a dense grid in one vectorized
+## call. Used for the group views, where 9,999 scores per group need a rank;
+## root-finding each (quantile_cdf) gave the same answer 20,000 times slower.
+## The grid runs from 0 to 100, so scores at the ends of the scale map to 0
+## and 100, and the error from linear interpolation between grid points is
+## far below anything that reaches a reported number.
+INVERSE_GRID <- seq(0, 100, by=0.001)
+quantile_rank <- function(Qfn, x) approx(Qfn(INVERSE_GRID), INVERSE_GRID, xout=x, rule=2, ties="ordered")$y
+
+## P(score <= x) under quantile function Qfn: the inverse of Qfn at x, as a
+## proportion. Qfn is strictly increasing on [0, 100], so the root is unique;
+## scores at or beyond the ends of the scale return 0 or 1.
+quantile_cdf <- function(Qfn, x) {
+  vapply(x, function(xi) {
+    if (xi <= Qfn(0)) return(0)
+    if (xi >= Qfn(100)) return(1)
+    uniroot(function(u) Qfn(u) - xi, c(0, 100), tol=1e-10)$root / 100
+  }, numeric(1))
+}
+
 ## Weighted quantile, midpoint convention. The midpoint removes the half-bin
 ## bias a step lookup carries, which matters here because the two mixture
 ## components interleave and the crossing can fall between grid atoms.

@@ -4,7 +4,7 @@
 ## These run against the committed CSV outputs, so they need no network and no
 ## restricted data. They are the checks that would catch a silent regression.
 
-source("analysis/dist-helpers.R")
+source("analysis/mixture.R")
 source("analysis/config-helpers.R")
 cfg <- load_sim_config()
 ## Treated effect for the group-gap and mixture checks below: the config's
@@ -25,6 +25,9 @@ bd <- if (file.exists(bd_path)) read.csv(bd_path, stringsAsFactors=FALSE) else N
 dd_path <- "tables/sim-distribution.csv"
 if (!file.exists(dd_path)) stop("Run analysis/01-simulations.R first (", dd_path, " is missing).")
 dd <- read.csv(dd_path, stringsAsFactors=FALSE)
+de_path <- "tables/sim-distribution-econdis.csv"
+if (!file.exists(de_path)) stop("Run analysis/01-simulations.R first (", de_path, " is missing).")
+de <- read.csv(de_path, stringsAsFactors=FALSE)
 
 cat("\n1. Validation against the companion article's restricted-use analysis\n")
 ## The single most important test: public data must reproduce Table 2 col (a).
@@ -57,21 +60,17 @@ ok(all(unlist(dc) < 1e-9), "diff_change == D(p90) - D(p10) for every cell")
 ok(all(qd$d_se > 0 & qd$d_se < 2.5), "quantile-difference SEs are positive and plausible")
 ok(all(qd$sd2019 > 20 & qd$sd2019 < 60), "2019 SDs are on a plausible NAEP scale")
 
-cat("\n2b. group_cdf: the only distributional assumption in the pipeline\n")
-## Unit tests for the tail-extrapolation function, independent of the API and
-## of the committed CSVs. Not previously covered at all, despite being the
-## place a tied-knot input (I3) or an out-of-range cut (I2) would fail.
-pc <- c("10"=150, "25"=180, "50"=210, "75"=240, "90"=265)
-ok(abs(group_cdf(pc, 180) - 0.25) < 1e-12, "group_cdf returns the knot percentile at a knot")
-gm <- group_cdf(pc, 195)
-ok(gm > 0.25 && gm < 0.50, "group_cdf interpolates between knots")
-ok(group_cdf(pc, 100) < 0.10, "group_cdf's left-tail extrapolation is below P10 at a point below P10")
-ok(is.finite(group_cdf(pc, 150)), "group_cdf returns a finite value at the lower knot")
-ok(inherits(tryCatch(group_cdf(pc, 300), error=function(e) e), "error"),
-   "group_cdf errors (rather than silently returning 1) above the top knot")
-tied <- c("10"=150, "25"=150, "50"=210, "75"=240, "90"=265)
-ok(inherits(tryCatch(group_cdf(tied, 150), error=function(e) e), "error"),
-   "group_cdf errors (rather than returning NaN) on tied percentile knots")
+cat("\n2b. quantile_cdf: the inverse behind the ED decomposition and nat_pct\n")
+## Replaced the group_cdf unit tests on 2026-09-29, when the five-percentile,
+## normal-tail group CDF was retired in favour of each group's own score
+## distribution. quantile_cdf inverts a quantile function; check it against
+## one with a known inverse and at the ends of the scale.
+Qlin <- make_quantile_fn(c(0, 50, 100), c(100, 200, 300))
+ok(abs(quantile_cdf(Qlin, 200) - 0.5) < 1e-8, "quantile_cdf inverts at a point the curve passes through")
+ok(max(abs(quantile_cdf(Qlin, Qlin(c(3, 37.5, 91))) - c(0.03, 0.375, 0.91))) < 1e-8,
+   "quantile_cdf(Q, Q(u)) returns u")
+ok(identical(quantile_cdf(Qlin, c(50, 350)), c(0, 1)),
+   "quantile_cdf returns 0 and 1 beyond the ends of the scale")
 
 cat("\n3. Monotonicity of the quantile function\n")
 mono <- by(qd, qd$cell, function(z) {
@@ -81,15 +80,15 @@ ok(all(unlist(mono)), "2019 quantiles increase with percentile in every cell")
 
 cat("\n4. Bottom-decile decomposition\n")
 if (!is.null(bd)) {
-  ## The reconstructed mass should land near the definitional target for
-  ## whichever cut is being decomposed (0.10 for the decile, 0.25 for the
-  ## quartile). This is an internal consistency check, not a validation of
-  ## the tail model -- see the note in 01-simulations.R.
+  ## The two measured groups (ED and not ED, from their own histograms) must
+  ## account for most but not more than all of the students below the cut;
+  ## "Information not available" takes the remainder. A measured mass above
+  ## the cut would mean the group histograms disagree with the national
+  ## percentiles, which group_composition refuses.
   for (q in unique(bd$target_pct)) {
     z <- bd[bd$target_pct == q, ]
-    ok(all(abs(z$reconstructed_mass - q/100) < 0.015),
-       sprintf("reconstructed mass for the bottom %d%% is within 0.015 of %.2f",
-               q, q/100))
+    ok(all(z$measured_mass <= q/100 + 1e-9 & z$measured_mass > 0.85 * q/100),
+       sprintf("measured groups account for 85 to 100 percent of the bottom %d%%", q))
   }
   s <- aggregate(share_of_tail ~ cell + year + target_pct, bd, sum)
   ok(all(abs(s$share_of_tail - 1) < 1e-6),
@@ -184,18 +183,16 @@ cat("\n8. Seat-allocation rules (analysis/alloc-rules.R)\n")
 ## Nothing above this point touches the allocation rules. Both bugs found in
 ## September 2026 were violations of the two invariants asserted here: the
 ## since-removed observed opt-in rule returned participation above 100 percent
-## at high budgets, and the eligibility screen capped correctly but then
-## under-spent its budget.
+## at high budgets, and the first, water-filled eligibility screen (retired
+## 2026-09-29) capped correctly but then under-spent its budget. The screen
+## that replaced it under-spends on purpose, since it seats only eligible
+## students; that is a definition, not a bug, and it is tested separately.
 source("analysis/alloc-rules.R")
 
-ed_ok <- !is.null(bd) && nrow(bd[bd$cell=="Reading G4" & grepl("^Econ", bd$group) &
-                                bd$year==2019, ]) > 0
+## The budget-spending rules. The eligibility screen is tested on its own in
+## section 11: it spends min(B, ED share), not B, by design.
 rules <- list("bottom-up"=alloc_bottom, "proportional"=alloc_uniform,
               "opt-in"=alloc_optin_geom)
-if (ed_ok) {
-  edc <- make_ed_curve(bd, "Reading G4")
-  rules[["screen"]] <- function(p, B) water_fill(edc, p, B)
-}
 Bs <- seq(0, 1, by=0.01)
 
 ## 1. Budget conservation. The invariant that makes the rules comparable at
@@ -281,22 +278,21 @@ ok(max(sapply(c(0.05,0.13,0.25,sat*0.9),
 ok(max(abs(alloc_optin_geom(FILL_GRID, sat-1e-6) - alloc_optin_geom(FILL_GRID, sat+1e-6))) < 1e-3,
    "alloc_optin_geom is continuous in the budget across the saturation threshold")
 
-## 7. Grid independence for the water-filled rule.
-if (ed_ok) {
-  fine <- local({
-    FILL_GRID <- seq(0, 100, by=0.01)
-    sapply(c(0.25,0.5,0.9), function(B) water_fill(edc, c(10,25,50,75,90), B))
-  })
-  coarse <- sapply(c(0.25,0.5,0.9), function(B) water_fill(edc, c(10,25,50,75,90), B))
-  ok(max(abs(fine - coarse)) < 1e-3,
-     sprintf("water_fill is insensitive to the grid step (max difference %.1e)",
-             max(abs(fine - coarse))))
-}
+## 7. Grid independence for the water-filled rule (the opt-in gradient, at
+##    budgets past its saturation point, where the cap binds).
+fine <- local({
+  FILL_GRID <- seq(0.005, 99.995, by=0.01)
+  sapply(c(0.6,0.8,0.95), function(B) water_fill(geomtakeup_line, c(10,25,50,75,90), B))
+})
+coarse <- sapply(c(0.6,0.8,0.95), function(B) water_fill(geomtakeup_line, c(10,25,50,75,90), B))
+ok(max(abs(fine - coarse)) < 1e-3,
+   sprintf("water_fill is insensitive to the grid step (max difference %.1e)",
+           max(abs(fine - coarse))))
 
 ## 8. The regression test for the silent-degradation bug: a cell with no
-##    ECONDIS rows must error, not quietly become the proportional rule.
-ok(inherits(tryCatch(make_ed_curve(bd, "No Such Cell"), error=function(e) e), "error"),
-   "make_ed_curve errors on a cell with no ECONDIS rows rather than falling back")
+##    ECONDIS distribution must error, not quietly become the proportional rule.
+ok(inherits(tryCatch(ed_share_points(dd, de, "No Such Cell", 2024), error=function(e) e), "error"),
+   "ed_share_points errors on a cell with no ECONDIS distribution rather than falling back")
 
 cat("\n9. Mixture outcome model (analysis/mixture.R)\n")
 ## The model that replaced the linear shift. What is asserted here is that the
@@ -335,12 +331,13 @@ gap_after <- function(fn, B) {
 }
 obs_gap <- (q24[PSr==90] - q24[PSr==10]) - base_spread
 source("analysis/alloc-rules.R")
-edc2 <- make_ed_curve(bd, "Reading G4")
+screen_rg4 <- make_ed_screen(ed_share_points(dd, de, "Reading G4", 2024))
 rules2 <- list("bottom-up"=alloc_bottom, "proportional"=alloc_uniform,
-               "opt-in"=alloc_optin_geom,
-               "screen"=function(p,B) water_fill(edc2,p,B))
-ok(max(sapply(rules2, function(f) abs(gap_after(f, 1) - obs_gap))) < 1e-9,
-   "every rule returns the no-program gap at full coverage under the mixture")
+               "opt-in"=alloc_optin_geom, "screen"=screen_rg4)
+## The screen is left out of the full-coverage check: at B = 1 it still seats
+## only ED students, so it does not treat everyone.
+ok(max(sapply(rules2[names(rules2) != "screen"], function(f) abs(gap_after(f, 1) - obs_gap))) < 1e-9,
+   "every budget-spending rule returns the no-program gap at full coverage under the mixture")
 ok(max(sapply(rules2, function(f) abs(gap_after(f, 0) - obs_gap))) < 1e-9,
    "every rule returns the no-program gap at zero budget")
 
@@ -424,6 +421,68 @@ ok(inherits(tryCatch(make_quantile_fn(c(10, 50, 90), c(1, 2, 3)), error=function
 bad <- dd[dd$cell=="Reading G4" & dd$year==2024, ]
 ok(inherits(tryCatch(quantile_points(bad, c(10, 50), c(300, 200), "bad"), error=function(e) e), "error"),
    "quantile_points stops when the histogram and the percentiles disagree in order")
+
+cat("\n11. Economic disadvantage: the ED share curve, the screen, and group outcomes\n")
+## s(p), the ED share at each national percentile, from the ECONDIS score
+## distributions (ed_share_points, alloc-rules.R); the eligibility screen built
+## on it (make_ed_screen); and the ED / not-ED outcome tables from
+## 06-seat-allocation.R.
+wide <- merge(de[grepl("^Econ", de$group), c("cell","year","bin","pct","pop_share")],
+              de[grepl("^Not", de$group), c("cell","year","bin","pct","pop_share")],
+              by=c("cell","year","bin"), suffixes=c("_ed","_ned"))
+wide <- merge(wide, dd[, c("cell","year","bin","pct")], by=c("cell","year","bin"))
+wide <- wide[wide$pct > 0, ]
+cover <- (wide$pop_share_ed * wide$pct_ed + wide$pop_share_ned * wide$pct_ned) / wide$pct
+ok(nrow(wide) > 0 && all(cover <= 1 + 1e-3),
+   sprintf("ED plus not-ED students never exceed the national count in a score bin (max %.4f)", max(cover)))
+ok(all(!tapply(de$group, paste(de$cell, de$year), function(g) any(grepl("^Info", g)))),
+   "\"Information not available\" is not pulled (its bins can be flagged); it is the remainder")
+for (lab in unique(qd$cell)) {
+  pts <- ed_share_points(dd, de, lab, 2024)
+  sc  <- make_ed_screen(pts)
+  s_grid <- approx(pts$pct, pts$share, xout=FILL_GRID, rule=2)$y
+  ok(all(pts$share >= 0 & pts$share <= 1) && abs(mean(s_grid) - pts$pop) < 1e-3,
+     sprintf("%s: ED share stays in [0, 1] and averages to the ED population share (%.4f vs %.4f)",
+             lab, mean(s_grid), pts$pop))
+  spent <- sapply(c(0.1, 0.3, pts$pop, 0.8, 1), function(B) mean(sc(FILL_GRID, B)))
+  ok(max(abs(spent - pmin(c(0.1, 0.3, pts$pop, 0.8, 1), pts$pop))) < 1e-3,
+     sprintf("%s: the screen spends min(B, ED share) and leaves the rest unused", lab))
+  ok(max(abs(sc(FILL_GRID, 0.2) - (0.2 / pts$pop) * s_grid)) < 1e-12 &&
+       max(abs(sc(FILL_GRID, 0.9) - s_grid)) < 1e-12,
+     sprintf("%s: screen participation is r * s(p) with r = min(1, B / ED share)", lab))
+  ## The same quantity two ways: the average of s(p) over the bottom decile,
+  ## from the binned shares, against the ED share of the bottom decile in
+  ## sim-bottom-decile.csv, from each group's spline inverted at the cut.
+  tail_avg <- mean(s_grid[FILL_GRID < 10])
+  bd_ed <- bd$share_of_tail[bd$cell == lab & bd$year == 2024 & bd$target_pct == 10 & grepl("^Econ", bd$group)]
+  ok(length(bd_ed) == 1 && abs(tail_avg - bd_ed) < 0.002,
+     sprintf("%s: bottom-decile ED share agrees across the two routes (%.3f vs %.3f)", lab, tail_avg, bd_ed))
+}
+go <- Sys.glob("tables/sim-group-outcomes-*.csv")
+ok(length(go) == 4, sprintf("an ED / not-ED outcome table exists for each of the four seat-allocation cells (%d)", length(go)))
+cell_S <- function(f) {
+  lab <- tools::toTitleCase(sub("-g", " G", sub(".*outcomes-(.*)\\.csv", "\\1", f)))
+  qd$sd2019[qd$cell == lab][1]
+}
+PCOL <- paste0("p", c(10, 25, 50, 75, 90))
+for (f in go) {
+  g <- read.csv(f, stringsAsFactors=FALSE); tag <- basename(f); dS <- G_TREAT * cell_S(f)
+  none <- g[g$rule == "2024, no program", ]
+  scr  <- g[g$rule == "Eligibility screen (ECONDIS)", ]
+  nn   <- none[none$group == "Not ED", PCOL]
+  ok(max(abs(sweep(as.matrix(scr[scr$group == "Not ED", PCOL]), 2, unlist(nn)))) < 1e-9,
+     sprintf("%s: the screen leaves not-ED students exactly where they were", tag))
+  lab_f <- tools::toTitleCase(sub("-g", " G", sub(".*outcomes-(.*)\\.csv", "\\1", f)))
+  pop_f <- de$pop_share[de$cell == lab_f & de$year == 2024 & grepl("^Econ", de$group)][1]
+  ed_full <- scr[scr$group == "ED" & scr$budget >= pop_f, PCOL]
+  ok(max(abs(sweep(as.matrix(ed_full), 2, unlist(none[none$group == "ED", PCOL]) + dS))) < 1e-9,
+     sprintf("%s: once every ED student is seated, every ED percentile rises by exactly the treated effect", tag))
+  prop <- g[g$rule == "Proportional (untargeted)" & abs(g$budget - 1) < 1e-9, ]
+  ok(max(abs(as.matrix(prop[, PCOL]) - (as.matrix(none[match(prop$group, none$group), PCOL]) + dS))) < 1e-9,
+     sprintf("%s: full proportional coverage shifts both groups by the treated effect", tag))
+  ok(all(g$p10 < g$p25 & g$p25 < g$p50 & g$p50 < g$p75 & g$p75 < g$p90),
+     sprintf("%s: group percentiles are ordered in every row", tag))
+}
 
 cat(sprintf("\n%s: %d failure(s)\n", if (fails == 0) "ALL TESTS PASSED" else "TESTS FAILED", fails))
 quit(status = if (fails == 0) 0 else 1)

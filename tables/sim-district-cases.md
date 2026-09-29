@@ -25,10 +25,10 @@ would conclude that position does not matter.
 
 | District | Its p10 sits at national pctile | Its p25 sits at national pctile | Its median sits at |
 |---|---|---|---|
-| District A | 7.4 | 21.0 | 43.0 |
-| District B | 8.6 | 23.0 | 46.5 |
-| District C | 12.0 | 28.5 | 54.2 |
-| District D | 14.0 | 32.0 | 58.3 |
+| District A | 7.5 | 20.0 | 42.0 |
+| District B | 8.7 | 22.4 | 45.9 |
+| District C | 11.5 | 27.8 | 54.2 |
+| District D | 13.1 | 30.9 | 58.4 |
 
 This is where position bites. Even with medians only 0.4 SD apart end to
 end, District A's own bottom decile sits near the national 7th percentile
@@ -45,10 +45,10 @@ tutoring effect of 0.155 SD to those it reaches.
 
 | District | Share of its students eligible | Share of its p25 target covered |
 |---|---|---|
-| District A | 32.0% | 100% |
-| District B | 28.5% | 100% |
-| District C | 23.0% | 92% |
-| District D | 21.0% | 84% |
+| District A | 30.9% | 100% |
+| District B | 27.8% | 100% |
+| District C | 22.4% | 90% |
+| District D | 20.0% | 80% |
 
 A rule written on the national distribution is not a neutral instrument.
 It sends systematically more resource per student to low-median districts

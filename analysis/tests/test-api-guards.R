@@ -17,7 +17,7 @@
 ##   - the population-share guard: an ECONDIS response missing a group
 ##     normalized share_of_tail to ~100% for whichever group arrived
 
-source("analysis/dist-helpers.R")
+source("analysis/mixture.R")      # quantile_points / quantile_cdf, used by group_composition
 source("analysis/api-helpers.R")
 source("analysis/config-helpers.R")
 
@@ -73,14 +73,15 @@ query <- function(cell, variable, stattypes)
        stattype=paste(stattypes, collapse=","),
        Year=paste(years, collapse=","), ShowDetails="true")
 ## Raw JSON text of a committed response, and a variant with some rows dropped.
-fixture_text <- function(cell, variable, stattypes) {
-  qs <- paste0(names(query(cell, variable, stattypes)), "=",
-               vapply(query(cell, variable, stattypes),
-                      function(v) URLencode(as.character(v), reserved=TRUE), ""),
+## Raw JSON text of the committed response to query list `q`, found by the
+## same cache key fetch_api computes.
+read_fixture <- function(q) {
+  qs <- paste0(names(q), "=", vapply(q, function(v) URLencode(as.character(v), reserved=TRUE), ""),
                collapse="&")
   paste(readLines(file.path(fixture_cache, paste0(substr(cache_key_hash(qs), 1, 16), ".json")),
                   warn=FALSE), collapse="")
 }
+fixture_text <- function(cell, variable, stattypes) read_fixture(query(cell, variable, stattypes))
 with_rows <- function(txt, keep) {
   d <- jsonlite::fromJSON(txt, simplifyVector=FALSE)
   d$result <- Filter(keep, d$result)
@@ -194,7 +195,13 @@ pv <- function(y, code) unname(raw_tot[[paste(y, "All students", sep="||")]][[co
 obs <- list(Q19=list("10"=pv(yr[1], "PC:P1"), "25"=pv(yr[1], "PC:P2")),
             D=list("10"=c(d=pv(yr[2], "PC:P1") - pv(yr[1], "PC:P1")),
                    "25"=c(d=pv(yr[2], "PC:P2") - pv(yr[1], "PC:P2"))))
-comp <- capture(group_composition(raw_econ, obs, "10", years, "Reading G4"))$value
+## The committed ECONDIS score distributions for Reading G4, read from the
+## fixture cache with the network forbidden, exactly as 01 reads them.
+ECON_G <- ECON_HIST_GROUPS      # api-helpers.R, the groups 01 pulls
+gd <- setNames(lapply(years, function(y)
+  get_distribution(rg4, y, jurisdiction=juris, cache=fixture_cache, variable="ECONDIS",
+                   groups=ECON_G, download=no_network)), as.character(years))
+comp <- capture(group_composition(raw_econ, gd, obs, "10", years, "Reading G4"))$value
 ok(!is.null(comp) && setequal(names(comp), yr), "a complete ECONDIS fixture decomposes in both years")
 ## Against the committed output: the decomposition from the fixture must be
 ## the one in tables/sim-bottom-decile.csv (written with 15 significant digits).
@@ -212,19 +219,35 @@ ok(all(vapply(comp, function(y) abs(sum(vapply(y$rows, `[[`, 0, "share_of_tail")
 ## reference year only. The gate in fetch_api would stop this response; the
 ## guard is the second line if a group is lost after parsing.
 drop_ref <- raw_econ[names(raw_econ) != paste(yr[1], "Not economically disadvantaged", sep="||")]
-r <- capture(group_composition(drop_ref, obs, "10", years, "Reading G4"))
+r <- capture(group_composition(drop_ref, gd, obs, "10", years, "Reading G4"))
 ok(!is.null(r$value) && identical(names(r$value), yr[2]),
    "a year with a group missing is skipped; the complete year is kept")
 ok(any(grepl(paste0("Reading G4 ", yr[1], ": ECONDIS population shares sum to"), r$msgs)),
    "the skip is reported, naming the cell and year")
 drop_both <- raw_econ[!grepl("\\|\\|Not economically disadvantaged$", names(raw_econ))]
-r <- capture(group_composition(drop_both, obs, "10", years, "Reading G4"))
+r <- capture(group_composition(drop_both, gd, obs, "10", years, "Reading G4"))
 ok(is.null(r$value) && sum(grepl("population shares sum to", r$msgs)) == 2,
    "with the group missing in both years the decomposition returns NULL")
 ## Without the guard this is what would have been published: the surviving
 ## group's share of the tail normalized to about 100 percent.
 ok(max(vapply(r$msgs, function(s) as.numeric(sub(".*sum to ([0-9.]+),.*", "\\1", s)), 0)) < 0.98,
    "the rejected population shares are far from 1 (the guard is not firing on rounding)")
+
+## The remainder check: "Information not available" takes what the measured
+## groups leave of the national 10 percent. If the measured groups claim more
+## than that (here, the ED population share inflated from about 51 to 60
+## percent), the histograms disagree with the national percentiles and the
+## decomposition must stop rather than hand the third group a negative mass.
+inflate <- raw_econ
+k <- paste(yr[1], "Economically disadvantaged", sep="||")
+inflate[[k]][["RP:RP"]]["value"] <- 60
+nk <- paste(yr[1], "Information not available", sep="||")
+inflate[[nk]][["RP:RP"]]["value"] <- inflate[[nk]][["RP:RP"]]["value"] - 9
+ok(inherits(tryCatch(group_composition(inflate, gd, obs, "10", years[1], "Reading G4"),
+                     error=function(e) e), "error"),
+   "group_composition stops when the measured groups over-fill the national tail")
+ok(all(vapply(comp, function(y) y$measured_mass <= 0.10 + 1e-9 && y$measured_mass > 0.09, logical(1))),
+   "the two measured groups account for between 9 and 10 percent of students below the p10 cut")
 
 cat("\n6. The score distribution (DP:DP): parse_distribution and its gate\n")
 ## The committed histogram fixture for Reading G4 2019, fetched by the exact
@@ -233,13 +256,7 @@ dist_query <- function(cell, year)
   list(type="data", subject=cell$subject, grade=cell$grade, subscale=cell$subscale,
        variable="TOTAL", jurisdiction=juris, stattype=DIST_STAT,
        Year=as.character(year), ShowDetails="true")
-dist_txt <- local({
-  q <- dist_query(rg4, years[1])
-  qs <- paste0(names(q), "=", vapply(q, function(v) URLencode(as.character(v), reserved=TRUE), ""),
-               collapse="&")
-  paste(readLines(file.path(fixture_cache, paste0(substr(cache_key_hash(qs), 1, 16), ".json")),
-                  warn=FALSE), collapse="")
-})
+dist_txt <- read_fixture(dist_query(rg4, years[1]))
 dist_d <- jsonlite::fromJSON(dist_txt, simplifyVector=FALSE)
 h <- parse_distribution(dist_d, rg4$scale_max, "Reading G4 2019")
 ## (Bin edges are inferred from the bin number, so they are not checked here;
@@ -264,6 +281,29 @@ off_sum <- dist_d
 off_sum$result <- lapply(off_sum$result, function(r) { if (r$stattype == "DP:D25") r$value <- r$value + 1; r })
 ok(refuses(off_sum), "a histogram whose bins do not sum to 100 is refused")
 ok(refuses(dist_d, scale_max=300), "a 50-bin histogram is refused for a 0-300 scale")
+## Subgroup responses: each requested group parses on its own, and a group
+## that is not requested is never validated, so ECONDIS "Information not
+## available" (whose DP:DP bins can be flagged) cannot stop the run.
+ok(all(vapply(gd, function(y) identical(names(y), ECON_G) &&
+                all(vapply(y, function(h) nrow(h) == 50 && abs(sum(h$pct) - 100) < 0.01, logical(1))),
+              logical(1))),
+   "the ECONDIS DP:DP fixtures parse to complete 50-bin histograms for both measured groups")
+econ_d <- jsonlite::fromJSON(read_fixture(modifyList(dist_query(rg4, years[1]), list(variable="ECONDIS"))),
+                             simplifyVector=FALSE)
+flag_info <- econ_d
+flag_info$result <- lapply(flag_info$result, function(r) {
+  if (identical(r$varValueLabel, "Information not available") && r$stattype == "DP:D25")
+    r$errorFlag <- 257L
+  r })
+ok(identical(parse_distribution(flag_info, 500, "t", group=ECON_G[1]),
+             parse_distribution(econ_d, 500, "t", group=ECON_G[1])),
+   "a flagged bin in an unrequested group does not affect a requested group")
+ok(inherits(tryCatch(parse_distribution(econ_d, 500, "t"), error=function(e) e), "error"),
+   "a multi-group DP:DP response read without `group` is refused (repeated bins)")
+ok(inherits(tryCatch(get_distribution(rg4, years[1], juris, fixture_cache, variable="ECONDIS",
+                                      download=no_network), error=function(e) e), "error"),
+   "get_distribution refuses a subgroup variable without `groups`")
+
 ## The fetch gate: a truncated DP:DP response (half the rows) is not cached.
 half <- with_rows(dist_txt, local({ i <- 0; function(r) { i <<- i + 1; i <= 28 } }))
 cache <- fresh(); fk <- fake_download(list(half))

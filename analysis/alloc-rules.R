@@ -8,13 +8,18 @@
 ## asserted in analysis/tests/test-sim.R:
 ##
 ##   1. Budget conservation. Mean participation across the distribution equals
-##      B, so no rule may quietly spend more or less than another.
+##      B, so no rule may quietly spend more or less than another. The one
+##      deliberate exception is the eligibility screen, which cannot seat more
+##      students than are eligible: it spends min(B, ED share) and leaves the
+##      rest of the budget unused (see make_ed_screen).
 ##   2. Range. Participation is a rate, so it stays within [0, 1].
 ##
 ## Both bugs found in September 2026 were violations of one of these: the
 ## since-removed observed opt-in rule returned participation above 100 percent
-## at high budgets, and the eligibility screen capped correctly but then
-## under-spent its budget.
+## at high budgets, and the first, water-filled eligibility screen (retired
+## 2026-09-29) capped correctly but then under-spent its budget. The screen
+## that replaced it under-spends on purpose, since it seats only eligible
+## students; that is a definition, not a bug, and it is tested separately.
 
 ## Grid on which the budget constraint is enforced for rules with no closed
 ## form. Fine enough not to matter at the reported percentiles: against a much
@@ -122,8 +127,9 @@ geom_saturation <- function() geomtakeup_mean() / geomtakeup_line(90)
 ## Scale the shape to the budget, cap whatever exceeds 100 percent, hand the
 ## freed seats back to the percentiles still under the cap in proportion to
 ## their share of the shape, and repeat. Naive clipping skips the hand-back
-## and quietly loses those seats: applied to the eligibility screen at B = 1 it
-## spent only 84 percent of the budget. Solved on FILL_GRID so the answer does
+## and quietly loses those seats: applied to the retired water-filled
+## eligibility screen at B = 1 it spent only 84 percent of the budget. Today
+## only the opt-in gradient needs it, above geom_saturation(). Solved on FILL_GRID so the answer does
 ## not depend on which percentiles the caller happens to ask about.
 water_fill <- function(shape_fn, p, B) {
   w     <- shape_fn(FILL_GRID)
@@ -142,28 +148,57 @@ water_fill <- function(shape_fn, p, B) {
   approx(FILL_GRID, pmin(1, part), xout=p, rule=2)$y
 }
 
-## Eligibility screen: seats go only to economically disadvantaged students,
-## who are about 51 percent of students but 83 percent of the bottom decile.
+## ---------------------------------------------------------------------------
+## Eligibility screen: seats go only to economically disadvantaged (ED)
+## students, at random among them.
 ##
-## Returns a closure so the knots are read once and the resulting shape is a
-## pure function of p, which is what makes it testable in isolation. It stops
-## rather than falling back to a flat shape: a flat shape water-fills to
-## uniform participation, which would draw the screen as an exact copy of the
-## proportional curve while still carrying its own label and color. That
-## failure is reachable, because 01-simulations.R skips a cell whose
-## decomposition is unavailable, so a cell can appear in sim-quantiles.csv and
-## be absent from sim-bottom-decile.csv.
-make_ed_curve <- function(bd, cell) {
-  e   <- bd[bd$cell==cell & grepl("^Econ", bd$group) & bd$year==2019,]
-  d10 <- e$share_of_tail[e$target_pct==10]
-  if (!length(d10))
-    stop("no ECONDIS rows for cell '", cell, "' in sim-bottom-decile.csv. ",
-         "The eligibility-screen rule would degrade into the proportional ",
-         "rule while keeping its own label, so refusing to run.", call.=FALSE)
-  d25 <- e$share_of_tail[e$target_pct==25]
-  pop <- e$pop_share[e$target_pct==10]
-  ## ED share falls as we move up, crossing the population share at p50 and
-  ## continuing down to 2*pop-d25 at p90.
-  knots_y <- c(d10, d25, pop, max(0.05, 2*pop - d25))
-  function(p) approx(x=c(10,25,50,90), y=knots_y, xout=p, rule=2)$y
+## The ingredient is s(p), the ED share of students at national percentile p.
+## It comes straight from the published score distributions: in each 10-point
+## bin b, s_b = pop_ED * pct_ED,b / pct_TOTAL,b (the ED students in the bin
+## over all students in it). Each bin's share is placed at the national rank
+## of the bin's midpoint and interpolated linearly between midpoints, flat
+## beyond the outermost ones. No tail and no invented knots. On 2026-09-29 the
+## curve averaged to within 0.0005 of pop_ED in every cell, which is how close
+## the screen comes to spending min(B, pop_ED) exactly.
+##
+## Replaced make_ed_curve (2026-09-29), a four-point line through the ED
+## share of everyone below p10 and below p25, which are tail averages, not
+## shares AT p10 and p25, with made-up anchors at p50 and p90.
+##
+## dist and edist are the rows of tables/sim-distribution.csv and
+## tables/sim-distribution-econdis.csv. `year` should be the year the program
+## acts on, 2024: the screen seats 2024 students, so it is their ED share at
+## each 2024 percentile that matters. Returns list(pct, share, pop).
+ed_share_points <- function(dist, edist, cell, year) {
+  t <- dist[dist$cell == cell & dist$year == year, ]
+  e <- edist[edist$cell == cell & edist$year == year & grepl("^Econ", edist$group), ]
+  if (!nrow(t) || !nrow(e))
+    stop("no score distribution for '", cell, "' ", year, " in ",
+         if (!nrow(t)) "sim-distribution.csv" else "sim-distribution-econdis.csv",
+         ". The eligibility screen needs both; run analysis/01-simulations.R.",
+         call.=FALSE)
+  t <- t[order(t$bin), ]; e <- e[order(e$bin), ]
+  if (!identical(t$bin, e$bin))
+    stop("ed_share_points: ", cell, " ", year, " national and ED bins differ", call.=FALSE)
+  pop  <- e$pop_share[1]
+  cum  <- cumsum(t$pct) / sum(t$pct) * 100
+  mid  <- (c(0, head(cum, -1)) + cum) / 2
+  keep <- t$pct > 0
+  ## Clamp: in the handful of extreme bins holding under 0.003 percent of
+  ## students, rounding in the published percentages can put s a hair above 1.
+  share <- pmin(1, pmax(0, pop * e$pct[keep] / t$pct[keep]))
+  list(pct=mid[keep], share=share, pop=pop)
+}
+
+## The screen as an allocation rule. With budget B the ED treatment rate is
+## r = min(1, B / pop_ED), and participation at percentile p is r * s(p):
+## exactly what random assignment among ED students produces at each score.
+## Seats beyond pop_ED have no eligible taker and go unused. The rule is a
+## pure function of (p, B), like the others; `pop` is attached so callers can
+## report the unused seats without reaching back into the data.
+make_ed_screen <- function(pts) {
+  rule <- function(p, B)
+    min(1, B / pts$pop) * approx(pts$pct, pts$share, xout=p, rule=2)$y
+  attr(rule, "pop") <- pts$pop
+  rule
 }

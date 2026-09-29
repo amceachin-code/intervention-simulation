@@ -107,12 +107,6 @@ requirements_figure_points:
   - {label: "Opt-in tutoring take-up", g: null, share_all: null, share_targeted_id: optin,
      basis: targeted, src: "Robinson/Bisht/Loeb 2025 (take-up only, no effect)"}
 
-# Economically disadvantaged share of the population, used by
-# 05-compile-summary.R section 6b. Source UNCONFIRMED: it matches the Reading
-# G4 2019 ECONDIS population share in tables/sim-bottom-decile.csv (0.5095)
-# rounded, but was hardcoded without a citation. See TODO.md.
-ed_population_share: 0.510
-
 # Kraft (2020) empirical distribution of education RCT effect sizes, for benchmarking
 # the REQUIRED effect against what interventions actually deliver.
 kraft2020_effect_percentiles:

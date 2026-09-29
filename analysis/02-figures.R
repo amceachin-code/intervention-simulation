@@ -200,7 +200,7 @@ f10 <- ggplot(ed, aes(factor(year), tail, group=cell)) +
   xlab(NULL) +
   labs(title="Economic disadvantage identifies most of the bottom decile, but the screen is weakening",
        subtitle="Bars: share of students below the 10th percentile who are economically disadvantaged.\nDashed line: that group's share of the whole population. The gap between them is the targeting lift.",
-       caption="From published within-subgroup NAEP percentiles. Each group's left tail below its own P10 is\nextrapolated with a normal fitted through P10 and P25; reconstructed bottom-decile mass 0.103-0.106\nagainst a target of 0.100. Public NAEP Data Service API.") +
+       caption="From each group's published NAEP score distribution (10-point bins) and percentiles; no tail is assumed.\nStudents whose economic status is not available take the remainder of the bottom decile. Public NAEP Data Service API.") +
   theme_sim
 ggsave(file.path(OUT,"fig10-targeting-screen.png"), f10, width=11, height=6.4, dpi=200)
 message("wrote ", file.path(OUT,"fig10-targeting-screen.png"))

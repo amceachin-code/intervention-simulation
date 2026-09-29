@@ -53,10 +53,11 @@ get_stats_run <- function(cell, variable, stattypes, years, expect_rows=NULL)
 
 ## -------------------------------------------------- distribution helpers
 
-## group_cdf lives in dist-helpers.R, shared with analysis/tests/test-sim.R so
-## it has unit tests independent of the API and the committed CSVs. Run this
-## script from the repo root (as its own usage comment specifies).
-source("analysis/dist-helpers.R")
+## quantile_points, make_quantile_fn and quantile_cdf (mixture.R) build each
+## ECONDIS group's quantile function from its score distribution, which is how
+## group_composition gets the share of each group below a cut. Run this script
+## from the repo root (as its own usage comment specifies).
+source("analysis/mixture.R")
 
 ## ------------------------------------------------------------ parameters
 
@@ -148,12 +149,17 @@ requirements <- function(obs)
 ## normalized to ~100% for whichever group happened to arrive.
 ## The decomposition itself, with its population-share guard, is
 ## group_composition() in api-helpers.R.
-c_of_p <- function(cell, obs, cut_pct="10", n_groups=3) {
-  raw <- get_stats_run(cell, "ECONDIS", c(unname(PCT_CODE), "RP:RP"), YEARS,
-                       expect_rows=n_groups * (length(PCT_CODE) + 1) * 2)
+## `raw` is the cell's parsed ECONDIS statistics (econ_stats) and `gd` its
+## ECONDIS score distributions, list(<year>=list(<group>=histogram)); both are
+## pulled once per cell in section F2 below. ECON_HIST_GROUPS (the groups with
+## histograms) is in api-helpers.R.
+c_of_p <- function(cell, obs, raw, gd, cut_pct="10") {
   if (is.null(raw) || !length(raw)) return(NULL)
-  group_composition(raw, obs, cut_pct, YEARS, cell$label)
+  group_composition(raw, gd, obs, cut_pct, YEARS, cell$label)
 }
+econ_stats <- function(cell, n_groups=3)
+  get_stats_run(cell, "ECONDIS", c(unname(PCT_CODE), "RP:RP"), YEARS,
+                expect_rows=n_groups * (length(PCT_CODE) + 1) * 2)
 
 ## ------------------------------------------------------------------ main
 
@@ -183,6 +189,38 @@ dist <- do.call(rbind, lapply(names(res), function(lab) {
     data.frame(cell=lab, year=as.integer(yr), h, stringsAsFactors=FALSE)
   }))
 }))
+
+## F2. Score distributions by economic disadvantage, same one-request-per-year
+## rule. They feed the bottom-decile decomposition (Table E), the eligibility
+## screen's ED share by percentile, and the ED / not-ED outcome views (06 and
+## the explorer). pop_share is the group's RP:RP from the ECONDIS percentile
+## pull, carried on every row so a reader needs one file, not two.
+message("\nPulling score distributions by economic disadvantage (DP:DP x ECONDIS)...")
+## First pull, then flatten: econ_stats and econ_dist are what c_of_p reads
+## below, and edist is the flat table written to sim-distribution-econdis.csv.
+econ_st <- list(); econ_dist <- list()
+for (lab in names(res)) {
+  cell <- res[[lab]]$cell
+  econ_st[[lab]] <- econ_stats(cell)
+  for (yr in c(REF_YR, CMP_YR)) {
+    h <- get_distribution(cell, yr, jurisdiction=JURIS, cache=CACHE,
+                          variable="ECONDIS", groups=ECON_HIST_GROUPS)
+    if (is.null(h)) stop("ECONDIS score distribution unavailable for ", lab, " ", yr,
+                         "; rerun, or check the API", call.=FALSE)
+    econ_dist[[lab]][[yr]] <- h
+    message("  ok   ", lab, " ", yr)
+  }
+}
+edist <- do.call(rbind, lapply(names(econ_dist), function(lab)
+  do.call(rbind, lapply(names(econ_dist[[lab]]), function(yr) {
+    h <- econ_dist[[lab]][[yr]]
+    do.call(rbind, lapply(names(h), function(g) {
+      rp <- econ_st[[lab]][[paste(yr, g, sep="||")]][["RP:RP"]]
+      if (is.null(rp)) stop("no RP:RP for ", lab, " ", yr, " ", g, call.=FALSE)
+      data.frame(cell=lab, year=as.integer(yr), group=g,
+                 pop_share=unname(rp["value"]) / 100, h[[g]], stringsAsFactors=FALSE)
+    }))
+  }))))
 message("  rows dropped as suppressed/flagged: ", DROPPED$n)
 
 L <- c("# Simulation outputs: benchmarking the recovery requirement", "",
@@ -277,18 +315,13 @@ for (lab in names(res)) {
 }
 
 L <- c(L, "", "## Table E. Composition of the bottom decile, by economic disadvantage", "",
-       "From published within-subgroup percentiles. Each group's left tail below",
-       "its own P10 is extrapolated with a normal fitted through P10 and P25.",
-       "",
-       "The reconstructed-mass column is an INTERNAL CONSISTENCY check only: it",
-       "sums the group masses against the definitional 0.100. It is largely",
-       "INSENSITIVE to the tail shape (it moves ~0.002 while the estimand moves",
-       "~4 points), and its excess over 0.100 comes from linear interpolation",
-       "between percentile knots sitting above the true CDF. Do not read it as",
-       "validating the tail assumption. Sensitivity to that assumption is",
-       "reported separately: the ED share is 79-83% across normal, logistic and",
-       "exponential left tails, so the substantive conclusion is robust.", "",
-       "| Cell | Year | Group | Pop. share | P(below p10 cut) | Share of bottom decile | Recon. mass |",
+       "From each group's published score distribution (10-point bins) and its",
+       "own percentiles: a monotone spline through both, inverted at the cut. No",
+       "tail is assumed. The cut is the national p10, so 10 percent of students",
+       "fall below it by definition; \"Information not available\" (no usable",
+       "histogram) takes whatever the two measured groups leave. The measured-mass",
+       "column is what the two measured groups account for.", "",
+       "| Cell | Year | Group | Pop. share | P(below p10 cut) | Share of bottom decile | Measured mass |",
        paste0("|---|", strrep("---|", 6)))
 ## Compute the composition of BOTH the bottom decile and the bottom quartile.
 ## p25 matters because it is the target an eligibility screen can plausibly
@@ -297,10 +330,10 @@ L <- c(L, "", "## Table E. Composition of the bottom decile, by economic disadva
 ## is 25 percent and cannot be fully covered at that take-up.
 cps <- list(); cps25 <- list()
 for (lab in names(res)) {
-  cp <- c_of_p(res[[lab]]$cell, res[[lab]]$obs)
+  cp <- c_of_p(res[[lab]]$cell, res[[lab]]$obs, econ_st[[lab]], econ_dist[[lab]])
   if (is.null(cp)) { message("  -- c(p) unavailable for ", lab); next }
   cps[[lab]] <- cp
-  cp25 <- c_of_p(res[[lab]]$cell, res[[lab]]$obs, cut_pct="25")
+  cp25 <- c_of_p(res[[lab]]$cell, res[[lab]]$obs, econ_st[[lab]], econ_dist[[lab]], cut_pct="25")
   if (!is.null(cp25)) cps25[[lab]] <- cp25
   for (yr in names(cp)) {
     rows <- cp[[yr]]$rows
@@ -308,7 +341,7 @@ for (lab in names(res)) {
     for (r in rows)
       L <- c(L, sprintf("| %s | %s | %s | %.1f%% | %.1f%% | **%.1f%%** | %.3f |",
                         lab, yr, r$group, r$share*100, r$p_below*100,
-                        r$share_of_tail*100, cp[[yr]]$reconstructed_mass))
+                        r$share_of_tail*100, cp[[yr]]$measured_mass))
   }
   message("  ok   c(p) ", lab)
 }
@@ -338,6 +371,7 @@ write.csv(flat, file.path(OUT, "sim-quantiles.csv"), row.names=FALSE)
 ## The histograms, one row per cell x year x bin: published aggregate
 ## percentages only, like the percentiles above.
 write.csv(dist, file.path(OUT, "sim-distribution.csv"), row.names=FALSE)
+write.csv(edist, file.path(OUT, "sim-distribution-econdis.csv"), row.names=FALSE)
 
 cflat <- NULL
 for (tgt in list(list(10, cps), list(25, cps25))) {
@@ -350,7 +384,7 @@ for (tgt in list(list(10, cps), list(25, cps25))) {
           cell=lab, year=as.integer(yr), target_pct=qq, group=r$group,
           pop_share=r$share, p_below_cut=r$p_below,
           share_of_tail=r$share_of_tail,
-          reconstructed_mass=ci$reconstructed_mass, cut=ci$cut,
+          measured_mass=ci$measured_mass, cut=ci$cut,
           stringsAsFactors=FALSE))
       }
     }
@@ -377,7 +411,7 @@ git_sha <- if (!is.null(attr(git_sha, "status")) && attr(git_sha, "status") != 0
 ## (The config is the default path even under --config, which is recorded
 ## separately below.)
 DIRTY_FILES <- c("analysis/01-simulations.R", "analysis/api-helpers.R",
-                 "analysis/dist-helpers.R", "analysis/config-helpers.R",
+                 "analysis/mixture.R", "analysis/config-helpers.R",
                  "analysis/config/sim-params.yaml")
 git_dirty <- suppressWarnings(system2("git", c("status","--porcelain", DIRTY_FILES),
                                       stdout=TRUE, stderr=FALSE))
@@ -400,7 +434,7 @@ writeLines(c(
   paste("jurisdiction:", JURIS),
   paste("api:", API),
   paste("statistics:", paste(c(unname(PCT_CODE), "SD:SD", "RP:RP (ECONDIS)",
-                               paste(DIST_STAT, "(one request per year)")), collapse=", ")),
+                               paste(DIST_STAT, "(TOTAL and ECONDIS, one request per year)")), collapse=", ")),
   paste("cells_ok:", paste(names(res), collapse=", ")),
   paste("cells_failed:", if (length(failed)) paste(failed, collapse=", ") else "none"),
   paste("cache_dir:", CACHE, "(delete to force refresh)"),

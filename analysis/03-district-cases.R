@@ -44,25 +44,18 @@ districts <- tibble(
 ## where those students sit in the NATIONAL distribution, which is what a
 ## screen or a program actually sees.
 
-## Map a district score onto its national percentile, by interpolating the
-## national 2019 quantile function. Outside the published 10-90 range we
-## extrapolate with a normal fitted through the nearest two knots, and flag it.
-nat_pct <- function(x) {
-  v <- z$q2019; p <- z$percentile
-  if (x <= v[1]) {
-    sd <- (v[2]-v[1])/(qnorm(p[2]/100)-qnorm(p[1]/100)); mu <- v[1]-qnorm(p[1]/100)*sd
-    return(100*pnorm((x-mu)/sd))
-  }
-  if (x >= v[length(v)]) {
-    n <- length(v)
-    sd <- (v[n]-v[n-1])/(qnorm(p[n]/100)-qnorm(p[n-1]/100)); mu <- v[n]-qnorm(p[n]/100)*sd
-    return(100*pnorm((x-mu)/sd))
-  }
-  for (i in seq_len(length(v)-1))
-    if (x >= v[i] && x <= v[i+1])
-      return(p[i] + (p[i+1]-p[i])*(x-v[i])/(v[i+1]-v[i]))
-  NA
-}
+## Map a district score onto its national percentile: the inverse of the
+## national 2019 quantile function, built (quantile_points, mixture.R) from the
+## 2019 score distribution and the published percentiles. The distribution
+## reaches the ends of the scale, so no tail is assumed; this replaced linear
+## interpolation between the five percentiles with fitted normal tails on
+## 2026-09-29.
+source("analysis/mixture.R")
+dd <- read.csv(file.path("tables", "sim-distribution.csv"), stringsAsFactors=FALSE)
+q19_pts <- quantile_points(dd[dd$cell == CELL & dd$year == 2019, ], z$percentile,
+                           z$q2019, paste(CELL, 2019))
+Q19_fn <- make_quantile_fn(q19_pts$pct, q19_pts$score)
+nat_pct <- function(x) 100 * quantile_cdf(Q19_fn, x)
 
 L <- c()
 add <- function(...) L <<- c(L, sprintf(...))

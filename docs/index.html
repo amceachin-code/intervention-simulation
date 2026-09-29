@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- draft v2, 2026-09-28 (quantile functions from the score distribution); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R -->
+<!-- draft v3, 2026-09-29 (eligibility screen and ED / not-ED outcomes); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R, analysis/alloc-rules.R -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -92,6 +92,7 @@
 
       <fieldset>
         <legend>3. Who takes part <a class="why" href="methods.html#who-takes-part">How this works</a></legend>
+        <div class="seg two" id="rule"></div>
         <div class="seg" id="kPart"></div>
         <p class="ctl-help" id="kPart-help"></p>
       </fieldset>
@@ -141,6 +142,21 @@
       </section>
 
       <section class="card">
+        <h2>Economically disadvantaged students and everyone else</h2>
+        <p class="sub">Each group against its own 2019 score, in standard deviations. Percentiles are within each group.</p>
+        <div class="legend">
+          <span><i class="sw dash" style="border-color:var(--series-ed)"></i>Disadvantaged, no program</span>
+          <span><i class="sw" style="border-color:var(--series-ed)"></i>Disadvantaged, with the program</span>
+          <span><i class="sw dash" style="border-color:var(--series-ned)"></i>Not disadvantaged, no program</span>
+          <span><i class="sw" style="border-color:var(--series-ned)"></i>Not disadvantaged, with the program</span>
+        </div>
+        <div class="chart" id="ed-chart"><div class="tip"></div></div>
+        <p class="axis-cap">Percentile within each group, from lowest-scoring students (left) to highest (right)</p>
+        <div class="tbl-wrap" style="margin-top:12px"><table id="ed-tbl"></table></div>
+        <p class="ctl-help" id="ed-note"></p>
+      </section>
+
+      <section class="card">
         <h2>At the five percentiles NAEP reports</h2>
         <div class="tbl-wrap"><table id="tbl"></table></div>
         <div class="tbl-wrap" style="margin-top:12px"><table id="gap-tbl"></table></div>
@@ -156,7 +172,9 @@
         <p>Changing who takes part does not change how many take part. The tool moves the same number
         of seats between low and high scorers. No group can go above 100 percent; any extra seats go to
         groups that still have room. The boost works the same way, so its average across all
-        students stays at the value you set.</p>
+        students stays at the value you set. The one exception is "Economically disadvantaged only":
+        seats go at random to eligible students, so a program with more seats than eligible students
+        leaves the extra seats empty.</p>
         <p>The two ways of counting give different answers when only some students at a score level take
         part. "All students" lines everyone up again after the program. Students who took part can move
         past classmates who did not, so a program that reaches only some students spreads scores out.
@@ -173,7 +191,10 @@
           through the published percentiles and the cumulative 10-point score distribution (NAEP DP:DP),
           joined by monotone (Fritsch&ndash;Carlson) interpolation; the score bins bound the support, so no
           tails are assumed. Participation and the treated effect are linear in prior rank with mean held
-          fixed; participation is capped at 1 and water-filled to conserve the seat budget.</p>
+          fixed; participation is capped at 1 and water-filled to conserve the seat budget. Under the
+          eligibility screen, participation at rank p is r&middot;s(p), where s(p) is the 2024 share of
+          economically disadvantaged students at p (from the ECONDIS score distributions) and
+          r = min(1, B / e), with e their share of all students; the screen spends min(B, e).</p>
           <p>"All students" is the distributional estimand: post-program quantiles of the exact
           treated/untreated mixture, calibrated to reproduce the published knots. "Same students" is the
           group estimand, Q(p) + &pi;(p)&delta;(p). The R pipeline in <code>analysis/</code> is the
@@ -203,7 +224,7 @@ const defaults = {
   cell: D.cells[0].label,
   effect: configValue(D.benchmarks, D.treated_effect).g,
   share: configValue(D.participation, "hdt_dist").c,
-  kPart: "neutral", kEffect: "neutral", mode: "distributional",
+  kPart: "neutral", kEffect: "neutral", mode: "distributional", rule: "tilt",
 };
 const state = Object.assign({}, defaults, readHash());
 
@@ -225,6 +246,7 @@ function readHash() {
   if (out.cell && !D.cells.some((c) => c.label === out.cell)) delete out.cell;
   for (const k of ["kPart", "kEffect"]) if (out[k] && !E.TILT_LEVELS.some((l) => l.id === out[k])) delete out[k];
   if (out.mode && !["group", "distributional"].includes(out.mode)) delete out.mode;
+  if (out.rule && !["tilt", "ed"].includes(out.rule)) delete out.rule;
   return out;
 }
 function writeHash() {
@@ -260,6 +282,7 @@ function segmented(id, options, key) {
     root.append(inp, lab);
   });
 }
+segmented("rule", [{ id: "tilt", html: "Any student" }, { id: "ed", html: "Economically<br>disadvantaged only" }], "rule");
 segmented("kPart", E.TILT_LEVELS.map((l) => ({ id: l.id, html: TILT_LABELS.part[l.id] })), "kPart");
 segmented("kEffect", E.TILT_LEVELS.map((l) => ({ id: l.id, html: TILT_LABELS.effect[l.id] })), "kEffect");
 segmented("mode", [{ id: "distributional", html: "All students" }, { id: "group", html: "Same students" }], "mode");
@@ -276,6 +299,20 @@ function tiltHelp(levelId, kind) {
   return kind === "part"
     ? `Students at the ${more} percentile are ${times} times as likely to take part as students at the ${less}.`
     : `Students at the ${more} percentile gain ${times} times as much as students at the ${less}.`;
+}
+// The screen, in plain language, with this cell's numbers: how many students
+// are eligible, how they are spread across score levels, and whether the
+// chosen share runs past the eligible pool.
+function screenHelp() {
+  const cell = D.cells.find((c) => c.label === state.cell);
+  const s = (p) => E.edShareAt(cell.ed, [p])[0];
+  let t = `Seats go at random to economically disadvantaged students, ${fmtPct(cell.ed.pop)} of students in ` +
+    `${cellName(cell.label)} in 2024. They are ${fmtPct(s(10))} of students at the 10th percentile and ` +
+    `${fmtPct(s(90))} at the 90th.`;
+  if (state.share > cell.ed.pop)
+    t += ` Only ${fmtPct(cell.ed.pop)} of students are eligible, so every one of them takes part and the other ` +
+      `${fmtPct(state.share - cell.ed.pop)} of seats go unused.`;
+  return t;
 }
 const MODE_HELP = {
   distributional: "Line everyone up again after the program and compare each percentile with its 2019 score. " +
@@ -295,8 +332,13 @@ function sync() {
   cellSel.value = state.cell;
   $("effect").value = state.effect; $("effect-v").textContent = state.effect.toFixed(3) + " SD";
   $("share").value = (state.share * 100).toFixed(1); $("share-v").textContent = fmtPct(state.share);
-  for (const k of ["kPart", "kEffect", "mode"]) $(`${k}-${state[k]}`).checked = true;
-  $("kPart-help").textContent = tiltHelp(state.kPart, "part");
+  for (const k of ["rule", "kPart", "kEffect", "mode"]) $(`${k}-${state[k]}`).checked = true;
+  // Under the screen the tilt does not apply: who gets a seat is set by
+  // eligibility, at random among eligible students.
+  const screened = state.rule === "ed";
+  $("kPart").classList.toggle("off", screened);
+  $("kPart").querySelectorAll("input").forEach((i) => { i.disabled = screened; });
+  $("kPart-help").textContent = screened ? screenHelp() : tiltHelp(state.kPart, "part");
   $("kEffect-help").textContent = tiltHelp(state.kEffect, "effect");
   $("mode-help").textContent = MODE_HELP[state.mode];
   if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; render(); }); }
@@ -311,9 +353,11 @@ function render() {
   writeHash();
   const cell = D.cells.find((c) => c.label === state.cell);
   const k = (id) => E.TILT_LEVELS.find((l) => l.id === id).k;
-  const res = E.scenario(cell, PS, {
-    effect: state.effect, share: state.share, kPart: k(state.kPart), kEffect: k(state.kEffect), mode: state.mode,
-  }, CURVE_P);
+  const inputs = {
+    effect: state.effect, share: state.share, kPart: k(state.kPart), kEffect: k(state.kEffect),
+    mode: state.mode, rule: state.rule,
+  };
+  const res = E.scenario(cell, PS, inputs, CURVE_P);
   const at = (p) => res.knots.find((r) => r.p === p);
 
   // Tiles
@@ -352,10 +396,13 @@ function render() {
   const effMax = Math.max(0.05, ...res.curve.map((r) => r.effect)) * 1.1;
   drawProfile("eff-chart", res.curve, (r) => r.effect, [0, effMax], (v) => f2(v), "var(--series-effect)", "Boost (SD)");
   drawTable(res, cell);
+  drawGroups(E.groupScenario(cell, inputs, CURVE_P), cell);
 
   // Only the files this page uses; the Kraft (2023) table feeds the methods page.
-  $("provenance").textContent = provenanceText(D, ["tables/sim-quantiles.csv", "analysis/config/sim-params.yaml"]) + " " +
-    `Mean participation across all percentiles: ${fmtPct(res.meanPart)}.`;
+  $("provenance").textContent = provenanceText(D, ["tables/sim-quantiles.csv", "tables/sim-distribution.csv",
+                                                   "tables/sim-distribution-econdis.csv", "analysis/config/sim-params.yaml"]) + " " +
+    `Mean participation across all percentiles: ${fmtPct(res.meanPart)}` +
+    (state.rule === "ed" && state.share > cell.ed.pop ? ` (the eligible share; the other seats go unused).` : ".");
 }
 
 function drawMain(curve) {
@@ -409,6 +456,56 @@ function drawTable(res, cell) {
   const g = res.gap9010;
   $("gap-tbl").innerHTML = `<thead><tr><th>90-10 gap, NAEP points</th><th>2019</th><th>2024</th><th>2024 with the program</th></tr></thead>` +
     `<tbody><tr><td>${cellName(cell.label)}</td><td>${f1(g.y2019)}</td><td>${f1(g.y2024)}</td><td>${f1(g.post)}</td></tr></tbody>`;
+}
+
+// Economically disadvantaged (ED) and other students. Each group's curve is
+// its own 2024 quantile (dashed) and post-program quantile (solid) minus its
+// own 2019 quantile, in 2019 national SD, so it reads like the main chart:
+// zero is back to that group's 2019 score. The table gives the gap between
+// the groups in NAEP points.
+const GROUP_STYLE = { "ED": { color: "var(--series-ed)", name: "Disadvantaged" },
+                      "Not ED": { color: "var(--series-ned)", name: "Not disadvantaged" } };
+function drawGroups(groups, cell) {
+  const S = cell.sd2019;
+  const before = (r) => (r.q2024 - r.q2019) / S, after = (r) => (r.post - r.q2019) / S;
+  const vals = groups.flatMap((g) => g.rows.flatMap((r) => [before(r), after(r)]));
+  const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals), pad = (hi - lo) * 0.08;
+  // Extra room below for the lower group's direct label.
+  const F = frame("ed-chart", 720, 280, [lo - 2 * pad, hi > 0 ? hi + pad : 0], f2, 5);
+  for (const g of groups) {
+    const c = GROUP_STYLE[g.id].color;
+    el("path", { d: path(g.rows.map((r) => [F.x(r.p), F.y(before(r))])), fill: "none", stroke: c, "stroke-width": 2, "stroke-dasharray": "5 4" }, F.svg);
+    el("path", { d: path(g.rows.map((r) => [F.x(r.p), F.y(after(r))])), fill: "none", stroke: c, "stroke-width": 2 }, F.svg);
+  }
+  // Direct labels at the left end, where the two groups sit furthest apart
+  // (the curves converge toward the top): the higher group's label above its
+  // line, the lower group's below, so they cannot collide. Text ink, not the
+  // series color.
+  const first = groups.map((g) => ({ g, y: F.y(Math.max(before(g.rows[0]), after(g.rows[0]))),
+                                     yLow: F.y(Math.min(before(g.rows[0]), after(g.rows[0]))) }));
+  first.sort((a, b) => a.y - b.y);
+  first.forEach((f, i) => {
+    el("text", { x: F.x(groups[0].rows[0].p) + 4, y: i === 0 ? f.y - 7 : f.yLow + 15, class: "direct-label" }, F.svg)
+      .textContent = GROUP_STYLE[f.g.id].name;
+  });
+  const [ed, ned] = groups;
+  const rows = ed.rows.map((r, i) => ({ p: r.p, ed: r, ned: ned.rows[i] }));
+  hover(F, rows, (r) => F.y(after(r.ed)),
+    (r) => `<div>${ord(r.p)} percentile of each group</div>` +
+           `<div>Disadvantaged: <b>${f3(before(r.ed))}</b> SD, <b>${f3(after(r.ed))}</b> with the program</div>` +
+           `<div>Not disadvantaged: <b>${f3(before(r.ned))}</b> SD, <b>${f3(after(r.ned))}</b> with the program</div>`);
+
+  const at = (g, p) => g.rows.find((r) => r.p === p);
+  const gap = (p, key) => at(ned, p)[key] - at(ed, p)[key];
+  const body = [10, 50, 90].map((p) => `<tr><td>${ord(p)}</td><td>${f1(gap(p, "q2019"))}</td>` +
+    `<td>${f1(gap(p, "q2024"))}</td><td>${f1(gap(p, "post"))}</td></tr>`).join("");
+  $("ed-tbl").innerHTML = `<thead><tr><th>Percentile within each group</th><th>2019</th><th>2024</th>` +
+    `<th>2024 with the program</th></tr></thead><tbody>${body}</tbody>` +
+    `<caption>How far other students score above disadvantaged students at the same percentile of their own group, in NAEP points.</caption>`;
+  const other = E.edUnknownShare(cell.ed);
+  $("ed-note").textContent = `NAEP counts a student as economically disadvantaged if they are eligible for the ` +
+    `National School Lunch Program. In 2024 that was ${fmtPct(cell.ed.pop)} of students in ${cellName(cell.label)}; ` +
+    `for another ${fmtPct(other)} the information was not available, and they are left out of both groups here.`;
 }
 
 sync();

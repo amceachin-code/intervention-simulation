@@ -4,9 +4,11 @@ A static page (`index.html`) that starts from the restoration requirement g\*(p)
 
 1. the program effect (2019 SD units, averaged over all percentiles);
 2. the share of students treated;
-3. how participation varies with prior achievement (five levels, from 4:1 favoring p10 over p90 to 4:1 favoring p90);
+3. who takes part: any student, with participation varying by prior achievement (five levels, from 4:1 favoring p10 over p90 to 4:1 favoring p90), or economically disadvantaged students only, at random among them (the eligibility screen in `analysis/alloc-rules.R`; seats beyond the disadvantaged share go unused);
 4. how the effect varies with prior achievement (same scale);
 5. whether the outcome is read on the group (students who started at p, followed through) or the distribution (whoever stands at p afterward, the treated/untreated mixture in `analysis/mixture.R`).
+
+A card below the main chart shows economically disadvantaged and other students separately: each group's drop against its own 2019 score, with and without the program, and the gap between the groups at p10, p50, and p90 (the R reference is the group section of `analysis/06-seat-allocation.R`).
 
 The settings are kept in the URL hash, so a configuration can be shared as a link.
 
@@ -30,7 +32,7 @@ Rscript analysis/10-export-tool-data.R      # from the project root; rewrites do
 node analysis/tests/test-tool-engine.mjs    # checks cells.js and engine.js against tables/
 ```
 
-The test compares the engine with the committed R outputs for proportional allocation (both estimands, every budget, four cells); the two agree to about 1e-13 NAEP points. It also checks the methods-page data: the Kraft (2023) rows against `tables/kraft-2023-benchmarks-by-target.csv`, and the Table 2(a) targets against the differential change computed from the cells.
+The test compares the engine with the committed R outputs for proportional allocation and the eligibility screen (both estimands, every budget, four cells), and the ED / not-ED results with `tables/sim-group-outcomes-*.csv`; the two agree to under 1e-12 NAEP points. It also checks the methods-page data: the Kraft (2023) rows against `tables/kraft-2023-benchmarks-by-target.csv`, and the Table 2(a) targets against the differential change computed from the cells.
 
 ## Viewing and hosting
 

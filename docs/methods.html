@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- draft v2, 2026-09-28 (quantile functions from the score distribution); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
+<!-- draft v3, 2026-09-29 (eligibility screen and ED / not-ED results); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -40,7 +40,9 @@
     the NAEP Data Service <a href="#ref-naep">(National Center for Education Statistics [NCES], 2025)</a>.
     "National" covers public and private schools together. The table shows how far each percentile's score fell.
     From the same source we also took each year's score distribution: the share of students in every 10-point
-    band of the scale.</p>
+    band of the scale. We took the same bands separately for students NAEP counts as economically disadvantaged
+    and for students it does not, which the eligibility screen and the group results in
+    <a href="#who-takes-part">section 5</a> use.</p>
     <div class="card">
       <div class="tbl-wrap"><table id="data-tbl"></table></div>
     </div>
@@ -157,6 +159,33 @@
     <a href="#ref-callen">(Callen et al., 2025)</a>. In a study of recovery programs, though, 31 percent of the
     students in a math intervention meant for students at or below the 20th percentile scored above the 40th
     <a href="#ref-carb24">(Carbonari et al., 2024)</a>. The explorer starts at "All equally."</p>
+
+    <h3 id="screen">Seats only for economically disadvantaged students</h3>
+    <p>The "Economically disadvantaged only" button replaces the tilt with an eligibility rule. NAEP counts a
+    student as economically disadvantaged if they are eligible for the National School Lunch Program. Under the
+    rule, seats go at random to those students and to no one else.</p>
+    <p>What that does at each score level depends on how many disadvantaged students are there. In every
+    10-point band, the tool divides the disadvantaged students in the band by all students in it, using the 2024
+    score distributions from <a href="#data">section 1</a>, and places that share at the band's percentile. In
+    <span data-ed="cell"></span>, disadvantaged students are <span data-ed="pop"></span> of all students,
+    <span data-ed="s10"></span> of students at the 10th percentile, and <span data-ed="s90"></span> at the
+    90th. If the program has seats for a share B of all students, each disadvantaged student's chance of a
+    seat is B divided by their share of students, and the share taking part at a score level is that chance
+    times the disadvantaged share there. A program with more seats than eligible students seats every one of
+    them and leaves the rest empty, because the rule has no one else to give them to.</p>
+    <p>The rule uses 2024 shares because the program serves 2024 students. Students whose status NAEP does not
+    know (<span data-ed="info"></span> of students in 2024) are never eligible.</p>
+
+    <h3 id="groups">Results for disadvantaged students and everyone else</h3>
+    <p>The explorer also shows each group's own distribution before and after the program. A disadvantaged
+    student at a given percentile of their own group has some score, and that score sits at some percentile of
+    all students. The program sees the second percentile: under a tilt, that is where the student's chance of a
+    seat and size of boost are read. Under the eligibility screen, every disadvantaged student has the same
+    chance and no one else has any. Each group's result is then counted the same way as the national one
+    (<a href="#counting">section 7</a>).</p>
+    <p>The chart plots each group against its own 2019 score, so zero means that group is back where it was.
+    The table gives the distance between the groups at the same percentile of each group, in NAEP points. Each
+    group's curve runs through its own 10-point bands; NAEP's percentiles for each group are not used there.</p>
   </section>
 
   <!-- ============================================================ 6 -->
@@ -231,6 +260,11 @@
       without the five percentiles, lands within about a tenth of a point of every published percentile in every
       subject, grade, and year. The two sources describe the same distribution, so matching the curve to the
       percentiles bends it very little.</li>
+      <li><strong>The group results hold together.</strong> The explorer's eligibility screen and group results
+      match the R code to at least nine decimal places (about twelve in practice). Two separate calculations of the disadvantaged share of the
+      bottom tenth, one from the 10-point bands and one from each group's curve, agree within 0.2 percentage
+      points in every subject and grade. Under the screen, students who are not disadvantaged never move, and
+      once every disadvantaged student has a seat, every percentile of that group rises by exactly the boost.</li>
       <li><strong>A second, independent version agrees.</strong> A Stata version of the core calculation,
       written separately, gives the same drops and requirements as the R version to about 14 decimal places.</li>
       <li><strong>Sanity checks.</strong> With no one taking part, the tool returns the 2024 scores exactly. With
@@ -254,6 +288,12 @@
       <li><strong>Straight-line tilts.</strong> Real programs may target by a cutoff (everyone below the 25th
       percentile) rather than a smooth slope. The tilts show the direction of an effect, not any one
       program's rule.</li>
+      <li><strong>A school-lunch measure of disadvantage.</strong> Eligibility for the National School Lunch
+      Program is a rough measure of family income, not a direct one. The share of students whose status NAEP
+      does not know also grew from 2019 to 2024 (to <span data-ed="info"></span> in the subject and grade chosen
+      in <a href="#drop">section 2</a>), and the tool leaves them out of both groups.</li>
+      <li><strong>A random screen.</strong> The screen gives every eligible student the same chance. A real
+      program might screen on disadvantage and then favor its lowest scorers; the tool does not model that.</li>
       <li><strong>Same gain for similar students.</strong> The tool assumes that, among students with the same
       score, those who take part would gain as much as those who do not. If students who sign up would have
       gained more (or less), the results are too pessimistic (or too optimistic).</li>
@@ -507,7 +547,17 @@ document.querySelectorAll("[data-part]").forEach((n) => { n.textContent = fmtPct
 // ------------------------------------------------------------ provenance
 $("provenance").textContent = provenanceText(D);
 
-function render() { const c = currentCell(); drawDrop(c); drawCounting(c); }
+// ------------------------------------------------------------ 5. screen numbers
+// The eligibility-screen paragraph's numbers, for the cell chosen in section 2.
+function fillScreen(cell) {
+  const s = (p) => E.edShareAt(cell.ed, [p])[0];
+  const info = E.edUnknownShare(cell.ed);
+  const vals = { cell: cellName(cell.label), pop: fmtPct(cell.ed.pop), s10: fmtPct(s(10)), s90: fmtPct(s(90)),
+                 info: fmtPct(info) };
+  document.querySelectorAll("[data-ed]").forEach((n) => { n.textContent = vals[n.dataset.ed]; });
+}
+
+function render() { const c = currentCell(); drawDrop(c); drawCounting(c); fillScreen(c); }
 cellSel.addEventListener("change", render);
 render();
 </script>

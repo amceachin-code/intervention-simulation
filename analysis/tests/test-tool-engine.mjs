@@ -8,18 +8,24 @@
 // What is checked, and why:
 //   1. docs/cells.js matches tables/sim-quantiles.csv value for value, so a
 //      rerun of the pipeline without rerunning 10-export-tool-data.R is caught.
-//   2. The engine reproduces the R seat-allocation results for the one rule
+//   2. The engine reproduces the R seat-allocation results for the two rules
 //      the explorer can express exactly: proportional allocation (neutral
-//      participation gradient) at the configured treated effect with a
-//      neutral effect gradient. Both estimands are compared, the
-//      distributional one (res_p10, res_p90, gap_remaining) and the group one
-//      (gap_remaining_tracked), across every budget in the CSV. This is the
-//      test that the port of make_quantile_fn, weighted_quantile, and the
-//      calibration is faithful.
+//      participation gradient) and the eligibility screen (rule "ed"), at the
+//      configured treated effect with a neutral effect gradient. Both
+//      estimands are compared, the distributional one (res_p10, res_p90,
+//      gap_remaining) and the group one (gap_remaining_tracked), across every
+//      budget in the CSV. This is the test that the port of make_quantile_fn,
+//      weighted_quantile, the calibration, and make_ed_screen is faithful.
+//   2b. The ED and not-ED outcomes (groupScenario) match
+//      tables/sim-group-outcomes-<cell>.csv for both rules at every budget,
+//      plus the 2019 and 2024 reference rows; the ED data in cells.js match
+//      tables/sim-distribution-econdis.csv.
 //   3. Invariants: a zero program returns the 2024 knots exactly; full
 //      participation at a uniform effect is a pure shift in both modes;
 //      water-filling conserves the budget and stays in [0, 1] at every tilt
-//      level; each tilt level's named ratio matches its line.
+//      level; each tilt level's named ratio matches its line. The screen
+//      spends min(B, ED share), is r * s(p), leaves not-ED students in place,
+//      and ignores the participation tilt.
 //   4. The quantile-function points in cells.js: they reproduce the published
 //      percentiles and the score distribution's bin points, and the curve
 //      through them has no corners.
@@ -86,17 +92,23 @@ const ALLOC = {
   "Math G8": "tables/sim-seat-allocation-math-g8.csv",
 };
 // Tolerance in NAEP points. The engine and R use the same grids and formulas,
-// so agreement should be near machine precision; 1e-6 leaves room for
-// floating-point ordering differences in the sort and sums and nothing else.
-const TOL = 1e-6;
+// so agreement should be near machine precision (about 1e-12 observed);
+// 1e-9 leaves room for floating-point ordering differences in the sorts and
+// sums and nothing else, and is what the methods page's "at least nine
+// decimal places" rests on.
+const TOL = 1e-9;
 for (const [label, path] of Object.entries(ALLOC)) {
   const cell = cellByLabel[label];
-  const rows = readCsv(path).filter((r) => r.rule.startsWith("Proportional"));
-  check(rows.length > 0, `${path} has no Proportional rows`);
+  // The two R rules the page offers: proportional (the neutral tilt) and the
+  // eligibility screen (rule "ed").
+  const rows = readCsv(path).filter((r) => r.rule.startsWith("Proportional") || r.rule.startsWith("Eligibility"));
+  check(rows.some((r) => r.rule.startsWith("Proportional")) && rows.some((r) => r.rule.startsWith("Eligibility")),
+        `${path} lacks Proportional or Eligibility rows`);
   let worst = 0;
   for (const r of rows) {
     const B = Number(r.budget);
-    const base = { effect: G, share: B, kPart: 0, kEffect: 0 };
+    const rule = r.rule.startsWith("Eligibility") ? "ed" : "tilt";
+    const base = { effect: G, share: B, kPart: 0, kEffect: 0, rule };
     const dist = E.scenario(cell, PS, { ...base, mode: "distributional" }, [10, 90]);
     const grp  = E.scenario(cell, PS, { ...base, mode: "group" }, [10, 90]);
     const res = (s, p) => s.knots.find((k) => k.p === p).remaining * cell.sd2019;
@@ -109,10 +121,53 @@ for (const [label, path] of Object.entries(ALLOC)) {
       [gapG, Number(r.gap_remaining_tracked), "gap_remaining_tracked"],
     ]) {
       worst = Math.max(worst, Math.abs(got - want));
-      check(close(got, want, TOL), `${label} B=${B} ${name}: JS ${got} vs R ${want}`);
+      check(close(got, want, TOL), `${label} ${rule} B=${B} ${name}: JS ${got} vs R ${want}`);
     }
   }
-  console.log(`  ${label}: ${rows.length} budgets, max |JS - R| = ${worst.toExponential(2)} points`);
+  console.log(`  ${label}: ${rows.length} rule x budget rows, max |JS - R| = ${worst.toExponential(2)} points`);
+}
+
+// ---- 2b. ED and not-ED outcomes match R's group tables -------------------
+// tables/sim-group-outcomes-<cell>.csv from 06-seat-allocation.R: each
+// group's p10-p90 after the program, for the proportional rule and the
+// screen at every budget, plus the 2019 and 2024 reference rows.
+const PCOL = PS.map((p) => "p" + p);
+for (const [label, path] of Object.entries(ALLOC)) {
+  const cell = cellByLabel[label];
+  const gpath = path.replace("sim-seat-allocation-", "sim-group-outcomes-");
+  const all = readCsv(gpath);
+  check(all.length > 0, `${gpath} is missing or empty`);
+  let worst = 0, n = 0;
+  const cmp = (got, want, what) => {
+    worst = Math.max(worst, Math.abs(got - want)); n++;
+    check(close(got, want, TOL), `${label} ${what}: JS ${got} vs R ${want}`);
+  };
+  // Reference rows: the groups' own 2019 and 2024 quantiles.
+  const ref = E.groupScenario(cell, { effect: 0, share: 0, kPart: 0, kEffect: 0, mode: "distributional" }, PS);
+  for (const g of ref) for (const [rn, key] of [["2019", "q2019"], ["2024, no program", "q2024"]]) {
+    const r = all.find((x) => x.rule === rn && x.group === g.id);
+    PS.forEach((p, i) => cmp(g.rows[i][key], Number(r[PCOL[i]]), `${g.id} ${rn} p${p}`));
+  }
+  for (const r of all.filter((x) => x.rule.startsWith("Proportional") || x.rule.startsWith("Eligibility"))) {
+    const rule = r.rule.startsWith("Eligibility") ? "ed" : "tilt";
+    const out = E.groupScenario(cell, { effect: G, share: Number(r.budget), kPart: 0, kEffect: 0,
+                                        mode: "distributional", rule }, PS);
+    const g = out.find((x) => x.id === r.group);
+    PS.forEach((p, i) => cmp(g.rows[i].post, Number(r[PCOL[i]]), `${r.group} ${rule} B=${r.budget} p${p}`));
+  }
+  console.log(`  ${label} groups: ${n} values, max |JS - R| = ${worst.toExponential(2)} points`);
+}
+
+// cells.js ED data matches its sources: the population shares in
+// sim-distribution-econdis.csv, and the share curve averages to the ED share.
+const de = readCsv("tables/sim-distribution-econdis.csv");
+for (const cell of DATA.cells) {
+  const pop = (g) => Number(de.find((r) => r.cell === cell.label && r.year === "2024" && r.group === g).pop_share);
+  check(close(cell.ed.pop, pop("Economically disadvantaged"), 1e-12), `${cell.label} ed.pop mismatch`);
+  check(cell.ed.groups.length === 2 && close(cell.ed.groups[1].pop2024, pop("Not economically disadvantaged"), 1e-12),
+        `${cell.label} not-ED pop2024 mismatch`);
+  const s = E.edParticipation(cell.ed, cell.ed.pop)(E.FILL_GRID);
+  check(close(E.mean(s), cell.ed.pop, 1e-3), `${cell.label} ED share curve averages ${E.mean(s)}, not ${cell.ed.pop}`);
 }
 
 // ---- 3. invariants --------------------------------------------------------
@@ -153,6 +208,28 @@ for (const lvl of E.TILT_LEVELS) {
   // The named ratio is the p90:p10 ratio of the tilt.
   const w = E.tilt(lvl.k), [a, b] = lvl.ratio.split(":").map(Number);
   check(close(w(90) / w(10), a / b, 1e-12), `${lvl.id} ratio ${w(90) / w(10)} != ${lvl.ratio}`);
+}
+
+// The screen: spends min(B, ED share), is r * s(p), and in "Same students"
+// mode leaves not-ED students where they were while every ED student gains
+// r * effect on average.
+for (const cell of DATA.cells) {
+  for (const B of [0, 0.1, 0.3, cell.ed.pop, 0.8, 1]) {
+    const pi = E.edParticipation(cell.ed, B)(E.FILL_GRID);
+    check(close(E.mean(pi), Math.min(B, cell.ed.pop), 1e-3), `${cell.label} screen spends ${E.mean(pi)} at B=${B}`);
+    check(pi.every((v) => v >= 0 && v <= 1 + 1e-12), `${cell.label} screen participation outside [0,1] at B=${B}`);
+  }
+  const B = 0.2, eff = 0.1, r = Math.min(1, B / cell.ed.pop);
+  const out = E.groupScenario(cell, { effect: eff, share: B, kPart: 0.6, kEffect: 0, mode: "group", rule: "ed" }, PS);
+  const ed = out.find((g) => g.id === "ED"), ned = out.find((g) => g.id === "Not ED");
+  PS.forEach((p, i) => {
+    check(close(ned.rows[i].post, ned.rows[i].q2024, 1e-12), `${cell.label} screen moved not-ED students at p${p}`);
+    check(close(ed.rows[i].post - ed.rows[i].q2024, r * eff * cell.sd2019, 1e-9), `${cell.label} screen ED gain at p${p}`);
+  });
+  // kPart is ignored under the screen.
+  const a = E.scenario(cell, PS, { effect: eff, share: B, kPart: 0.6, kEffect: 0, mode: "distributional", rule: "ed" }, PS);
+  const b = E.scenario(cell, PS, { effect: eff, share: B, kPart: -0.6, kEffect: 0, mode: "distributional", rule: "ed" }, PS);
+  check(a.knots.every((k, i) => k.post_pts === b.knots[i].post_pts), `${cell.label} kPart changed the screen's result`);
 }
 
 // ---- 4. quantile functions ------------------------------------------------

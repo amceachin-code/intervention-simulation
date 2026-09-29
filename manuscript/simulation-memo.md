@@ -1,15 +1,15 @@
-<!-- memo v2, 2026-09-10, simulation results for co-authors (written as RQ3 of the naep-aera-open article; moved to intervention-simulation 2026-09-28); sources: tables/sim-quantiles.csv, tables/sim-bottom-decile.csv, figures/sim/ -->
+<!-- memo v3, 2026-09-29, simulation results for co-authors (written as RQ3 of the naep-aera-open article; moved to intervention-simulation 2026-09-28; distributional and screen numbers refreshed 2026-09-29); sources: tables/sim-quantiles.csv, tables/sim-bottom-decile.csv, tables/sim-seat-allocation-*.csv, tables/sim-allocation-shares-reading-g4.csv, figures/sim/ -->
 
-==Note added 2026-09-28: this memo is kept as written for the co-authors. Its post-intervention-distribution numbers (the mixture results, including the tail-sensitivity paragraph) used a quantile function rebuilt from the five published percentiles with normal tails. That tail met the spline at p90 with a corner, which inflated the widening from partial coverage. The pipeline now builds the quantile functions from NAEP's published 10-point score distribution, anchored to the percentiles, and 07-tail-sensitivity.R is retired. Current numbers are in tables/sim-seat-allocation-*.csv. For example, proportional coverage of half of Reading G4 now widens the 90-10 gap by 0.25 points, not 1.17. The baseline-distribution numbers, D(p), g*, and the Table 2(a) validation are unchanged.==
+==Note added 2026-09-29. We refreshed the numbers in this memo on this date, and they now match the committed tables. Two changes moved them. On 2026-09-28 we began building the quantile functions from NAEP's published 10-point score distribution instead of from five percentiles with normal tails. The old tails met the spline at p90 with a corner, which inflated the widening from partial coverage. Proportional coverage of half of Reading G4, for example, now widens the 90-10 gap by 0.25 points, not 1.17. On 2026-09-29 we redefined the eligibility screen as random assignment among economically disadvantaged students, with no seats for anyone else, and took the economic-disadvantage shares from each group's published score distribution. D(p), g*, the Table 2(a) validation, and the baseline-distribution numbers for the other three rules did not change.==
 
 ## Executive summary
 
 - This analysis asks what it would take to return the 2024 NAEP score distribution to its 2019 shape. Everything runs on public NAEP percentiles and reproduces the restricted-use differential-change numbers to a tenth of a point, so a reviewer can replicate all of it without a license.
 - The requirement is steeply tilted. Restoring the 10th percentile takes 0.26 to 0.29 SD in the featured cells, at or above the 75th percentile of RCT effects in Kraft (2020); restoring the 90th takes 0.03 to 0.13 SD, near or below the median.
 - At realistic participation, the best-evidenced at-scale effect (0.155 SD) leaves most of the bottom's gap open. Participation, not effect size, is the binding constraint: at summer-program reach, the remaining p10 gap in Reading G4 is 0.24 SD of an original 0.26.
-- One distinction organizes the allocation analysis: the baseline-distribution question follows students fixed at their pre-program percentiles (the answer at percentile $p$ is $Q_0(p) + \pi(p) \cdot \delta$), while the post-intervention-distribution question re-ranks the shifted population (the answer is $Q_1(p)$). Partial coverage widens the post-intervention distribution even when delivery is untargeted; voluntary opt-in delivery widens it further; only bottom-up allocation closes the 90-10 gap, and it must overshoot the target percentile to do so. The boundary-case numbers survive alternative lower-tail specifications.
-- Feasible targeting is blunt. An economic-disadvantage screen captures 82.8 percent of the bottom decile, but roughly five of six treated students sit outside the target, and the screen got noisier between 2019 and 2024.
-- Implication for §6.2: a one-size-fits-all program at partial coverage widens the differential rather than leaving it alone, and targeting helps only as far as the screen is sharp.
+- One distinction organizes the allocation analysis: the baseline-distribution question follows students fixed at their pre-program percentiles (the answer at percentile $p$ is $Q_0(p) + \pi(p) \cdot \delta$), while the post-intervention-distribution question re-ranks the shifted population (the answer is $Q_1(p)$). Partial coverage widens the post-intervention distribution slightly even when delivery is untargeted; voluntary opt-in delivery widens it much further; only bottom-up allocation closes most of the 90-10 gap, and it must overshoot the target percentile to do so.
+- Feasible targeting is blunt. Economically disadvantaged students are 79.4 percent of the bottom decile in Reading G4 (2019), but roughly five of six students a disadvantage screen treats sit outside that decile, and the screen got noisier between 2019 and 2024.
+- Implication for §6.2: a one-size-fits-all program at partial coverage widens the differential slightly rather than leaving it alone, and targeting helps only as far as the screen is sharp.
 
 **Open questions as you read the document**: 
 
@@ -194,11 +194,10 @@ We test four allocation rules, each spending the same seats and delivering the s
   2. Rescale all weights by one constant so their population mean equals $B$.
   3. Water-fill (below).
 
-- **Eligibility screen (ECONDIS)**: Target economic disadvantage as a proxy for the bottom decile. Seats follow the measured share of economically disadvantaged students at each percentile, rescaled to the budget. Where that share would carry a percentile past 100 percent participation we cap it and hand the freed seats back to the percentiles still under the cap, repeating until the budget is exhausted. The rule therefore spends its full allocation at every budget, and at full coverage it too collapses into the proportional rule.
-  
-  1. Set each percentile's weight to the measured share of economically disadvantaged students at that percentile.
-  2. Rescale all weights by one constant so their population mean equals $B$.
-  3. Water-fill (below).
+- **Eligibility screen (ECONDIS)**: Target economic disadvantage as a proxy for the bottom decile. Seats go at random to economically disadvantaged students and to no one else. Each disadvantaged student's chance of a seat is $r = \min(1, B / e)$, where $e$ is the disadvantaged share of all students (49.9 percent in Reading G4 in 2024), so the participation rate at percentile $p$ is $r \cdot s(p)$, where $s(p)$ is the disadvantaged share of students at $p$. We measure $s(p)$ from the published 2024 score distributions of disadvantaged students and of all students, 10-point band by 10-point band. The rule cannot seat more students than are eligible. Once $B$ exceeds $e$, every disadvantaged student holds a seat and the remaining seats go unused. It is therefore the one rule that leaves part of a large budget unspent, and at full coverage it does not collapse into the proportional rule.
+
+  1. Measure the disadvantaged share of students at each percentile of the 2024 distribution.
+  2. Give each disadvantaged student a seat with probability $\min(1, B / e)$.
 
 - *Water-fill (shared subroutine)*
 
@@ -207,14 +206,14 @@ We test four allocation rules, each spending the same seats and delivering the s
   3. Count the seats the caps freed, and hand them to the uncapped percentiles in proportion to their weights.
   4. Go to step 1.
 
-The subroutine matters because naive clipping loses the freed seats. Applied to the eligibility screen at full budget, naive clipping spends only 84 percent of its allocation, and the rules stop being comparable at equal cost.
+The subroutine matters because naive clipping loses the freed seats, and the rules would stop being comparable at equal cost. In the current rules only the opt-in gradient needs it, above $B = 55.8$ percent.
 
 
-**As a figure.** The curves below show what share of each percentile holds a seat under each rule, at four example budgets. Bottom-up is a step; proportional is flat; the opt-in gradient rises with achievement; the screen falls. The opt-in curve is flat above p90 at every budget, the built-in edge of the ramp; the plateau that spreads down from the top in the 75 percent panel is the water-fill at work.
+**As a figure.** The curves below show what share of each percentile holds a seat under each rule, at four example budgets. Bottom-up is a step; proportional is flat; the opt-in gradient rises with achievement; the screen falls, and its 50 and 75 percent panels are identical because every eligible student already holds a seat. The opt-in curve is flat above p90 at every budget, the built-in edge of the ramp; the plateau that spreads down from the top in the 75 percent panel is the water-fill at work.
 
 ![Figure: participation rate by percentile under each rule](figures/sim/fig15-allocation-curves-reading-g4.png)
 
-**As tables.** The same curves read at the five target percentiles. Each row's population mean equals its budget. The rules differ in who gets access to the intervention. 
+**As tables.** The same curves read at the five target percentiles. Each row's population mean equals its budget, except the screen's once the budget passes the disadvantaged share. The rules differ in who gets access to the intervention. 
 
 *Participation share (percent) at 13 percent of seats:*
 
@@ -223,7 +222,7 @@ The subroutine matters because naive clipping loses the freed seats. Applied to 
 | Bottom-up (lowest first) | 100 | 0 | 0 | 0 | 0 |
 | Proportional (untargeted) | 13 | 13 | 13 | 13 | 13 |
 | Opt-in gradient | 5.8 | 7.6 | 11.7 | 18.0 | 23.3 |
-| Eligibility screen (ECONDIS) | 19.8 | 17.6 | 12.2 | 8.8 | 6.8 |
+| Eligibility screen (ECONDIS) | 18.9 | 16.4 | 12.9 | 9.7 | 7.4 |
 
 *Participation share (percent) at 25 percent of seats:*
 
@@ -232,7 +231,7 @@ The subroutine matters because naive clipping loses the freed seats. Applied to 
 | Bottom-up (lowest first) | 100 | 100 | 0 | 0 | 0 |
 | Proportional (untargeted) | 25 | 25 | 25 | 25 | 25 |
 | Opt-in gradient | 11.2 | 14.5 | 22.4 | 34.6 | 44.8 |
-| Eligibility screen (ECONDIS) | 38.1 | 33.8 | 23.5 | 17.0 | 13.2 |
+| Eligibility screen (ECONDIS) | 36.3 | 31.6 | 24.8 | 18.7 | 14.2 |
 
 *Participation share (percent) at 50 percent of seats:*
 
@@ -241,7 +240,7 @@ The subroutine matters because naive clipping loses the freed seats. Applied to 
 | Bottom-up (lowest first) | 100 | 100 | 100 | 0 | 0 |
 | Proportional (untargeted) | 50 | 50 | 50 | 50 | 50 |
 | Opt-in gradient | 22.4 | 29.1 | 44.8 | 69.1 | 89.5 |
-| Eligibility screen (ECONDIS) | 76.2 | 67.6 | 46.9 | 34.0 | 26.3 |
+| Eligibility screen (ECONDIS) | 72.3 | 63.1 | 49.5 | 37.3 | 28.3 |
 
 *Participation share (percent) at 75 percent of seats:*
 
@@ -250,7 +249,7 @@ The subroutine matters because naive clipping loses the freed seats. Applied to 
 | Bottom-up (lowest first) | 100 | 100 | 100 | 100 | 0 |
 | Proportional (untargeted) | 75 | 75 | 75 | 75 | 75 |
 | Opt-in gradient | 39.3 | 50.9 | 78.5 | 100 | 100 |
-| Eligibility screen (ECONDIS) | 100 | 100 | 74.6 | 54.1 | 41.8 |
+| Eligibility screen (ECONDIS) | 72.3 | 63.1 | 49.5 | 37.3 | 28.3 |
 
 **The same two ways to think about this question: the baseline distribution or the post-intervention distribution** 
 
@@ -260,7 +259,7 @@ The other question is about **the post-intervention distribution**. Run the prog
 
 To answer the second question, we need to estimate a post-intervention distribution from the public data takes one further step. The natural shortcut is to move each percentile by its participation rate times the treated effect, so that a rule reaching 13 percent of students at percentile $p$ lifts that percentile by $0.13 \cdot \delta$. That is correct only if every student at $p$ receives a partial dose sized to the participation rate. Real coverage does not work that way. A program reaching 13 percent of students delivers the whole effect to 13 percent of them and nothing to the other 87 percent, so the post-intervention population is a mixture of a treated component and an untreated one. Mixing a distribution with a shifted copy of itself does not merely move it, it spreads it, because treated students move past untreated neighbors who stay exactly where they were.
 
-We therefore compute the mixture rather than the shortcut. We rebuild a quantile function for the 2024 distribution from the five published percentiles, interpolating monotonically between them and fitting normal tails outside p10 and p90. Recall $F_0$ and $Q_0 = F_0^{-1}$ from the notation at the top of the memo (here the no-program distribution is the baseline 2024 distribution), and write $u$ for a rank in the no-program distribution, a position stated as a share between 0 and 1, so that $Q_0(u)$ is the score of the student standing at position $u$. At each rank $u$ we leave weight $1 - \pi(u)$ at $Q_0(u)$ and move weight $\pi(u)$ to $Q_0(u) + \delta$; the combined population defines the post-intervention CDF $F_1$ and its quantile function $Q_1 = F_1^{-1}$, and we read the post-intervention percentiles off $Q_1$. Where $\pi$ is 0 or 1, as under bottom-up allocation, it reduces to exact rank-preserving assignment, so all four rules run through one calculation. The reconstruction reproduces the published percentiles exactly at a zero budget by construction, and the results move by less than 0.01 points when the rank grid is refined fivefold.
+We therefore compute the mixture rather than the shortcut. We build a quantile function for the 2024 distribution from NAEP's published score distribution (the share of students in each 10-point band of the scale) together with the five published percentiles, joined by monotone interpolation. The bands reach the ends of the scale, so no tail shape is assumed. Recall $F_0$ and $Q_0 = F_0^{-1}$ from the notation at the top of the memo (here the no-program distribution is the baseline 2024 distribution), and write $u$ for a rank in the no-program distribution, a position stated as a share between 0 and 1, so that $Q_0(u)$ is the score of the student standing at position $u$. At each rank $u$ we leave weight $1 - \pi(u)$ at $Q_0(u)$ and move weight $\pi(u)$ to $Q_0(u) + \delta$; the combined population defines the post-intervention CDF $F_1$ and its quantile function $Q_1 = F_1^{-1}$, and we read the post-intervention percentiles off $Q_1$. Where $\pi$ is 0 or 1, as under bottom-up allocation, it reduces to exact rank-preserving assignment, so all four rules run through one calculation. The reconstruction reproduces the published percentiles exactly at a zero budget by construction, and the results move by less than 0.01 points when the rank grid is refined fivefold.
 
 We assume who takes part is independent of how much they would gain. The rules already carry selection across percentiles, which is the entire content of the opt-in gradient; this is the further claim that there is no selection on gains within a percentile.
 
@@ -277,24 +276,24 @@ We present the baseline-distribution question first, then the post-intervention-
 | Bottom-up (lowest scorers first) | **2.7** | **2.7** | **2.7** | **2.7** | **2.7** | 8.7 |
 | Proportional (untargeted) | 8.7 | 8.7 | 8.7 | 8.7 | 8.7 | 8.7 |
 | Opt-in gradient | 9.5 | 9.7 | 10.7 | 12.7 | 12.3 | 8.7 |
-| Eligibility screen (ECONDIS) | 8.1 | 7.9 | 7.2 | 5.7 | 5.2 | 8.7 |
+| Eligibility screen (ECONDIS) | 8.1 | 8.0 | 7.3 | 6.0 | 6.0 | 6.0 |
 
 Each cell is the gap, in score points, between the average student who started at p90 and the average student who started at p10, after the program runs at that budget. Membership in the two groups is fixed at baseline (e.g. examining heterogeneity by baseline achievement), so a treated student who overtakes an untreated neighbor still counts in the group where they began. Each group's mean rises by its participation rate times the treated effect, which means the gap moves only when the two groups participate at different rates. That is why the proportional row is flat at 8.7: equal rates at p10 and p90 cancel exactly, at every budget. The post-intervention-distribution question below drops the fixed membership and reads the gap off the post-intervention percentiles instead (e.g. QTE framework), and there even equal rates widen the gap, because a percentile that mixes treated and untreated students spreads out.
 
 In formulas, the two questions differ only in which CDF the percentile indexes. The baseline-distribution answer at percentile $p$ reads the rank off $F_0$ and shifts the score attached to it: $Q_0(p) + \pi(p) \cdot \delta$, so that gap is the no-program gap plus $\delta \cdot (\pi(90) - \pi(10))$. The post-intervention answer reads the rank off $F_1$: it is $Q_1(p)$, the score with a share $p$ of the mixture below it, where at each rank $u$ (the same 0-to-1 scale $p$ lives on, used here as the running variable that sweeps the whole distribution) weight $1 - \pi(u)$ stays at $Q_0(u)$ and weight $\pi(u)$ moves to $Q_0(u) + \delta$. The pair to keep in mind is $Q_0(p) + \pi(p) \cdot \delta$ against $Q_1(p)$: shift the score attached to a fixed rank, or re-rank the shifted population.
 
-The sharpest disagreement between the two tables is bottom-up allocation at 10 percent of seats, 2.7 against 6.0. It is the boundary case. The budget covers exactly the bottom decile, so the students who started at p10 are treated and their group gains the full effect: with $\delta = 8.7 - 2.7 = 6.0$ points (0.155 SD on the Reading G4 scale), the baseline-distribution gap closes to 2.7. The post-intervention p10 rises by less than $\delta$. The treated students leapfrog the untreated students who sat between the old p10 and the old p10 plus 6 points; those students do not move, and they refill the bottom of the distribution from behind. Recall that $F_0(v)$ is the share of students scoring at or below $v$ before the program. The new p10 is the score $v$ at which the treated share below, $F_0(v - \delta)$, and the untreated share below, $F_0(v) - 0.10$, sum to 0.10, so $v$ solves $F_0(v) + F_0(v - \delta) = 0.20$. That score sits 2.7 points above the old p10, not 6.0, and the gap stays at 6.0. At 13 percent the budget treats a buffer above the 10th percentile, the score standing at the new p10 belongs to a treated student, and the two questions agree at 2.7. The general rule: the two answers split whenever coverage stops at or near the percentile being measured.
+The sharpest disagreement between the two tables is bottom-up allocation at 10 percent of seats, 2.7 against 5.8. It is the boundary case. The budget covers exactly the bottom decile, so the students who started at p10 are treated and their group gains the full effect: with $\delta = 8.7 - 2.7 = 6.0$ points (0.155 SD on the Reading G4 scale), the baseline-distribution gap closes to 2.7. The post-intervention p10 rises by less than $\delta$. The treated students leapfrog the untreated students who sat between the old p10 and the old p10 plus 6 points; those students do not move, and they refill the bottom of the distribution from behind. Recall that $F_0(v)$ is the share of students scoring at or below $v$ before the program. The new p10 is the score $v$ at which the treated share below, $F_0(v - \delta)$, and the untreated share below, $F_0(v) - 0.10$, sum to 0.10, so $v$ solves $F_0(v) + F_0(v - \delta) = 0.20$. That score sits 2.9 points above the old p10, not 6.0, and the gap stays at 5.8. At 13 percent the budget treats a buffer above the 10th percentile, the score standing at the new p10 belongs to a treated student, and the two questions agree at 2.7. The general rule: the two answers split whenever coverage stops at or near the percentile being measured.
 
-The boundary-case number leans on the fitted lower tail, the one modeling choice in the reconstruction, so we recomputed the bottom-up column under three alternative lower-tail specifications: a normal fitted to the local p10-p25 slope, a logistic tail, and a straight-line extension of the p10-p25 segment (`analysis/07-tail-sensitivity.R`; `tables/sim-tail-sensitivity.csv`). At 10 percent of seats the entry moves between 5.7 and 6.2 in Reading G4 and between 3.3 and 4.2 in Math G8; at 13 percent of seats it is 2.7 in every specification in Reading G4 and 0.8 to 0.9 in Math G8. The split between the two questions at the boundary is a feature of coverage stopping at the measured percentile, not an artifact of the tail model.
+The boundary-case number does not rest on an assumed tail, because the quantile function runs through NAEP's published score distribution across the whole scale. The two questions split at the boundary because coverage stops at the measured percentile.
 
 **Remaining 90-10 gap in the post-intervention distribution (post-intervention-distribution question), Reading G4 (no program: 8.7 points):**
 
 | Allocation rule | 10% of seats | 13% | 25% | 50% | 75% | 100% |
 |---|---|---|---|---|---|---|
-| Bottom-up (lowest scorers first) | 6.0 | **2.7** | **2.7** | **2.7** | **2.7** | 8.7 |
-| Proportional (untargeted) | 9.1 | 9.3 | 9.6 | 9.8 | 9.4 | 8.7 |
-| Opt-in gradient | 10.1 | 10.4 | 11.7 | 13.2 | 12.6 | 8.7 |
-| Eligibility screen (ECONDIS) | 8.5 | 8.4 | 8.0 | 6.7 | 6.1 | 8.7 |
+| Bottom-up (lowest scorers first) | 5.8 | **2.7** | **2.7** | **2.7** | **2.7** | 8.7 |
+| Proportional (untargeted) | 8.7 | 8.8 | 8.8 | 8.9 | 8.9 | 8.7 |
+| Opt-in gradient | 9.5 | 9.8 | 10.8 | 12.8 | 12.4 | 8.7 |
+| Eligibility screen (ECONDIS) | 8.2 | 8.1 | 7.5 | 6.3 | 6.3 | 6.3 |
 
 <!-- Distribution-question tables for Reading G8 and Math G4, commented out
 for now while the memo features Reading G4 and Math G8.
@@ -304,20 +303,20 @@ points):**
 
 | Allocation rule | 10% of seats | 13% | 25% | 50% | 75% | 100% |
 |---|---|---|---|---|---|---|
-| Bottom-up (lowest scorers first) | 4.4 | **1.2** | **1.2** | **1.2** | **1.2** | 7.0 |
-| Proportional (untargeted) | 7.5 | 7.6 | 7.9 | 8.1 | 7.8 | 7.0 |
-| Opt-in gradient | 8.4 | 8.7 | 9.9 | 11.5 | 10.9 | 7.0 |
-| Eligibility screen (ECONDIS) | 6.8 | 6.7 | 6.2 | 4.9 | 4.4 | 7.0 |
+| Bottom-up (lowest scorers first) | 4.2 | **1.2** | **1.2** | **1.2** | **1.2** | 7.0 |
+| Proportional (untargeted) | 7.1 | 7.1 | 7.2 | 7.3 | 7.2 | 7.0 |
+| Opt-in gradient | 7.9 | 8.2 | 9.2 | 11.1 | 10.7 | 7.0 |
+| Eligibility screen (ECONDIS) | 6.6 | 6.5 | 5.9 | 4.7 | 4.7 | 4.7 |
 
 **Remaining 90-10 gap after the program, Math G4 (no program: 7.9
 points):**
 
 | Allocation rule | 10% of seats | 13% | 25% | 50% | 75% | 100% |
 |---|---|---|---|---|---|---|
-| Bottom-up (lowest scorers first) | 5.7 | **3.0** | **3.0** | **3.0** | **3.0** | 7.9 |
-| Proportional (untargeted) | 8.2 | 8.4 | 8.6 | 8.8 | 8.5 | 7.9 |
-| Opt-in gradient | 9.0 | 9.3 | 10.3 | 11.6 | 11.1 | 7.9 |
-| Eligibility screen (ECONDIS) | 7.7 | 7.6 | 7.2 | 6.1 | 5.7 | 7.9 |
+| Bottom-up (lowest scorers first) | 5.6 | **3.0** | **3.0** | **3.0** | **3.0** | 7.9 |
+| Proportional (untargeted) | 8.0 | 8.1 | 8.2 | 8.3 | 8.1 | 7.9 |
+| Opt-in gradient | 8.7 | 9.0 | 9.8 | 11.4 | 11.0 | 7.9 |
+| Eligibility screen (ECONDIS) | 7.5 | 7.5 | 7.0 | 5.9 | 5.9 | 5.9 |
 
 -->
 
@@ -328,20 +327,20 @@ points):**
 | Bottom-up (lowest scorers first) | **0.3** | **0.3** | **0.3** | **0.3** | **0.3** | 6.4 |
 | Proportional (untargeted) | 6.4 | 6.4 | 6.4 | 6.4 | 6.4 | 6.4 |
 | Opt-in gradient | 7.3 | 7.5 | 8.5 | 10.6 | 10.2 | 6.4 |
-| Eligibility screen (ECONDIS) | 5.8 | 5.6 | 4.8 | 3.1 | 2.7 | 6.4 |
+| Eligibility screen (ECONDIS) | 5.8 | 5.6 | 4.8 | 3.4 | 3.4 | 3.4 |
 
 **Remaining 90-10 gap in the post-intervention distribution (post-intervention-distribution question), Math G8 (no program: 6.4 points):**
 
 | Allocation rule | 10% of seats | 13% | 25% | 50% | 75% | 100% |
 |---|---|---|---|---|---|---|
-| Bottom-up (lowest scorers first) | 4.0 | **0.8** | **0.3** | **0.3** | **0.3** | 6.4 |
-| Proportional (untargeted) | 6.9 | 7.0 | 7.3 | 7.7 | 7.3 | 6.4 |
-| Opt-in gradient | 7.7 | 8.1 | 9.3 | 11.2 | 10.7 | 6.4 |
-| Eligibility screen (ECONDIS) | 6.2 | 6.1 | 5.7 | 4.1 | 3.3 | 6.4 |
+| Bottom-up (lowest scorers first) | 3.6 | **0.3** | **0.3** | **0.3** | **0.3** | 6.4 |
+| Proportional (untargeted) | 6.5 | 6.6 | 6.7 | 6.9 | 6.8 | 6.4 |
+| Opt-in gradient | 7.4 | 7.6 | 8.8 | 10.8 | 10.4 | 6.4 |
+| Eligibility screen (ECONDIS) | 5.9 | 5.8 | 5.1 | 3.7 | 3.7 | 3.7 |
 
-Every row holds the allocation rule and the effect size fixed at 0.155 SD; only the budget changes across the row, so reading across shows what that rule does to the gap as the budget grows from 10 to 100 percent of seats. Reading down a column holds the budget fixed and compares what the four rules do with identical resources. Every rule returns to the no-program gap at full coverage (8.7 in Reading G4, 6.4 in Math G8), which is the one point where the answer is known in advance: if every student holds a seat, allocation cannot change the shape of anything. 
+Every row holds the allocation rule and the effect size fixed at 0.155 SD; only the budget changes across the row, so reading across shows what that rule does to the gap as the budget grows from 10 to 100 percent of seats. Reading down a column holds the budget fixed and compares what the four rules do with identical resources. Every rule except the screen returns to the no-program gap at full coverage (8.7 in Reading G4, 6.4 in Math G8), which is the one point where the answer is known in advance: if every student holds a seat, allocation cannot change the shape of anything. The screen never seats everyone, so its row stops moving once every disadvantaged student holds a seat, at a budget near half of all students. 
 
-**Partial coverage widens the distribution even when it treats everyone equally** Proportional allocation offers every percentile the same rate and targets nobody. Read as a baseline-distribution question, it does nothing to the gap at all: the average student at p10 and the average student at p90 each gain the same $\pi \cdot \delta$. Read as a post-intervention-distribution question, proportional allocation pushes the 90-10 gap from 8.7 to 9.8 points at half coverage. At any partial rate some students move a full 0.155 SD while their neighbors move nothing, and a percentile split that way is wider than the one it started as.
+**Partial coverage widens the distribution even when it treats everyone equally** Proportional allocation offers every percentile the same rate and targets nobody. Read as a baseline-distribution question, it does nothing to the gap at all: the average student at p10 and the average student at p90 each gain the same $\pi \cdot \delta$. Read as a post-intervention-distribution question, proportional allocation pushes the 90-10 gap from 8.66 to 8.91 points at half coverage in Reading G4, and from 6.44 to 6.88 in Math G8. The effect is small but always in the same direction. At any partial rate some students move a full 0.155 SD while their neighbors move nothing, and a percentile split that way is wider than the one it started as.
 
 <!-- The 13%/50% side-by-side below is now redundant with the two full
 tables above; commented out rather than deleted in case the compact form
@@ -353,44 +352,45 @@ points):**
 | Rule | Group question, 13% / 50% | Distribution, 13% / 50% |
 |---|---|---|
 | Bottom-up (lowest scorers first) | 2.7 / 2.7 | 2.7 / 2.7 |
-| Proportional (untargeted) | 8.7 / 8.7 | 9.3 / 9.8 |
-| Opt-in gradient | 9.7 / 12.7 | 10.4 / 13.2 |
-| Eligibility screen (ECONDIS) | 7.9 / 5.7 | 8.4 / 6.7 |
+| Proportional (untargeted) | 8.7 / 8.7 | 8.8 / 8.9 |
+| Opt-in gradient | 9.7 / 12.7 | 9.8 / 12.8 |
+| Eligibility screen (ECONDIS) | 8.0 / 6.0 | 8.1 / 6.3 |
 
 -->
 
-The practical consequence is that the proportional row, not the no-program line, is the bar a targeted rule has to clear. Bottom-up clears it by a wide margin, the eligibility screen clears it modestly at every budget, and the opt-in gradient never does.
+The practical consequence is that the proportional row, not the no-program line, is the bar a targeted rule has to clear. Bottom-up clears it by a wide margin, the eligibility screen clears it at every budget (in Reading G4 by 0.5 points at 10 percent of seats and 2.6 points at half coverage), and the opt-in gradient never does.
 
-**The opt-in gradient adds harm on top of that, and it is the one rule that looks bad under both questions.** At half coverage the distributional gap runs to 13.2 points against 8.7 with no program. Of that 4.5-point widening, 1.1 points is the splitting any partial program produces (the proportional row's 9.8) and 3.4 points is the take-up gradient itself, so about a quarter of the widening is the price of partial coverage rather than of opt-in behavior.
+**The opt-in gradient adds harm on top of that, and it is the one rule that looks bad under both questions.** At half coverage the distributional gap runs to 12.8 points against 8.7 with no program. Of that 4.1-point widening, 0.25 points is the splitting any partial program produces (the proportional row's 8.9) and 3.9 points is the take-up gradient itself, so only about 6 percent of the widening is the price of partial coverage; almost all of it is opt-in behavior.
 
 The gradient survives that subtraction, and the baseline-distribution question is what shows it cleanly. There the proportional rule sits at 8.7 and opt-in sits at 12.7, and the whole 4.0-point difference is attributable to who took up the offer, with no splitting mixed in. So the two readings agree on the substantive point and disagree only on its size: voluntary delivery is worse than untargeted delivery, and untargeted delivery is already worse than doing nothing to the distribution. The gradient's 4:1 take-up ratio across the p10-to-p90 span is a stylized steepening of the 2:1 contrast Robinson, Bisht, and Loeb (2025) measured.
 
-**Bottom-up allocation is the only rule that closes the gap, and it needs enough seats to clear the target.** At 13 percent of seats and above it cuts the 90-10 gap from 8.7 to 2.7 points, and in Math G8 from 6.4 to 0.8 at 13 percent and to 0.3 from 25 percent on. At exactly 10 percent of seats the distributional answer is only 6.0, and the reason is worth stating because it is a genuine feature of the policy rather than an artifact. A program that treats exactly the bottom decile lifts those students past the untreated students immediately above them, and the new bottom decile refills with students the program never touched. The budget has to overshoot the percentile it is trying to move. The transition is smooth, from 8.3 points at an 8 percent budget to 6.0 at 10 percent to 2.7 at 13.
+**Bottom-up allocation is the only rule that closes the gap, and it needs enough seats to clear the target.** At 13 percent of seats and above it cuts the 90-10 gap from 8.7 to 2.7 points, and in Math G8 from 6.4 to 0.3. At exactly 10 percent of seats the distributional answer is only 5.8 in Reading G4, and the reason is worth stating because it is a genuine feature of the policy rather than an artifact. A program that treats exactly the bottom decile lifts those students past the untreated students immediately above them, and the new bottom decile refills with students the program never touched. The budget has to overshoot the percentile it is trying to move. The transition is steep, from 8.6 points at an 8 percent budget to 7.2 at 9 percent, 5.8 at 10 percent, and 2.7 at 13.
 
 The practical difficulty is that bottom-up allocation requires identifying the
-bottom decile. The eligibility-screen row is the honest version of trying: it
-moves the gap from 8.7 to 8.4 at a realistic budget, which is better than the
-proportional row's 9.3 at the same budget but a long way from the 2.7 that
+bottom decile. The eligibility-screen row shows what an honest attempt buys. At a realistic
+budget of 13 percent of seats it moves the gap from 8.7 to 8.1. That beats the
+proportional row's 8.8 at the same budget but falls far short of the 2.7 that
 knowing the target exactly would buy.
 
 ### 3. Targeting works better than expected, but is blunt
 
-Using published within-subgroup percentiles, economic disadvantage captures
-**82.8 percent of the bottom decile** in Reading G4 while covering 51.0
-percent of students.
+Using each group's published score distribution, economically disadvantaged
+students are **79.4 percent of the bottom decile** in Reading G4 (2019) while
+making up 51.0 percent of students.
 
 But it is blunt in a specific way. Because the eligible group is half the
 population and the bottom decile is a tenth of it, only about **16 percent of
 the students a fully-implemented program would treat are actually in the
 bottom decile**. Roughly five in six of the treated sit outside the target.
-Shifting the target to the bottom quartile improves that to about one in
-three, which is the strongest argument for reporting p25 alongside p10.
+Shifting the target to the bottom quartile improves the share inside the
+target to about 36 percent, which is the strongest argument for reporting p25
+alongside p10.
 
 And the screen is degrading where it matters most. Between 2019 and 2024 the
-economically disadvantaged share of the bottom decile fell from 82.8 to 78.0
+economically disadvantaged share of the bottom decile fell from 79.4 to 75.1
 percent in Reading G4, with parallel drops in Reading G8 and both grade 4 and
-8 mathematics. Grade 12, where the differential decline is small, did not
-move. Meanwhile the "information not available" category grew from about 6 to
+8 mathematics. Grade 12, where the differential decline is small, went the other way,
+rising by 1.6 points in reading and 1.9 in math. Meanwhile the "information not available" category grew from about 6 to
 about 9 percent in every cell. **The instrument a targeted policy would use
 became noisier over exactly the period we are studying.**
 
@@ -398,7 +398,7 @@ became noisier over exactly the period we are studying.**
 
 ## What §6.2 can and cannot say
 
-The current draft asserts that a one-size-fits-all intervention "will not address the differential decline" and that targeted interventions "are necessary." A one-size-fits-all intervention delivered at partial coverage does not merely fail to close the differential, it widens it (**note: how strongly should we state this?**. What cannot stand is the implication that targeting fixes this: targeting helps only if the screen is sharp, and the honest screen we can build recovers a small part of the distance. 
+The current draft asserts that a one-size-fits-all intervention "will not address the differential decline" and that targeted interventions "are necessary." A one-size-fits-all intervention delivered at partial coverage does not merely fail to close the differential, it widens it slightly, by up to 0.26 points in Reading G4 and 0.44 in Math G8 (**note: how strongly should we state this?**). What cannot stand is the implication that targeting fixes this: targeting helps only if the screen is sharp, and the honest screen we can build recovers a small part of the distance. 
 
 ## Items for us to consider.
 

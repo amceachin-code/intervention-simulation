@@ -21,10 +21,17 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="${1:?usage: manuscript/render-section.sh manuscript/<section>.md [docx]}"
 OUT="${SRC%.md}.rendered.md"
 BIBS=(--bibliography="$ROOT/references/references.bib")
-PANDOC="$(command -v pandoc || true)"
-if ! "$PANDOC" --citeproc --version >/dev/null 2>&1 && [ -x "$HOME/.local/bin/pandoc" ]; then
-  PANDOC="$HOME/.local/bin/pandoc"
-fi
+# Use the first pandoc that runs and is version 3 or newer: an Intel build
+# left in /usr/local/bin fails with "Bad CPU type" on Apple silicon, so try
+# every copy on the PATH (then ~/.local/bin) rather than trusting the first
+# one found. Read line by line so a path with a space survives.
+PANDOC=""
+while IFS= read -r cand; do
+  [ -x "$cand" ] || continue
+  major="$( { "$cand" --version 2>/dev/null || true; } | head -1 | sed -E 's/^pandoc ([0-9]+).*/\1/')"
+  if [[ "$major" =~ ^[0-9]+$ ]] && [ "$major" -ge 3 ]; then PANDOC="$cand"; break; fi
+done < <(type -ap pandoc; echo "$HOME/.local/bin/pandoc")
+[ -n "$PANDOC" ] || { echo "render-section.sh: no working pandoc 3 or newer found" >&2; exit 1; }
 "$PANDOC" --citeproc "${BIBS[@]}" --csl="$ROOT/references/apa.csl" \
   -f markdown+mark -t markdown_strict --wrap=none "$SRC" -o "$OUT"
 # newer pandoc emits <span class="nocase"> around brace-protected names; strip it for paste-ready text,

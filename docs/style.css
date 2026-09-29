@@ -18,6 +18,8 @@
   --series-after: #2a78d6;    /* position after the program */
   --series-part: #2a78d6;
   --series-effect: #eb6834;
+  --series-ed: #4a3aa7;       /* economically disadvantaged (categorical slot 7) */
+  --series-ned: #1baf7a;      /* not economically disadvantaged (slot 3); under 3:1 on light, so the table carries the numbers */
   --closed-fill: rgba(42, 120, 214, 0.16);
   --over-fill: rgba(235, 104, 52, 0.18);
 }
@@ -37,6 +39,8 @@
     --series-after: #3987e5;
     --series-part: #3987e5;
     --series-effect: #d95926;
+    --series-ed: #9085e9;
+    --series-ned: #199e70;
     --closed-fill: rgba(57, 135, 229, 0.22);
     --over-fill: rgba(217, 89, 38, 0.25);
   }
@@ -56,6 +60,8 @@
   --series-after: #3987e5;
   --series-part: #3987e5;
   --series-effect: #d95926;
+  --series-ed: #9085e9;
+  --series-ned: #199e70;
   --closed-fill: rgba(57, 135, 229, 0.22);
   --over-fill: rgba(217, 89, 38, 0.25);
 }
@@ -98,6 +104,9 @@ select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface
 .seg label:first-of-type { border-left: 0; }
 .seg input:checked + label { background: var(--accent-soft); color: var(--text-primary); font-weight: 600; }
 .seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
+.seg.off { opacity: 0.45; }
+.seg.off label { cursor: not-allowed; }
+.seg + .seg { margin-top: 8px; }
 
 /* Headline tiles */
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -114,6 +123,7 @@ select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface
 .zero { stroke: var(--text-muted); stroke-width: 1; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart .direct-label { fill: var(--text-secondary); font-size: 11px; font-weight: 600; }
 .sw { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
 .sw.dash { border-top-style: dashed; }
 .sw.box { height: 10px; border: 0; border-radius: 2px; }

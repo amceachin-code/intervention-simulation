@@ -21,12 +21,14 @@
 
 source("analysis/config-helpers.R")
 source("analysis/mixture.R")   # quantile_points: the explorer gets the same points R uses
+source("analysis/alloc-rules.R")   # ed_share_points: the screen's ED share, as 06 uses it
 
 IN     <- "tables/sim-quantiles.csv"
 DIST   <- "tables/sim-distribution.csv"
+ECON   <- "tables/sim-distribution-econdis.csv"
 KRAFT  <- "tables/kraft-2023-benchmarks-by-target.csv"
 OUT    <- "docs/cells.js"
-for (f in c(IN, DIST))
+for (f in c(IN, DIST, ECON))
   if (!file.exists(f))
     stop("missing ", f, ". Run: Rscript analysis/01-simulations.R", call. = FALSE)
 if (!file.exists(KRAFT))
@@ -38,6 +40,7 @@ if (!requireNamespace("jsonlite", quietly = TRUE))
 cfg <- load_sim_config()
 qd  <- read.csv(IN, stringsAsFactors = FALSE)
 dd  <- read.csv(DIST, stringsAsFactors = FALSE)
+de  <- read.csv(ECON, stringsAsFactors = FALSE)
 PS  <- as.integer(cfg_get(cfg, "percentiles"))
 
 ## Cells in the config's order, which is the order the menu shows them. Each
@@ -61,13 +64,32 @@ cells <- lapply(cell_labels, function(lab) {
     pts <- quantile_points(dd[dd$cell == lab & dd$year == yr, ], PS, knots, paste(lab, yr))
     list(pct = pts$pct, score = pts$score)
   }
+  ## Economic disadvantage, the same objects 06-seat-allocation.R builds:
+  ## the 2024 ED share at each 2024 percentile (ed_share_points, which the
+  ## eligibility screen reads), and each group's quantile points in both
+  ## years, through its score distribution alone (no knots), for the ED and
+  ## not-ED outcome views.
+  ed_pts <- ed_share_points(dd, de, lab, 2024)
+  group <- function(g, id) {
+    gq <- function(yr) {
+      pts <- group_quantile_points(de, lab, yr, g)   # mixture.R, shared with 06
+      list(pct = pts$pct, score = pts$score)
+    }
+    list(id = id, label = g,
+         pop2024 = de$pop_share[de$cell == lab & de$year == 2024 & de$group == g][1],
+         qf2019 = gq(2019), qf2024 = gq(2024))
+  }
   list(label       = lab,
        q2019       = z$q2019,
        d           = z$d,
        g_star      = z$g_star,
        sd2019      = z$sd2019[1],
        qf2019      = qf(2019, z$q2019),
-       qf2024      = qf(2024, z$q2019 + z$d))
+       qf2024      = qf(2024, z$q2019 + z$d),
+       ed          = list(pop = ed_pts$pop,
+                          share = list(pct = ed_pts$pct, share = ed_pts$share),
+                          groups = list(group("Economically disadvantaged", "ED"),
+                                        group("Not economically disadvantaged", "Not ED"))))
 })
 
 ## Kraft (2023) effect sizes by the population a study served, for the
@@ -94,7 +116,7 @@ strip <- function(recs, fields) lapply(recs, function(r) r[fields])
 ## Provenance is an MD5 of each source file rather than a run date, so
 ## rerunning the script on unchanged inputs writes a byte-identical file and
 ## git shows a change only when the data did.
-srcs <- c(IN, DIST, KRAFT, attr(cfg, "path"))
+srcs <- c(IN, DIST, ECON, KRAFT, attr(cfg, "path"))
 payload <- list(
   sources        = lapply(srcs, function(f) list(path = f, md5 = unname(tools::md5sum(f)))),
   percentiles    = PS,

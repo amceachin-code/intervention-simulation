@@ -21,7 +21,7 @@
 ## rule that raises the mean in section 2 may widen the very gap section 1 is
 ## trying to close.
 ##
-## Public data only. Usage: Rscript analysis/06-seat-allocation.R [cell]
+## Public data only. Usage: Rscript analysis/06-seat-allocation.R [--cell CELL]
 
 suppressPackageStartupMessages({
   library(ggplot2); library(dplyr); library(scales)
@@ -29,23 +29,21 @@ suppressPackageStartupMessages({
 
 TABLES <- "tables"; OUT <- "figures/sim"
 dir.create(OUT, showWarnings=FALSE, recursive=TRUE)
-for (f in c("sim-quantiles.csv", "sim-bottom-decile.csv", "sim-distribution.csv"))
+for (f in c("sim-quantiles.csv", "sim-distribution.csv", "sim-distribution-econdis.csv"))
   if (!file.exists(file.path(TABLES, f)))
     stop("missing ", file.path(TABLES, f), ". Run: Rscript analysis/01-simulations.R",
          call.=FALSE)
 qd <- read.csv(file.path(TABLES,"sim-quantiles.csv"), stringsAsFactors=FALSE)
-bd <- read.csv(file.path(TABLES,"sim-bottom-decile.csv"), stringsAsFactors=FALSE)
 dd <- read.csv(file.path(TABLES,"sim-distribution.csv"), stringsAsFactors=FALSE)
+de <- read.csv(file.path(TABLES,"sim-distribution-econdis.csv"), stringsAsFactors=FALSE)
 
-CELL <- if (length(commandArgs(TRUE))) commandArgs(TRUE)[1] else "Reading G4"
-## Fail here rather than 100 lines later with a subscript-out-of-bounds from an
-## empty deficit vector.
-if (!CELL %in% qd$cell)
-  stop("unknown cell '", CELL, "'. Available: ",
-       paste(sort(unique(qd$cell)), collapse=", "), call.=FALSE)
+## --cell, parsed and validated by parse_cell_arg (config-helpers.R).
+source("analysis/config-helpers.R")
+CELL <- parse_cell_arg("Reading G4", qd$cell)
+## One file-name slug for every output this script writes.
+SLUG <- gsub("[^A-Za-z0-9]+", "-", tolower(CELL))
 ## Treated effect, SD: the config's treated_effect benchmark (best-evidenced
 ## tutoring at national scale).
-source("analysis/config-helpers.R")
 G    <- cfg_treated_g(load_sim_config())
 z <- qd[qd$cell==CELL,]; z <- z[order(z$percentile),]
 S <- z$sd2019[1]
@@ -55,7 +53,8 @@ deficit <- setNames(-z$d, PS)          # points needed to restore, positive
 ## ---------------------------------------------------------------------------
 ## Allocation rules. Each returns the participation rate at percentile p given
 ## a total seat budget B, expressed as a share of ALL students. Every rule must
-## satisfy the budget: the mean participation across the distribution equals B.
+## satisfy the budget: the mean participation across the distribution equals B,
+## except the eligibility screen, which cannot spend more than the ED share.
 ##
 ## Defined in analysis/alloc-rules.R rather than here so that the test suite
 ## can load them without running this script, which writes figures and a CSV
@@ -64,8 +63,10 @@ deficit <- setNames(-z$d, PS)          # points needed to restore, positive
 source("analysis/alloc-rules.R")
 source("analysis/mixture.R")
 
-ed_curve     <- make_ed_curve(bd, CELL)
-alloc_screen <- function(p, B) water_fill(ed_curve, p, B)
+## The screen reads the 2024 ED share at each 2024 percentile: the program
+## seats 2024 students.
+alloc_screen <- make_ed_screen(ed_share_points(dd, de, CELL, 2024))
+pop_ed <- attr(alloc_screen, "pop")    # the screen spends min(B, pop_ed)
 
 RULES <- list(
   "Bottom-up (lowest first)"      = alloc_bottom,
@@ -151,10 +152,11 @@ f13 <- ggplot(grid, aes(budget, -differential, colour=rule)) +
   scale_y_continuous("Remaining 90-10 gap after the program (NAEP points)") +
   scale_colour_brewer(palette="Dark2") +
   labs(title=sprintf("Helping the whole district: where the seats go decides the shape (%s)", CELL),
-       subtitle=paste(sprintf("Every rule spends the SAME number of seats and delivers the same %.3f SD to whoever takes them.", G),
-                      "\nOnly the allocation differs. Lower is a narrower gap; the dashed line is doing nothing."),
-       caption=paste("Every curve meets the no-program line at full coverage, because a budget that reaches everyone",
-                     "\nleaves the shape alone whoever it was aimed at. Below that, note where the PROPORTIONAL curve sits: it targets",
+       subtitle=paste(sprintf("Every rule spends the SAME number of seats (the screen, at most the %.0f percent who are eligible)", 100*pop_ed),
+                      sprintf("\nand delivers the same %.3f SD to whoever takes them. Lower is a narrower gap; the dashed line is doing nothing.", G)),
+       caption=paste("Every curve except the screen meets the no-program line at full coverage, because a budget that reaches",
+                     "\neveryone leaves the shape alone whoever it was aimed at; the screen never seats students who are not",
+                     "\neconomically disadvantaged, so its curve stops moving once every eligible student holds a seat. Below that, note where the PROPORTIONAL curve sits: it targets",
                      "\nnobody and still widens the gap, because partial coverage splits each percentile into treated and",
                      "\nuntreated students and a distribution split that way is wider than the one it started as. That curve,",
                      "\nnot the dashed line, is the bar a targeted rule has to beat. Bottom-up is the only rule that clears it,",
@@ -169,7 +171,7 @@ f13 <- ggplot(grid, aes(budget, -differential, colour=rule)) +
         plot.subtitle=element_text(colour="grey30", size=9.5),
         plot.caption=element_text(colour="grey45", size=7.5, hjust=0))
 fn13 <- file.path(OUT, sprintf("fig13-seat-allocation-%s.png",
-                               gsub("[^A-Za-z0-9]+","-",tolower(CELL))))
+                               SLUG))
 ggsave(fn13, f13, width=9.2, height=6.2, dpi=200)
 message("wrote ", fn13)
 
@@ -208,7 +210,7 @@ f14 <- ggplot(curves, aes(percentile, -residual, colour=rule, linetype=rule)) +
         plot.subtitle=element_text(colour="grey30", size=9.5),
         plot.caption=element_text(colour="grey45", size=7.5, hjust=0))
 fn14 <- file.path(OUT, sprintf("fig14-seats-four-ways-%s.png",
-                               gsub("[^A-Za-z0-9]+","-",tolower(CELL))))
+                               SLUG))
 ggsave(fn14, f14, width=9.2, height=6.2, dpi=200)
 message("wrote ", fn14)
 
@@ -235,7 +237,63 @@ for (rn in names(RULES)) {
   cat("\n")
 }
 write.csv(grid, file.path(TABLES, sprintf("sim-seat-allocation-%s.csv",
-          gsub("[^A-Za-z0-9]+","-",tolower(CELL)))), row.names=FALSE)
+          SLUG)), row.names=FALSE)
+
+## ---- ED and not-ED students: each group's distribution after the program ---
+## The same mixture as residual(), run inside each group. A student at rank u
+## of group g scores Q_g(u) and sits at national rank F(Q_g(u)) in 2024, so
+## under a national rule (bottom-up, proportional, opt-in) their chance of a
+## seat is pi(F(Q_g(u))). Under the screen it is r = min(1, B / pop_ED) for
+## every ED student and zero for everyone else, which is the rule's
+## definition rather than an approximation to it. The treated effect is the
+## same G*S points as everywhere else in this script.
+##
+## Group quantile functions run through each group's published score
+## distribution alone (group_quantile_points in mixture.R, which the explorer
+## export shares): the group percentiles are not in a committed table, and a
+## histogram alone reproduces the national percentiles to within 0.11 points
+## (analysis/tests/test-sim.R, section 10).
+## Each is anchored, like calibrated_program_quantiles, so a zero budget
+## returns the group's own 2024 quantile function at `probs` exactly.
+##
+## Scores are NAEP points. The ED-minus-not-ED gap at a percentile is the
+## not-ED score minus the ED score, positive when ED students score lower.
+GROUP_LABELS <- c("Economically disadvantaged"="ED", "Not economically disadvantaged"="Not ED")
+group_qf <- function(g, yr) {
+  qp <- group_quantile_points(de, CELL, yr, g)
+  make_quantile_fn(qp$pct, qp$score)
+}
+screen_rule <- "Eligibility screen (ECONDIS)"
+group_rows <- bind_rows(lapply(names(GROUP_LABELS), function(g) {
+  Q19g <- group_qf(g, 2019); Q24g <- group_qf(g, 2024)
+  x    <- Q24g(RANK_GRID)
+  v    <- quantile_rank(Q2024_fn, x)     # national 2024 rank, fixed across budgets
+  base <- weighted_quantile(c(x, x), c(rep(1, length(x)), rep(0, length(x))), PS)
+  offset <- Q24g(PS) - base
+  post <- function(pr) weighted_quantile(c(x, x + G*S), c(1 - pr, pr), PS) + offset
+  ref <- bind_rows(
+    tibble(rule="2019", budget=NA_real_, !!!setNames(as.list(Q19g(PS)), paste0("p", PS))),
+    tibble(rule="2024, no program", budget=NA_real_, !!!setNames(as.list(Q24g(PS)), paste0("p", PS))))
+  runs <- bind_rows(lapply(names(RULES), function(rn) bind_rows(lapply(budgets, function(B) {
+    pr <- if (rn == screen_rule) rep(if (GROUP_LABELS[[g]] == "ED") min(1, B / pop_ed) else 0, length(x))
+          else RULES[[rn]](v, B)     # every rule returns a rate in [0, 1] (tested)
+    tibble(rule=rn, budget=B, !!!setNames(as.list(post(pr)), paste0("p", PS)))
+  }))))
+  bind_rows(ref, runs) %>% mutate(group=GROUP_LABELS[[g]], .after=budget)
+}))
+write.csv(group_rows, file.path(TABLES, sprintf("sim-group-outcomes-%s.csv",
+          SLUG)), row.names=FALSE)
+
+cat("\nED minus not-ED gap (not-ED score minus ED score, NAEP points) at p10 / p50 / p90\n")
+gap_at <- function(rn, B) {
+  a <- group_rows[group_rows$rule == rn & (if (is.na(B)) is.na(group_rows$budget)
+                  else abs(group_rows$budget - B) < 1e-9), ]
+  e <- a[a$group == "ED", ]; n <- a[a$group == "Not ED", ]
+  sprintf("%5.1f %5.1f %5.1f", n$p10 - e$p10, n$p50 - e$p50, n$p90 - e$p90)
+}
+cat(sprintf("%-30s %s\n", "2019", gap_at("2019", NA)))
+cat(sprintf("%-30s %s\n", "2024, no program", gap_at("2024, no program", NA)))
+for (rn in names(RULES)) cat(sprintf("%-30s %s   (13%% of seats)\n", rn, gap_at(rn, 0.13)))
 
 ## ---- Figure 15: the allocation rules themselves, pi(p) vs p ----------------
 ## Distinct from figures 13/14, which show what a rule DOES to the score
@@ -265,15 +323,15 @@ f15 <- ggplot(curve_grid, aes(percentile, pi, colour=rule)) +
                                "Proportional (untargeted)"="#D95F02",
                                "Opt-in gradient"="#7570B3",
                                "Eligibility screen (ECONDIS)"="#E7298A")) +
-  labs(title="How each rule spends the same seat budget",
-       subtitle="Participation rate by percentile, at four example budgets. Panels share the same seat total; only the shape differs.",
+  labs(title="How each rule spends a seat budget",
+       subtitle=sprintf("Participation rate by percentile, at four example budgets. Within a panel every rule spends the same seats, except that the screen stops at the %.0f percent who are eligible.", 100*pop_ed),
        caption=paste("Bottom-up fills from the lowest percentile and is a step function: 1 below the budget's cutoff, 0 above.",
                      "\nProportional is flat by construction. The opt-in gradient rises with achievement, doubling every 40",
                      "\npercentile points (10% at p10, 20% at p50, 40% at p90), and is capped and water-filled once a percentile",
                      "\nwould exceed 100 percent participation, which is visible as the curve flattening at high budgets. The",
-                     sprintf("\neligibility screen follows the measured ECONDIS share (cell-specific; shown here for %s)", CELL),
-                     "\nand is also water-filled. Every curve's mean over the population equals the budget shown at the top of",
-                     "\nits panel."),
+                     "\neligibility screen seats economically disadvantaged students at random, so it follows their share of each",
+                     sprintf("\npercentile (cell-specific; shown here for %s). It cannot seat more students than are eligible, so", CELL),
+                     sprintf("\nabove a budget of %.0f percent the extra seats go unused; every other curve's mean equals the budget.", 100*pop_ed)),
        colour=NULL) +
   theme_minimal(base_size=11) +
   theme(panel.grid.minor=element_blank(), legend.position="top",
@@ -282,7 +340,7 @@ f15 <- ggplot(curve_grid, aes(percentile, pi, colour=rule)) +
         plot.caption=element_text(colour="grey45", size=7.5, hjust=0),
         strip.text=element_text(face="bold"))
 fn15 <- file.path(OUT, sprintf("fig15-allocation-curves-%s.png",
-                               gsub("[^A-Za-z0-9]+","-",tolower(CELL))))
+                               SLUG))
 ggsave(fn15, f15, width=11.5, height=4.6, dpi=200)
 message("wrote ", fn15)
 
@@ -299,7 +357,7 @@ share_tbl <- bind_rows(lapply(names(RULES), function(rn)
       mutate(cell=CELL, rule=rn, budget=B, .before=1)
   }))))
 fn_shares <- file.path(TABLES, sprintf("sim-allocation-shares-%s.csv",
-                                       gsub("[^A-Za-z0-9]+","-",tolower(CELL))))
+                                       SLUG))
 write.csv(share_tbl, fn_shares, row.names=FALSE)
 message("wrote ", fn_shares)
 

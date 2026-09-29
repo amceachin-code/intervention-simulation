@@ -5,7 +5,258 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: QUANTILE FUNCTIONS FROM THE NAEP SCORE HISTOGRAM (2026-09-28)
+# CURRENT TASK: ED BREAKDOWN, TWO TODO FIXES, STATA-MCP (2026-09-29, closed)
+
+**Status:** Complete. All plan steps (3, G, A to F, wrap-up, verification,
+code review) are done and tested. Nothing is in progress. Next: commit and
+push (Andrew asked for it).
+
+Full plan: `/Users/andrewmceachin/.claude/plans/replicated-napping-canyon.md`.
+
+## Objective
+
+Andrew (2026-09-29): the paper venue is undecided. The focus is getting the
+explorer tool spun up, then deciding whether it ships as an artifact with the
+NAEP AERA Open paper or goes into a new paper. Three asks:
+
+1. Integrate the economic-disadvantage (ED) breakdown, both as a targeting
+   rule (seats go only to ED students) and as an outcome group (ED and
+   not-ED distributions before and after a program).
+2. Fix two items from the "Analysis" list in `TODO.md`: refresh the stale
+   distributional numbers in `manuscript/simulation-memo.md`, and give `04-`
+   and `06-` the same `--flag` arguments as `01-` and `02-`.
+3. Get the stata-mcp server running (it failed this session with
+   ECONNREFUSED).
+
+## Plan
+
+- [x] 0. Investigate current ED use, confirm the two TODO items, write and
+      get approval for the plan.
+- [x] 3. Stata-mcp server restarted and verified (see Step details).
+- [x] G. Argument conventions: `04-district-requirements.R` and
+      `06-seat-allocation.R` take `--cell "Math G8"`; unknown cells fail with
+      the valid list; `test-regen.sh`, `README.md`, `analysis/README.md`,
+      `CLAUDE.md` updated.
+- [x] A. Data by ED status: `get_distribution(variable=, groups=)`,
+      `parse_distribution(group=)`; ECONDIS DP:DP pulled for 6 cells x 2
+      years; `tables/sim-distribution-econdis.csv`; `group_composition()`
+      uses group quantile functions; `group_cdf` and `dist-helpers.R`
+      retired; `nat_pct` in `03-district-cases.R` uses the national 2019
+      quantile function.
+- [x] B. ED share curve s(p): `ed_share_points()` in `analysis/alloc-rules.R`.
+- [x] C. Exact eligibility screen: `make_ed_screen()`, r = min(1, B/pop_ED),
+      pi(p) = r x s(p).
+- [x] D. ED/not-ED outcomes: `06-seat-allocation.R` writes
+      `tables/sim-group-outcomes-<cell>.csv`.
+- [x] E. Explorer: `10-export-tool-data.R` exports ED data;
+      `docs/engine.js` gets `inputs.rule` and `groupScenario()`;
+      `docs/index.html` gets a "Who is eligible" choice and an ED/not-ED
+      card; `docs/methods.html` gets screen and group subsections plus
+      Checks and Limits updates; `docs/README.md` notes the new input.
+- [x] F. Memo refresh (last, after the ED change moves the screen numbers):
+      update every post-program number in `manuscript/simulation-memo.md`
+      from the regenerated tables, remove tail-sensitivity text, rewrite the
+      method and screen text, run `/writing-style`, re-render; mark the stale
+      "40/60" and "6.0 vs 2.7" lines in `PROGRESS.md` history as superseded.
+- [x] Wrap-up: regenerate `SIM-SUMMARY.md`; close TODO items (including the
+      `04-`/`06-` argument item) and log the tilted-screen idea. (Done
+      already: `05-compile-summary.R` section 6/6b/7 prose and the `02-`
+      fig10 caption are now computed from the table.)
+- [x] Verify: `bash analysis/tests/run-all.sh --regen`, Node engine test vs
+      R tables, unchanged numbers (D, g*, Table 2(a)) stay byte-identical,
+      Stata guard run via stata-mcp, explorer check in Chrome, memo number
+      grep and re-render.
+
+## Step details
+
+- **Step 0 (planning).** Done 2026-09-29. Found that ED is used only inside
+  the R eligibility-screen rule (`make_ed_curve`, `analysis/alloc-rules.R`),
+  fed by `group_cdf` (`analysis/dist-helpers.R`), which still uses a normal
+  tail. The screen caps participation at 100 percent rather than at the ED
+  share. `docs/` has no ED code.
+- **Step 3 (stata-mcp).** Done 2026-09-29. The server is the VS Code
+  extension `deepecon.stata-mcp` 0.5.3 (HTTP at
+  `localhost:4000/mcp-streamable`). It stopped at 07:09 when VS Code closed.
+  Restarted standalone with
+  `node ~/.vscode/extensions/deepecon.stata-mcp-0.5.3/src/start-server.js --port 4000 --stata-path /Applications/StataNow --stata-edition mp`,
+  then reconnected via `/mcp`; `display c(stata_version)` returned 19.5 MP.
+  **Note for future sessions:** if stata-mcp shows ECONNREFUSED, open VS
+  Code or run that command, then reconnect with `/mcp`.
+- **Step G (arguments).** Done 2026-09-29. `04-` and `06-` take `--cell`.
+  A bare positional cell name is refused with a message. `04-` now
+  validates the cell. Updated `analysis/tests/test-regen.sh`, `README.md`,
+  `analysis/README.md`, `CLAUDE.md`.
+- **Step A (data by ED status).** Done 2026-09-29.
+  `get_distribution(variable=, groups=)` and `parse_distribution(group=)` in
+  `analysis/api-helpers.R`. `01-simulations.R` pulls ECONDIS DP:DP for 6
+  cells x 2 years (12 new cache files in `analysis/.cache/`, to be
+  committed) and writes `tables/sim-distribution-econdis.csv` (cell, year,
+  group, pop_share, bin, lo, hi, pct; ED and not-ED only).
+  `group_composition` now takes `gdist` and uses each group's quantile
+  function (`quantile_points` with the group percentiles as knots), inverted
+  at the cut via the new `quantile_cdf()` in `analysis/mixture.R`.
+  "Information not available" gets the remainder of the national cut_pct
+  and is checked to lie in [0, its share]. Column `reconstructed_mass`
+  renamed `measured_mass`. `analysis/dist-helpers.R` (`group_cdf`) deleted.
+  `03-district-cases.R`'s `nat_pct` now inverts the national 2019 quantile
+  function (no tails): district case numbers moved by up to about 1 point
+  (for example District D p25 32.0 to 30.9; coverage 84% to 80%).
+  **Effect:** the ED share of the bottom decile fell 1.4 to 3.6 points in
+  grades 4 and 8 compared with the old normal-tail method (Reading G4 2019:
+  82.8 to 79.4); p25 shares rose about 1 point.
+- **Steps B and C (ED share curve and screen).** Done 2026-09-29.
+  `ed_share_points()` and `make_ed_screen()` in `analysis/alloc-rules.R`
+  replace `make_ed_curve`. s(p) = pop_ED x pct_ED / pct_TOTAL per bin, placed
+  at midpoint national ranks, linearly interpolated, clamped to [0, 1]; it
+  averages within 0.0005 of pop_ED in every cell. The screen uses the 2024
+  ED share (the program seats 2024 students; the old rule used 2019).
+  pi(p) = min(1, B/pop_ED) x s(p); the screen spends min(B, pop_ED).
+  Reading G4 screen gap at 100% budget is now 6.3 (was 8.7 via
+  water-filling). Non-screen rows of the seat tables are byte-identical.
+- **Step D (ED/not-ED outcomes).** Done 2026-09-29. `06-seat-allocation.R`
+  writes `tables/sim-group-outcomes-<cell>.csv` (rule, budget, group ED /
+  Not ED, p10 to p90 in NAEP points, plus "2019" and "2024, no program"
+  reference rows). Group quantile functions are histogram-only. Reading G4
+  ED gap (not-ED minus ED) at p10: 34.2 (2019), 31.6 (2024), 25.6 under
+  bottom-up at 13%, 30.1 under the screen at 13%.
+- **Tests (G to D).** `test-api-guards.R`: 48 pass (6 new: group parsing,
+  flagged unrequested group ignored, over-fill stop). `test-sim.R` new
+  section 11 (ED share curve, screen spend, r x s(p), two-route
+  bottom-decile agreement within 0.002, group outcome invariants). All pass.
+  `02-figures.R` fig10 caption and `05-compile-summary.R` section 6/6b/7
+  prose are now computed from the table.
+- **Step E (explorer).** Done 2026-09-29.
+  - `analysis/10-export-tool-data.R` exports per cell `ed` = {pop,
+    share{pct, share} (2024, from `ed_share_points`), groups [ED, Not ED]
+    with pop2024, qf2019, qf2024 (histogram-only quantile points)}. The
+    sources list adds `tables/sim-distribution-econdis.csv`.
+  - `docs/engine.js` adds `edParticipation`, `inverseQuantile` (bisection
+    to 1e-10), `participationFor` (`inputs.rule` "tilt" or "ed"), and
+    `groupScenario` (per-group mixture at the national rank, cached per
+    cell).
+  - `analysis/tests/test-tool-engine.mjs` now checks the Proportional AND
+    Eligibility rows against R, group outcomes against
+    `sim-group-outcomes-*.csv` (7,760 values, max diff about 7e-13), ED
+    data against the econdis CSV, and screen invariants. 12,574 checks
+    pass.
+  - `docs/index.html`: step 3 gains "Any student" / "Economically
+    disadvantaged only" (the tilt control is greyed out under the screen;
+    help text gives the ED share, the share at p10 and p90, and unused
+    seats). New card "Economically disadvantaged students and everyone
+    else": chart against each group's own 2019 in SD units, direct labels
+    at the left end, gap table at p10/p50/p90 in NAEP points, and a note on
+    the NSLP definition and the "information not available" share. The
+    rule is stored in the URL hash.
+  - `docs/style.css`: `--series-ed` (violet #4a3aa7, dark #9085e9) and
+    `--series-ned` (aqua #1baf7a, dark #199e70), validated with the dataviz
+    palette validator (aqua is under 3:1 on light, so the table carries the
+    numbers); `.seg.off`; `.direct-label`.
+  - `docs/methods.html`: section 1 mentions ED distributions; section 5
+    gains h3 "Seats only for economically disadvantaged students"
+    (`#screen`) and "Results for disadvantaged students and everyone else"
+    (`#groups`), with numbers filled from `cells.js`; section 8 adds a
+    group-results check; section 9 adds "A school-lunch measure of
+    disadvantage" and "A random screen".
+  - `docs/README.md` updated.
+  - Verified with headless Chrome screenshots (the Chrome extension was not
+    connected): the page renders with no JS errors. Fixed a label
+    collision found in the screenshots.
+- **Step F (memo).** Done 2026-09-29. Memo numbers refreshed from
+  `tables/sim-seat-allocation-*.csv`,
+  `tables/sim-allocation-shares-reading-g4.csv`, and
+  `tables/sim-bottom-decile.csv`. The tail-sensitivity paragraph was removed,
+  the method text rewritten, and the screen described as random assignment
+  among ED students. The dated note at the top was replaced. The memo passed
+  through `/writing-style` and was re-rendered (`.rendered.md` and `.docx`).
+  `manuscript/render-section.sh` fixed: the Intel pandoc in `/usr/local/bin`
+  fails on Apple silicon ("Bad CPU type"), so the script now uses the first
+  pandoc 3+ on the PATH that runs.
+- **Verification.** Done 2026-09-29. `bash analysis/tests/run-all.sh --regen`:
+  7/7 pass, 23 tables byte-identical, no step errors. The Stata port, rerun
+  via stata-mcp, reproduces `tables/sim-quantiles-stata.csv` byte for byte
+  and agrees with R to 1e-14 (the manifest timestamp change was reverted).
+  Explorer checked with headless Chrome (the extension was not connected).
+- **Code review.** Done 2026-09-29; Andrew chose "apply all". 35 findings,
+  one false (`CLAUDE.md` was already updated). Applied:
+  - Stale screen text in the `06-` fig13/fig15 captions; history notes in
+    `alloc-rules.R` and `test-sim.R`; the engine `meanPart` comment and page
+    provenance line; seat and technical-notes text in `docs/index.html`.
+  - `analysis/README.md` arguments and table list.
+  - `parse_cell_arg` in `config-helpers.R` (used by `04-` and `06-`); `SLUG`
+    in `06-`.
+  - `group_quantile_points` and `quantile_rank` in `mixture.R`. The `06-`
+    national rank is now a vectorized `approx` on a 0.001 grid instead of
+    20k `uniroot` calls; the JS `quantileRank` mirrors it and
+    `inverseQuantile` was removed.
+  - `ECON_HIST_GROUPS` moved to `api-helpers.R`; `read_fixture` helper in
+    `test-api-guards.R`.
+  - `01-` fetches ECONDIS stats once per cell, with no `<<-`.
+  - `05-` lift/tail arithmetic in one wide table.
+  - `ed_population_share` removed from `sim-params.yaml`; `05-` reads the
+    measured 0.5095 from `sim-bottom-decile.csv` (TODO item closed).
+  - Engine shared caches (`onGrid`, `withoutProgram`), `edShareAt`,
+    `edUnknownShare`.
+  - Test tolerances tightened to back the methods-page claims (two-route ED
+    share < 0.002; JS vs R TOL 1e-9); the `ed_full` test reads pop from the
+    data.
+  - `api-helpers.R` header documents its `mixture.R` dependency.
+  - `render-section.sh` probes the pandoc version and handles spaces in
+    paths.
+- **Not done from the approved plan.** The exact recombination test (ED +
+  not-ED + information-not-available group back to national), because the
+  information group's histogram has flagged bins. Group outcomes are checked
+  by other invariants instead.
+- **Next.** Commit and push (Andrew asked for it).
+
+## Key decisions
+
+- Journal and framing are deferred. The explorer tool is the priority.
+- Andrew chose the two "Analysis" TODO items: fix the memo's stale
+  distributional numbers, and normalize the `04-`/`06-` arguments.
+- ED enters as BOTH a targeting rule and an outcome group.
+- The eligibility screen is redefined as random assignment among ED
+  students: r = min(1, B/pop_ED), pi(p) = r x s(p). Seats beyond the ED share
+  default to unused (alternative: give them to not-ED students at random).
+- The ED share curve s(p) comes from ECONDIS DP:DP histograms over the
+  national TOTAL histogram. Group 3 ("Information not available") is not
+  pulled; its mass is the total minus groups 1 and 2.
+- The screen uses the 2024 ED share, because the program seats 2024
+  students (the old rule used 2019).
+- Group quantile functions for the ED/not-ED outcomes are histogram-only
+  (no tails).
+- The memo refresh happens last, after the ED change moves the screen
+  numbers.
+
+## Files
+
+- **Created:** `tables/sim-distribution-econdis.csv`,
+  `tables/sim-group-outcomes-<cell>.csv` (one per `06-` cell), 12 ECONDIS
+  cache files in `analysis/.cache/`.
+- **Modified (step E):** `analysis/10-export-tool-data.R`,
+  `analysis/tests/test-tool-engine.mjs`, `docs/cells.js`, `docs/engine.js`,
+  `docs/index.html`, `docs/style.css`, `docs/methods.html`,
+  `docs/README.md`.
+- **Modified (step F, wrap-up, review):** `analysis/config-helpers.R`,
+  `analysis/config/sim-params.yaml`, `analysis/README.md`, `TODO.md`,
+  `manuscript/render-section.sh`, `manuscript/simulation-memo.md`,
+  `manuscript/simulation-memo.rendered.md`, `docs/README.md`,
+  `tables/SIM-SUMMARY.md`, `tables/sim-results.md`,
+  `tables/sim-district-cases.md`, `figures/sim/*`.
+- **Modified:** `PROGRESS.md`, `README.md`, `CLAUDE.md`,
+  `analysis/README.md`, `analysis/api-helpers.R`, `analysis/mixture.R`,
+  `analysis/alloc-rules.R`, `analysis/01-simulations.R`,
+  `analysis/02-figures.R`, `analysis/03-district-cases.R`,
+  `analysis/04-district-requirements.R`, `analysis/05-compile-summary.R`,
+  `analysis/06-seat-allocation.R`, `analysis/tests/test-api-guards.R`,
+  `analysis/tests/test-sim.R`, `analysis/tests/test-regen.sh`, regenerated
+  `tables/` outputs (seat allocation, allocation shares, bottom decile,
+  district cases, SIM summary, results, manifest) and `figures/sim/`
+  (fig10, fig11, fig13 to fig15).
+- **Deleted:** `analysis/dist-helpers.R`.
+
+---
+
+# PREVIOUS TASK: QUANTILE FUNCTIONS FROM THE NAEP SCORE HISTOGRAM (2026-09-28, closed)
 
 **Status:** Steps 0 to 9 complete; verified and reviewed. Being committed and
 pushed (Andrew approved updating the GitHub page once the review passed).
@@ -584,9 +835,11 @@ map to this project as follows:
      proportional curve, not the no-program line, is the bar a targeted rule
      must clear.
   2. Opt-in widening splits roughly 40/60 between the mixture and the take-up
-     gradient.
+     gradient (superseded 2026-09-29: about 6/94 after the score-distribution
+     rebuild).
   3. Bottom-up needs its budget to overshoot the target percentile: 6.0 at a
-     10 percent budget versus 2.7 at 13 percent.
+     10 percent budget versus 2.7 at 13 percent (superseded 2026-09-29: 5.8
+     versus 2.7 after the score-distribution rebuild).
 - **New stated assumptions:** no selection on gains within a percentile;
   large population (no Monte Carlo term).
 - Tests grew to 75 to 76 assertions, including grid independence and a guard

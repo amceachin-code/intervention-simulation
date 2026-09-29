@@ -11,7 +11,7 @@
 ## exercise from RECOVERY into CATCH-UP, and the four districts then face very
 ## different tasks. That distinction is the substantive point of the figure.
 ##
-## Public data only. Usage: Rscript analysis/04-district-requirements.R
+## Public data only. Usage: Rscript analysis/04-district-requirements.R [--cell CELL]
 
 suppressPackageStartupMessages({
   library(ggplot2); library(dplyr); library(tidyr); library(scales); library(ggrepel)
@@ -24,7 +24,9 @@ if (!file.exists(file.path(IN, "sim-quantiles.csv")))
        ". Run: Rscript analysis/01-simulations.R", call.=FALSE)
 qd <- read.csv(file.path(IN,"sim-quantiles.csv"), stringsAsFactors=FALSE)
 
-CELL   <- if (length(commandArgs(TRUE))) commandArgs(TRUE)[1] else "Math G8"
+## --cell, parsed and validated by parse_cell_arg (config-helpers.R).
+source("analysis/config-helpers.R")
+CELL <- parse_cell_arg("Math G8", qd$cell)
 LO_P   <- 25     # lower target percentile
 HI_P   <- 90
 
@@ -47,7 +49,6 @@ req <- function(offset, p) {
 ## participation rate, by id (district_requirements_points in
 ## analysis/config/sim-params.yaml). The "Opt-in tutoring (ITT)" pairing is
 ## flagged there as unconfirmed.
-source("analysis/config-helpers.R")
 cfg <- load_sim_config()
 benchmarks <- bind_rows(lapply(cfg_get(cfg, "district_requirements_points"), function(pt)
   tibble(label=pt$label,

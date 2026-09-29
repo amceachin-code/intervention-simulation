@@ -146,6 +146,8 @@ Share-weighted these reproduce the published overall mean to 0.02 points (220.45
 
 **What this establishes** (==rewritten 2026-09-04 after retrieving subgroup percentiles; my two earlier formulations were both wrong==).
 
+==Superseded 2026-09-29: the decomposition now uses each ECONDIS group's published score distribution (DP:DP), with no assumed tail; see `group_composition` in `api-helpers.R`. The paragraph below records the original five-percentile method.==
+
 Subgroup percentiles ARE publicly available (see the API section below), so c(p) can be **measured rather than assumed**. Using published percentiles within each ECONDIS category, with each group's left tail below its own P10 fitted as a normal through P10 and P25, with the reconstructed mass below the overall P10 coming to 0.103 (2019) and 0.102 (2024) against a definitional 0.10 (an internal consistency check, not a validation of the tail shape; see the sensitivity note below):
 
 **Grade 4 reading, national, composition of the bottom decile**

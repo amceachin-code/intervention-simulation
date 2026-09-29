@@ -6,6 +6,9 @@
 //   waterFill          analysis/alloc-rules.R  water_fill
 //   mixtureQuantiles   analysis/mixture.R  program_quantiles + calibration
 //   groupQuantiles     analysis/06-seat-allocation.R  residual_tracked
+//   edParticipation    analysis/alloc-rules.R  make_ed_screen
+//   quantileRank       analysis/mixture.R  quantile_rank
+//   groupScenario      analysis/06-seat-allocation.R  the ED / not-ED outcome table
 // The comments in those files explain the modelling choices; the comments here
 // say what is ported and where the port differs. analysis/tests/test-tool-engine.mjs
 // checks this file against the committed R outputs in tables/.
@@ -136,6 +139,28 @@
   // by water-filling. Returns a function of an array of ranks.
   function participation(B, k) { return waterFill(tilt(k), B); }
 
+  // Eligibility screen, port of make_ed_screen (analysis/alloc-rules.R).
+  // Seats go at random to economically disadvantaged (ED) students, so with
+  // budget B the ED treatment rate is r = min(1, B / pop) and participation at
+  // rank p is r * s(p), where s(p) is the 2024 ED share at p (cells.js ed.share,
+  // exported from ed_share_points). Seats beyond pop have no eligible taker
+  // and go unused, which the page reports.
+  function edParticipation(ed, B) {
+    const r = Math.min(1, B / ed.pop);
+    return (ps) => edShareAt(ed, ps).map((s) => r * s);
+  }
+  // s(p), the 2024 ED share at each rank in ps (an array), and the share of
+  // students whose status NAEP does not know (neither group), for the pages'
+  // text.
+  function edShareAt(ed, ps) { return approx(ed.share.pct, ed.share.share, ps); }
+  function edUnknownShare(ed) { return 1 - ed.groups.reduce((a, g) => a + g.pop2024, 0); }
+
+  // National rank (0-100) of each score in xs, port of quantile_rank
+  // (analysis/mixture.R): the inverse of Qfn read off a dense grid from 0 to
+  // 100 in steps of 0.001, built as i * 0.001 the way R's seq() builds it.
+  const INVERSE_GRID = Array.from({ length: 100001 }, (_, i) => i * 0.001);
+  function quantileRank(Qfn, xs) { return approx(INVERSE_GRID.map(Qfn), INVERSE_GRID, xs); }
+
   // Treated effect at each rank, in NAEP score points. `effect` is the
   // population-average effect in 2019 SD units (the mean of w is 1, so the
   // average over all ranks is exactly `effect`); S converts to points.
@@ -170,19 +195,24 @@
     return weightedQuantile(v, w, probs);
   }
 
-  // Per-cell cache of what does not depend on the program: the pre-program
-  // quantile function on RANK_GRID and the no-program mixture at a given set
-  // of percentiles. Both are rebuilt only when the cell or the
-  // requested percentiles change, not on every slider move.
-  const baseCache = new Map();
-  function baseline(Qfn, key, probs) {
+  // Caches for what does not depend on the program, rebuilt only when the
+  // cell (or group) or the requested percentiles change, not on every slider
+  // move: a quantile function evaluated on RANK_GRID, and the no-program
+  // mixture at a set of percentiles (the calibration baseline). `key` names
+  // the quantile function; any string unique to it works. Shared by the
+  // national answer and the group views.
+  const gridCache = new Map(), noProgCache = new Map();
+  function onGrid(key, Qfn) {
+    if (!gridCache.has(key)) gridCache.set(key, RANK_GRID.map(Qfn));
+    return gridCache.get(key);
+  }
+  function withoutProgram(key, x, probs) {
     const k = key + "|" + probs.join(",");
-    if (!baseCache.has(k)) {
-      const x = RANK_GRID.map(Qfn);
+    if (!noProgCache.has(k)) {
       const zeros = RANK_GRID.map(() => 0);
-      baseCache.set(k, { x, without: rawMixture(x, zeros, zeros, probs) });
+      noProgCache.set(k, rawMixture(x, zeros, zeros, probs));
     }
-    return baseCache.get(k);
+    return noProgCache.get(k);
   }
 
   // DISTRIBUTIONAL answer: whoever stands at percentile p after the program.
@@ -193,7 +223,7 @@
   // knots it applies the same idea at every p. `key` identifies the cell for
   // the baseline cache; any string unique to Qfn works.
   function mixtureQuantiles(Qfn, piFn, deltaFn, probs, key) {
-    const { x, without } = baseline(Qfn, key, probs);
+    const x = onGrid(key, Qfn), without = withoutProgram(key, x, probs);
     const pr = piFn(RANK_GRID).map((p) => Math.min(1, Math.max(0, p)));
     const withProg = rawMixture(x, pr, deltaFn(RANK_GRID), probs);
     return probs.map((p, i) => Qfn(p) + withProg[i] - without[i]);
@@ -206,10 +236,18 @@
     return probs.map((p, i) => Qfn(p) + pr[i] * dl[i]);
   }
 
+  // inputs.rule is "tilt" (the default: any student may take part, tilted by
+  // kPart) or "ed" (the eligibility screen; kPart is ignored).
+  function participationFor(cell, inputs) {
+    return inputs.rule === "ed" ? edParticipation(cell.ed, inputs.share)
+                                : participation(inputs.share, inputs.kPart);
+  }
+
   // ---------------------------------------------------------------------
   // One full scenario for a cell.
   //
-  // inputs: { effect (SD), share (0-1), kPart, kEffect, mode: "group"|"distributional" }
+  // inputs: { effect (SD), share (0-1), kPart, kEffect, mode: "group"|"distributional",
+  //           rule: "tilt"|"ed" (optional; "tilt" when absent) }
   // probs:  percentiles to evaluate (the chart grid); the knots are always
   //         evaluated as well, in the same pass, for the table.
   //
@@ -221,13 +259,14 @@
   //   part, effect   the participation rate and treated effect (SD) at p
   //   post_pts, q2019_pts, q2024_pts   the post-program, 2019, and 2024 scores
   // gap9010 is the 90-10 gap in NAEP points { y2019, y2024, post }, and
-  // meanPart is mean participation over all ranks (equal to share by
-  // construction; shown on the page as a check).
+  // meanPart is mean participation over all ranks: equal to share under the
+  // tilts by construction, and min(share, ED share) under the screen (shown
+  // on the page as a check).
   function scenario(cell, knotsPct, inputs, probs) {
     const S = cell.sd2019;
     const Q19 = makeQuantileFn(cell.qf2019.pct, cell.qf2019.score);
     const Q24 = makeQuantileFn(cell.qf2024.pct, cell.qf2024.score);
-    const piFn = participation(inputs.share, inputs.kPart);
+    const piFn = participationFor(cell, inputs);
     const dFn = effectPoints(inputs.effect, inputs.kEffect, S);
 
     // One pass over the union of the chart grid and the knots: the mixture
@@ -256,12 +295,67 @@
     };
   }
 
+  // ---------------------------------------------------------------------
+  // Economically disadvantaged and other students: each group's own
+  // distribution before and after the program. Port of the group section of
+  // analysis/06-seat-allocation.R.
+  //
+  // A student at rank u of group g scores Q_g(u) and sits at national rank
+  // v = F(Q_g(u)) in 2024. Under the tilt rules their chance of a seat is
+  // pi(v) and their boost delta(v), both read at the NATIONAL rank, because
+  // that is what the program sees. Under the screen every ED student has the
+  // same chance r = min(1, B / pop) and no one else has any. The group's
+  // post-program quantiles are then the same treated/untreated mixture as the
+  // national answer, calibrated the same way (a zero program returns Q_g
+  // exactly). In "Same students" mode the group at its own percentile p gains
+  // pi(v) * delta(v) on average, as groupQuantiles does nationally.
+  //
+  // Returns [{ id, label, rows: [{ p, q2019, q2024, post }] }, ...], scores in
+  // NAEP points, one entry per group in cells.js order (ED, then not ED).
+  const groupCache = new Map();
+  function groupBase(cell, g) {
+    const k = cell.label + "|" + g.id;
+    if (!groupCache.has(k)) {
+      const Q24 = makeQuantileFn(cell.qf2024.pct, cell.qf2024.score);
+      const Q19g = makeQuantileFn(g.qf2019.pct, g.qf2019.score);
+      const Q24g = makeQuantileFn(g.qf2024.pct, g.qf2024.score);
+      const x = onGrid(k, Q24g);
+      const v = quantileRank(Q24, x);   // national rank, fixed across programs
+      groupCache.set(k, { Q24, Q19g, Q24g, x, v });
+    }
+    return groupCache.get(k);
+  }
+  function groupScenario(cell, inputs, probs) {
+    const S = cell.sd2019;
+    const dFn = effectPoints(inputs.effect, inputs.kEffect, S);
+    const piNat = inputs.rule === "ed" ? null : participation(inputs.share, inputs.kPart);
+    const r = Math.min(1, inputs.share / cell.ed.pop);
+    return cell.ed.groups.map((g) => {
+      const b = groupBase(cell, g);
+      // Every rule already returns a rate in [0, 1] (tested); no clamp.
+      const chance = (vs) => inputs.rule === "ed" ? vs.map(() => (g.id === "ED" ? r : 0)) : piNat(vs);
+      let post;
+      if (inputs.mode === "group") {
+        const vp = quantileRank(b.Q24, probs.map(b.Q24g));
+        const pr = chance(vp), dl = dFn(vp);
+        post = probs.map((p, i) => b.Q24g(p) + pr[i] * dl[i]);
+      } else {
+        const without = withoutProgram(cell.label + "|" + g.id, b.x, probs);
+        const withProg = rawMixture(b.x, chance(b.v), dFn(b.v), probs);
+        post = probs.map((p, i) => b.Q24g(p) + withProg[i] - without[i]);
+      }
+      return { id: g.id, label: g.label,
+               rows: probs.map((p, i) => ({ p, q2019: b.Q19g(p), q2024: b.Q24g(p), post: post[i] })) };
+    });
+  }
+
   function mean(a) { let s = 0; for (const v of a) s += v; return s / a.length; }
 
-  // Exported: what the pages use (scenario, tilt, TILT_LEVELS; the methods
-  // page also calls participation) and what the test checks directly (the rest).
+  // Exported: what the pages use (scenario, groupScenario, tilt, TILT_LEVELS,
+  // edShareAt, edUnknownShare; the methods page also calls participation) and
+  // what the test checks directly (the rest).
   root.NAEPEngine = {
-    scenario, tilt, TILT_LEVELS,
-    makeQuantileFn, participation, effectPoints, FILL_GRID, mean,
+    scenario, groupScenario, tilt, TILT_LEVELS, edShareAt, edUnknownShare,
+    makeQuantileFn, participation, edParticipation, effectPoints, FILL_GRID, mean,
   };
 })(globalThis);

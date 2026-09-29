@@ -112,53 +112,48 @@ Required treated effect g = g*(p10) / participation rate.
 
 ## Table E. Composition of the bottom decile, by economic disadvantage
 
-From published within-subgroup percentiles. Each group's left tail below
-its own P10 is extrapolated with a normal fitted through P10 and P25.
+From each group's published score distribution (10-point bins) and its
+own percentiles: a monotone spline through both, inverted at the cut. No
+tail is assumed. The cut is the national p10, so 10 percent of students
+fall below it by definition; "Information not available" (no usable
+histogram) takes whatever the two measured groups leave. The measured-mass
+column is what the two measured groups account for.
 
-The reconstructed-mass column is an INTERNAL CONSISTENCY check only: it
-sums the group masses against the definitional 0.100. It is largely
-INSENSITIVE to the tail shape (it moves ~0.002 while the estimand moves
-~4 points), and its excess over 0.100 comes from linear interpolation
-between percentile knots sitting above the true CDF. Do not read it as
-validating the tail assumption. Sensitivity to that assumption is
-reported separately: the ED share is 79-83% across normal, logistic and
-exponential left tails, so the substantive conclusion is robust.
-
-| Cell | Year | Group | Pop. share | P(below p10 cut) | Share of bottom decile | Recon. mass |
+| Cell | Year | Group | Pop. share | P(below p10 cut) | Share of bottom decile | Measured mass |
 |---|---|---|---|---|---|---|
-| Reading G4 | 2019 | Economically disadvantaged | 51.0% | 16.8% | **82.8%** | 0.103 |
-| Reading G4 | 2019 | Not economically disadvantaged | 42.7% | 3.5% | **14.7%** | 0.103 |
-| Reading G4 | 2019 | Information not available | 6.3% | 4.1% | **2.5%** | 0.103 |
-| Reading G4 | 2024 | Economically disadvantaged | 49.9% | 16.0% | **78.0%** | 0.103 |
-| Reading G4 | 2024 | Not economically disadvantaged | 41.3% | 4.2% | **16.9%** | 0.103 |
-| Reading G4 | 2024 | Information not available | 8.8% | 6.0% | **5.1%** | 0.103 |
-| Reading G8 | 2019 | Economically disadvantaged | 46.8% | 17.2% | **78.1%** | 0.103 |
-| Reading G8 | 2019 | Not economically disadvantaged | 46.2% | 4.3% | **19.3%** | 0.103 |
-| Reading G8 | 2019 | Information not available | 7.0% | 3.8% | **2.6%** | 0.103 |
-| Reading G8 | 2024 | Economically disadvantaged | 47.1% | 16.6% | **75.4%** | 0.104 |
-| Reading G8 | 2024 | Not economically disadvantaged | 43.9% | 5.2% | **22.0%** | 0.104 |
-| Reading G8 | 2024 | Information not available | 9.0% | 3.1% | **2.7%** | 0.104 |
-| Reading G12 | 2019 | Economically disadvantaged | 39.6% | 16.2% | **61.6%** | 0.104 |
-| Reading G12 | 2019 | Not economically disadvantaged | 53.7% | 6.9% | **35.6%** | 0.104 |
-| Reading G12 | 2019 | Information not available | 6.7% | 4.5% | **2.9%** | 0.104 |
-| Reading G12 | 2024 | Economically disadvantaged | 41.4% | 15.8% | **63.2%** | 0.104 |
-| Reading G12 | 2024 | Not economically disadvantaged | 49.9% | 6.9% | **33.5%** | 0.104 |
-| Reading G12 | 2024 | Information not available | 8.7% | 3.9% | **3.3%** | 0.104 |
-| Math G4 | 2019 | Economically disadvantaged | 50.5% | 16.9% | **82.7%** | 0.103 |
-| Math G4 | 2019 | Not economically disadvantaged | 43.2% | 3.4% | **14.1%** | 0.103 |
-| Math G4 | 2019 | Information not available | 6.3% | 5.3% | **3.3%** | 0.103 |
-| Math G4 | 2024 | Economically disadvantaged | 49.6% | 16.3% | **78.4%** | 0.103 |
-| Math G4 | 2024 | Not economically disadvantaged | 41.2% | 3.9% | **15.4%** | 0.103 |
-| Math G4 | 2024 | Information not available | 9.2% | 6.9% | **6.2%** | 0.103 |
-| Math G8 | 2019 | Economically disadvantaged | 46.7% | 17.5% | **77.6%** | 0.105 |
-| Math G8 | 2019 | Not economically disadvantaged | 46.3% | 4.4% | **19.2%** | 0.105 |
-| Math G8 | 2019 | Information not available | 7.0% | 4.9% | **3.3%** | 0.105 |
-| Math G8 | 2024 | Economically disadvantaged | 47.0% | 17.0% | **76.3%** | 0.105 |
-| Math G8 | 2024 | Not economically disadvantaged | 44.0% | 5.1% | **21.4%** | 0.105 |
-| Math G8 | 2024 | Information not available | 9.1% | 2.6% | **2.3%** | 0.105 |
-| Math G12 | 2019 | Economically disadvantaged | 40.6% | 17.8% | **68.1%** | 0.106 |
-| Math G12 | 2019 | Not economically disadvantaged | 53.0% | 5.7% | **28.6%** | 0.106 |
-| Math G12 | 2019 | Information not available | 6.5% | 5.3% | **3.2%** | 0.106 |
-| Math G12 | 2024 | Economically disadvantaged | 41.7% | 17.6% | **69.6%** | 0.106 |
-| Math G12 | 2024 | Not economically disadvantaged | 49.7% | 5.8% | **27.3%** | 0.106 |
-| Math G12 | 2024 | Information not available | 8.6% | 3.8% | **3.1%** | 0.106 |
+| Reading G4 | 2019 | Economically disadvantaged | 51.0% | 15.6% | **79.4%** | 0.097 |
+| Reading G4 | 2019 | Not economically disadvantaged | 42.7% | 4.2% | **17.9%** | 0.097 |
+| Reading G4 | 2019 | Information not available | 6.3% | 4.3% | **2.7%** | 0.097 |
+| Reading G4 | 2024 | Economically disadvantaged | 49.9% | 15.1% | **75.1%** | 0.094 |
+| Reading G4 | 2024 | Not economically disadvantaged | 41.3% | 4.6% | **19.2%** | 0.094 |
+| Reading G4 | 2024 | Information not available | 8.8% | 6.4% | **5.7%** | 0.094 |
+| Reading G8 | 2019 | Economically disadvantaged | 46.8% | 15.9% | **74.6%** | 0.097 |
+| Reading G8 | 2019 | Not economically disadvantaged | 46.2% | 4.8% | **22.3%** | 0.097 |
+| Reading G8 | 2019 | Information not available | 7.0% | 4.4% | **3.1%** | 0.097 |
+| Reading G8 | 2024 | Economically disadvantaged | 47.1% | 15.5% | **72.8%** | 0.097 |
+| Reading G8 | 2024 | Not economically disadvantaged | 43.9% | 5.5% | **24.0%** | 0.097 |
+| Reading G8 | 2024 | Information not available | 9.0% | 3.5% | **3.2%** | 0.097 |
+| Reading G12 | 2019 | Economically disadvantaged | 39.6% | 15.1% | **59.6%** | 0.097 |
+| Reading G12 | 2019 | Not economically disadvantaged | 53.7% | 7.0% | **37.4%** | 0.097 |
+| Reading G12 | 2019 | Information not available | 6.7% | 4.5% | **3.0%** | 0.097 |
+| Reading G12 | 2024 | Economically disadvantaged | 41.4% | 14.8% | **61.2%** | 0.097 |
+| Reading G12 | 2024 | Not economically disadvantaged | 49.9% | 7.1% | **35.4%** | 0.097 |
+| Reading G12 | 2024 | Information not available | 8.7% | 3.9% | **3.4%** | 0.097 |
+| Math G4 | 2019 | Economically disadvantaged | 50.5% | 15.7% | **79.1%** | 0.096 |
+| Math G4 | 2019 | Not economically disadvantaged | 43.2% | 4.0% | **17.2%** | 0.096 |
+| Math G4 | 2019 | Information not available | 6.3% | 5.9% | **3.7%** | 0.096 |
+| Math G4 | 2024 | Economically disadvantaged | 49.6% | 15.2% | **75.6%** | 0.093 |
+| Math G4 | 2024 | Not economically disadvantaged | 41.2% | 4.3% | **17.6%** | 0.093 |
+| Math G4 | 2024 | Information not available | 9.2% | 7.4% | **6.8%** | 0.093 |
+| Math G8 | 2019 | Economically disadvantaged | 46.7% | 16.3% | **76.2%** | 0.097 |
+| Math G8 | 2019 | Not economically disadvantaged | 46.3% | 4.4% | **20.3%** | 0.097 |
+| Math G8 | 2019 | Information not available | 7.0% | 4.9% | **3.5%** | 0.097 |
+| Math G8 | 2024 | Economically disadvantaged | 47.0% | 15.9% | **74.8%** | 0.097 |
+| Math G8 | 2024 | Not economically disadvantaged | 44.0% | 5.1% | **22.6%** | 0.097 |
+| Math G8 | 2024 | Information not available | 9.1% | 2.8% | **2.5%** | 0.097 |
+| Math G12 | 2019 | Economically disadvantaged | 40.6% | 16.7% | **67.8%** | 0.097 |
+| Math G12 | 2019 | Not economically disadvantaged | 53.0% | 5.5% | **29.0%** | 0.097 |
+| Math G12 | 2019 | Information not available | 6.5% | 5.0% | **3.2%** | 0.097 |
+| Math G12 | 2024 | Economically disadvantaged | 41.7% | 16.7% | **69.8%** | 0.097 |
+| Math G12 | 2024 | Not economically disadvantaged | 49.7% | 5.6% | **27.6%** | 0.097 |
+| Math G12 | 2024 | Information not available | 8.6% | 3.0% | **2.6%** | 0.097 |

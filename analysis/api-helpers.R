@@ -1,6 +1,6 @@
 ## NAEP Data Service API access and the input guards on what comes back.
 ## Shared by 01-simulations.R and analysis/tests/test-api-guards.R. Extracted
-## (the same pattern as dist-helpers.R) so the guards that keep a bad response
+## (the same pattern as alloc-rules.R and mixture.R) so the guards that keep a bad response
 ## out of the pipeline have tests of their own that need no network:
 ##
 ##   response_status()     the partial-response gate: a response is cached only
@@ -8,8 +8,16 @@
 ##   fetch_api()           cache lookup, download, gate, cache write
 ##   usable()              drops suppressed/flagged statistics
 ##   get_stats()           query + parse into year||group -> stattype -> value/se
+##   parse_distribution()  validate one group's DP:DP histogram
+##   get_distribution()    the DP:DP pull, national or by subgroup, one year
 ##   group_composition()   the bottom-decile decomposition behind c_of_p, with
-##                         the population-share guard
+##                         the population-share and remainder guards
+##   ECON_HIST_GROUPS      the ECONDIS groups whose histograms are pulled
+##
+## Dependency: group_composition() calls quantile_points(), make_quantile_fn(),
+## and quantile_cdf() from mixture.R, so callers source mixture.R too (01 and
+## tests/test-api-guards.R do). It is not sourced here, to keep this file free
+## of path assumptions.
 ##
 ## Nothing here reads a global set by 01. The cache directory, jurisdiction,
 ## and years are arguments, and the downloader is injectable, so a test can
@@ -176,9 +184,21 @@ dist_rows_expected <- function(scale_max) dist_n_bins(scale_max) + DIST_SUMMARY_
 ## to 10k, NAEP's documented "10-point scale score intervals". Checked on
 ## 2026-09-28: those edges reproduce the published percentiles to within 0.11
 ## points in every cell and year (analysis/tests/test-sim.R, section 10).
-parse_distribution <- function(d, scale_max, label, tol=0.01) {
+##
+## `group` selects one subgroup's rows from a subgroup response (for example
+## "Economically disadvantaged" from an ECONDIS request) by varValueLabel.
+## NULL, the default, takes every bin row, which is right for TOTAL and which
+## the duplicate-bin check turns into a hard stop if the response is in fact
+## a multi-group one. Validation then runs on the selected group alone, so a
+## flagged bin in a group we never read (ECONDIS "Information not available"
+## has some) cannot stop the run.
+parse_distribution <- function(d, scale_max, label, tol=0.01, group=NULL) {
   n_bins <- dist_n_bins(scale_max)
   rows <- Filter(function(r) grepl(DIST_BIN_RE, r$stattype), d$result)
+  if (!is.null(group)) {
+    rows <- Filter(function(r) identical(r$varValueLabel, group), rows)
+    label <- paste0(label, " [", group, "]")
+  }
   if (!length(rows)) stop(label, ": DP:DP response has no bin rows", call.=FALSE)
   bins <- as.integer(sub(DIST_BIN_RE, "\\1", vapply(rows, function(r) r$stattype, character(1))))
   if (anyDuplicated(bins))
@@ -200,47 +220,98 @@ parse_distribution <- function(d, scale_max, label, tol=0.01) {
   data.frame(bin=bins[o], lo=10 * (bins[o] - 1), hi=10 * bins[o], pct=pct[o])
 }
 
-## The score distribution for one cell and one year, national TOTAL group.
-get_distribution <- function(cell, year, jurisdiction, cache, ...) {
+## The score distribution for one cell and one year.
+##
+## variable="TOTAL" (the default) returns the national histogram as one
+## data.frame; the request is byte-identical to the pre-2026-09-29 one, so the
+## committed cache keys still match.
+##
+## A subgroup variable returns a named list of data.frames, one per entry in
+## `groups` (varValueLabels). The expect_rows gate asks for len(groups) full
+## grids, the groups we will actually read; rows for groups we do not read
+## (ECONDIS "Information not available", partly flagged) may add to the count
+## but are never required, and parse_distribution then checks each requested
+## group is complete on its own.
+get_distribution <- function(cell, year, jurisdiction, cache, variable="TOTAL",
+                             groups=NULL, ...) {
+  if (variable != "TOTAL" && !length(groups))
+    stop("get_distribution: a subgroup variable needs `groups`", call.=FALSE)
+  n_grids <- if (variable == "TOTAL") 1L else length(groups)
   d <- fetch_api(list(type="data", subject=cell$subject, grade=cell$grade,
-                      subscale=cell$subscale, variable="TOTAL",
+                      subscale=cell$subscale, variable=variable,
                       jurisdiction=jurisdiction, stattype=DIST_STAT,
                       Year=as.character(year), ShowDetails="true"),
-                 cache=cache, expect_rows=dist_rows_expected(cell$scale_max), ...)
+                 cache=cache, expect_rows=n_grids * dist_rows_expected(cell$scale_max), ...)
   if (is.null(d)) return(NULL)
-  parse_distribution(d, cell$scale_max, paste(cell$label, year))
+  label <- paste(cell$label, year)
+  if (variable == "TOTAL") return(parse_distribution(d, cell$scale_max, label))
+  setNames(lapply(groups, function(g)
+    parse_distribution(d, cell$scale_max, label, group=g)), groups)
 }
 
-## Composition of the population below a cut, by group, from parsed subgroup
-## statistics (`raw`, as returned by get_stats for a subgroup variable such as
-## ECONDIS). `obs` supplies the cut: the reference-year quantile at cut_pct,
-## and for the comparison year that quantile plus D(cut_pct). `years` is
-## c(reference, comparison). Needs group_cdf() from dist-helpers.R.
+## The ECONDIS groups whose score distributions are pulled. "Information not
+## available" is left out on purpose: its histogram has flagged bins, and
+## group_composition gives it the remainder of the national tail instead.
+ECON_HIST_GROUPS <- c("Economically disadvantaged", "Not economically disadvantaged")
+
+## Composition of the population below a cut, by group.
 ##
-## The body of 01's c_of_p, split out so the population-share guard can be
-## tested on a synthetic response with a group missing.
-group_composition <- function(raw, obs, cut_pct, years, label) {
+##   raw    parsed subgroup statistics from get_stats (ECONDIS: RP:RP, the
+##          population share, and PC:P1..P9, the group's own percentiles)
+##   gdist  list keyed by year, each a named list of group histograms from
+##          get_distribution(variable="ECONDIS", groups=...)
+##   obs    supplies the cut: the reference-year quantile at cut_pct, and for
+##          the comparison year that quantile plus D(cut_pct)
+##   years  c(reference, comparison)
+##
+## Each group with a histogram gets P(score <= cut) from its own quantile
+## function: quantile_points() through the group's histogram and its published
+## percentiles, inverted at the cut (needs mixture.R). No tail is assumed; this
+## replaced the five-percentile, normal-left-tail group_cdf on 2026-09-29.
+##
+## The cut is the national cut_pct-th percentile in both years (the 2024 cut is
+## Q2019 + D = Q2024), so the national mass below it is cut_pct/100 by
+## definition. The one group without a histogram (ECONDIS "Information not
+## available", whose histogram has flagged bins) gets the remainder. That is
+## why exactly one group may lack a histogram, and why the remainder is
+## checked: a negative mass, or more mass than the group has, means the
+## measured groups over-fill the tail and the histograms disagree with the
+## national percentiles.
+##
+## Returns list(<yr>=list(cut, rows=list(group, share, p_below, mass,
+## share_of_tail, measured), measured_mass)), where measured_mass is the mass
+## the histogram groups account for. The population-share guard (below) is
+## unchanged from the first version.
+group_composition <- function(raw, gdist, obs, cut_pct, years, label, tol=1e-6) {
   years <- as.character(years)
+  total <- as.numeric(cut_pct) / 100
   res <- list()
   for (yr in years) {
     cut <- if (yr == years[1]) obs$Q19[[cut_pct]]
            else obs$Q19[[cut_pct]] + unname(obs$D[[cut_pct]]["d"])
-    rows <- list(); total <- 0
+    rows <- list()
     for (k in names(raw)) {
       kk <- strsplit(k, "\\|\\|")[[1]]
       if (kk[1] != yr) next
       st <- raw[[k]]
       share <- if (!is.null(st[["RP:RP"]])) unname(st[["RP:RP"]]["value"]) else NA
+      if (is.na(share)) next
+      h <- gdist[[yr]][[kk[2]]]
+      if (is.null(h)) {
+        rows[[length(rows)+1]] <- list(group=kk[2], share=share/100, measured=FALSE)
+        next
+      }
       pcts <- c()
       for (code in names(st)) if (code %in% names(CODE_PCT))
         pcts[as.character(CODE_PCT[[code]])] <- unname(st[[code]]["value"])
-      if (is.na(share) || length(pcts) < 2) next
-      below <- group_cdf(pcts, cut); mass <- share/100 * below
-      rows[[length(rows)+1]] <- list(group=kk[2], share=share/100,
-                                     p_below=below, mass=mass)
-      total <- total + mass
+      pcts <- pcts[order(as.numeric(names(pcts)))]
+      qp <- quantile_points(h, as.numeric(names(pcts)), unname(pcts),
+                            label=paste(label, yr, kk[2]))
+      below <- quantile_cdf(make_quantile_fn(qp$pct, qp$score), cut)
+      rows[[length(rows)+1]] <- list(group=kk[2], share=share/100, measured=TRUE,
+                                     p_below=below, mass=share/100 * below)
     }
-    if (!length(rows) || total <= 0) next
+    if (!length(rows)) next
     ## Belt-and-suspenders on top of the expect_rows gate in fetch_api: if
     ## population shares don't sum close to 1, a group silently dropped out
     ## somewhere between the API and here, and share_of_tail would be
@@ -251,8 +322,21 @@ group_composition <- function(raw, obs, cut_pct, years, label) {
               round(pop_sum, 3), ", not ~1 -- skipping (a group likely dropped out)")
       next
     }
-    for (i in seq_along(rows)) rows[[i]]$share_of_tail <- rows[[i]]$mass/total
-    res[[yr]] <- list(cut=cut, rows=rows, reconstructed_mass=total)
+    meas <- vapply(rows, function(r) r$measured, logical(1))
+    if (sum(!meas) != 1)
+      stop(label, " ", yr, ": ", sum(!meas), " groups lack a histogram; the ",
+           "remainder can be assigned to exactly one", call.=FALSE)
+    measured_mass <- sum(vapply(rows[meas], function(r) r$mass, numeric(1)))
+    rest <- total - measured_mass; j <- which(!meas)
+    if (rest < -tol || rest > rows[[j]]$share + tol)
+      stop(label, " ", yr, ": the remainder below the p", cut_pct, " cut for '",
+           rows[[j]]$group, "' is ", signif(rest, 4), ", outside [0, ",
+           signif(rows[[j]]$share, 4), "]; the group histograms over- or ",
+           "under-fill the national tail", call.=FALSE)
+    rest <- min(max(rest, 0), rows[[j]]$share)
+    rows[[j]]$mass <- rest; rows[[j]]$p_below <- rest / rows[[j]]$share
+    for (i in seq_along(rows)) rows[[i]]$share_of_tail <- rows[[i]]$mass / total
+    res[[yr]] <- list(cut=cut, rows=rows, measured_mass=measured_mass)
   }
   if (length(res)) res else NULL
 }

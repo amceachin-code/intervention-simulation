@@ -1,13 +1,13 @@
 # Simulation run manifest
-generated: 2026-09-28 21:50:28 PDT
+generated: 2026-09-29 15:17:01 PDT
 script: analysis/01-simulations.R
-git_sha: 2ae29bd
+git_sha: fdc920b-dirty (uncommitted changes in: analysis/01-simulations.R, analysis/api-helpers.R, analysis/config-helpers.R, analysis/config/sim-params.yaml, analysis/mixture.R)
 R: R version 4.5.1 (2025-06-13)
 packages: jsonlite 2.0.0, yaml 2.3.10
 config: analysis/config/sim-params.yaml
 jurisdiction: NT
 api: https://www.nationsreportcard.gov/DataService/GetAdhocData.aspx
-statistics: PC:P1, PC:P2, PC:P5, PC:P7, PC:P9, SD:SD, RP:RP (ECONDIS), DP:DP (one request per year)
+statistics: PC:P1, PC:P2, PC:P5, PC:P7, PC:P9, SD:SD, RP:RP (ECONDIS), DP:DP (TOTAL and ECONDIS, one request per year)
 cells_ok: Reading G4, Reading G8, Reading G12, Math G4, Math G8, Math G12
 cells_failed: none
 cache_dir: analysis/.cache (delete to force refresh)

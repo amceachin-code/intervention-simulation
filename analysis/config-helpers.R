@@ -91,3 +91,21 @@ cfg_point_value <- function(cfg, pt, field, section) {
          "' in ", attr(cfg, "path"), call. = FALSE)
   if (is.null(pt[[field]])) NA_real_ else as.numeric(pt[[field]])
 }
+
+## The --cell argument shared by 04-district-requirements.R and
+## 06-seat-allocation.R: --flag value pairs, like 01- and 02-. A bare
+## positional cell name (the convention before 2026-09-29) is refused rather
+## than ignored, so an old command line cannot silently run the default cell,
+## and an unknown cell stops here with the list of valid ones instead of
+## failing later on an empty subset.
+parse_cell_arg <- function(default, available, args = commandArgs(trailingOnly = TRUE)) {
+  if (length(args) && !startsWith(args[1], "--"))
+    stop("positional cell names are no longer accepted; use --cell \"", args[1], "\"",
+         call. = FALSE)
+  i <- match("--cell", args)
+  cell <- if (is.na(i)) default else args[i + 1]
+  if (is.na(cell) || !cell %in% available)
+    stop("unknown cell '", cell, "'. Available: ",
+         paste(sort(unique(available)), collapse = ", "), call. = FALSE)
+  cell
+}

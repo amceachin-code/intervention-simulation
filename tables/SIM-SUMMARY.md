@@ -1,6 +1,6 @@
 # Simulation results: benchmarking the recovery requirement
 
-Built on 2026-09-28 from the NAEP Data Service API (responses cached in analysis/.cache/). Public NAEP data only; no restricted-use inputs.
+Built on 2026-09-29 from the NAEP Data Service API (responses cached in analysis/.cache/). Public NAEP data only; no restricted-use inputs.
 The quantile differences and restoration requirements were computed independently in R
 and Stata and agree to 1e-14 across all 30 cell-percentile pairs. The participation
 adjustment and the bottom-decile decomposition below have a single implementation, in R.
@@ -113,18 +113,22 @@ against that group's share of the whole population. The gap is the targeting lif
 
 | Cell | Pop. share 2019 | Bottom decile 2019 | Pop. share 2024 | Bottom decile 2024 | Change |
 |---|---|---|---|---|---|
-| Reading G4 | 51.0% | **82.8%** | 49.9% | **78.0%** | -4.8 pp |
-| Reading G8 | 46.8% | **78.1%** | 47.1% | **75.4%** | -2.7 pp |
-| Reading G12 | 39.6% | **61.6%** | 41.4% | **63.2%** | +1.6 pp |
-| Math G4 | 50.5% | **82.7%** | 49.6% | **78.4%** | -4.3 pp |
-| Math G8 | 46.7% | **77.6%** | 47.0% | **76.3%** | -1.3 pp |
-| Math G12 | 40.6% | **68.1%** | 41.7% | **69.6%** | +1.5 pp |
+| Reading G4 | 51.0% | **79.4%** | 49.9% | **75.1%** | -4.2 pp |
+| Reading G8 | 46.8% | **74.6%** | 47.1% | **72.8%** | -1.8 pp |
+| Reading G12 | 39.6% | **59.6%** | 41.4% | **61.2%** | +1.6 pp |
+| Math G4 | 50.5% | **79.1%** | 49.6% | **75.6%** | -3.6 pp |
+| Math G8 | 46.7% | **76.2%** | 47.0% | **74.8%** | -1.4 pp |
+| Math G12 | 40.6% | **67.8%** | 41.7% | **69.8%** | +1.9 pp |
 
-Sensitivity: the bottom-decile share depends on the left-tail model. For Reading G4
-2019 it is 82.8% (normal), 80.6% (logistic), 79.2% (exponential), so read these as
-roughly 79-83% rather than as point estimates. The 2019-to-2024 changes of 3-5 points
-are the same order as that uncertainty; the direction is consistent across grades 4
-and 8 in both subjects, which is why it is worth reporting as a pattern.
+Method: each group's share below the cut comes from its own published score
+distribution (10-point bins) and percentiles, with no assumed tail. Students whose
+economic status is not available take the remainder. Through 2026-09-28 these
+shares came from five percentiles with a normal left tail, which put the ED share
+of the bottom decile 1.4 to 3.6 points higher in grades 4 and 8.
+
+From 2019 to 2024 the ED share of the bottom decile fell by 1.4 to 4.2 points in
+grades 4 and 8. The direction is the same in both subjects and both grades, which is
+why it is worth reporting as a pattern.
 
 ## 6b. Why p25 is the better target: the population math of take-up
 
@@ -138,13 +142,13 @@ off differently depending on where the target is drawn.
 
 | Target | ED share of the target | Target as % of population | Share of treated students who are IN the target | Effort landing outside the target |
 |---|---|---|---|---|
-| bottom 10% | 82.8% | 10% | **16.2%** | 83.8% |
-| bottom 25% | 73.4% | 25% | **36.0%** | 64.0% |
+| bottom 10% | 79.4% | 10% | **15.6%** | 84.4% |
+| bottom 25% | 74.4% | 25% | **36.5%** | 63.5% |
 
-(Grade 4 reading, 2019.) At p10, about five of every six treated students sit
-outside the target group, because the target is only a tenth of the population
-while the screen covers half of it. At p25 that falls to roughly two of three.
-The same screen is far less wasteful against the broader target.
+(Grade 4 reading, 2019.) At p10, 84 percent of treated students sit outside the
+target group, because the target is only a tenth of the population while the
+screen covers half of it. At p25 that falls to 64 percent. The same screen is
+far less wasteful against the broader target.
 
 There is a reachability constraint pointing the same way. With perfect
 targeting, a program with participation c can reach at most
@@ -167,12 +171,12 @@ alone.
 2. **Participation is the binding constraint, not effect size.** At realistic take-up the
    requirement rises to 1.3-2.2 SD, beyond anything ever delivered at scale.
 3. **Targeting on economic disadvantage is a decent screen but a blunt instrument.**
-   It captures roughly four-fifths of the bottom decile at grades 4 and 8, while
-   covering about half the population, so a fixed budget buys half the per-student
-   intensity of a program aimed at the bottom decile.
-4. **The screen weakened where the decline is worst.** Grades 4 and 8 lost 1-5 points
-   of targeting lift between 2019 and 2024; grade 12, where the differential decline
-   is small, did not.
+   ED students are 73 to 79 percent of the bottom decile at grades 4 and 8 (2019
+   and 2024), while making up about half the population, so a fixed budget buys
+   half the per-student intensity of a program aimed at the bottom decile.
+4. **The screen weakened where the decline is worst.** Grades 4 and 8 lost 1.7 to 3.2
+   points of targeting lift between 2019 and 2024; grade 12, where the differential
+   decline is small, did not.
 
 ## Caveats carried
 

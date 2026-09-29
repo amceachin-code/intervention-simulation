@@ -161,11 +161,32 @@ for (c in ord) {
         (b$share_of_tail - a$share_of_tail)*100)
 }
 add("")
-add("Sensitivity: the bottom-decile share depends on the left-tail model. For Reading G4")
-add("2019 it is 82.8%% (normal), 80.6%% (logistic), 79.2%% (exponential), so read these as")
-add("roughly 79-83%% rather than as point estimates. The 2019-to-2024 changes of 3-5 points")
-add("are the same order as that uncertainty; the direction is consistent across grades 4")
-add("and 8 in both subjects, which is why it is worth reporting as a pattern.")
+## The prose numbers below are read from sim-bottom-decile.csv, so they move
+## with the table, except the one historical comparison (the "1.4 to 3.6
+## points" against the five-percentile method), which is fixed: it compares
+## this table with the version committed before 2026-09-29.
+## One wide table over all six cells, 2019 against 2024: the change in the ED
+## share of the bottom decile and in the targeting lift (that share minus the
+## ED population share). Grades 4 and 8 carry the pattern; grade 12 is the
+## contrast in section 7.
+ed10 <- bd[grepl("^Econ", bd$group) & bd$target_pct == 10, ]
+ed10w <- merge(ed10[ed10$year == 2019, c("cell", "share_of_tail", "pop_share")],
+               ed10[ed10$year == 2024, c("cell", "share_of_tail", "pop_share")],
+               by="cell", suffixes=c("_19", "_24"))
+ed10w$lift_change <- with(ed10w, (share_of_tail_24 - pop_share_24) - (share_of_tail_19 - pop_share_19)) * 100
+ed10w$tail_change <- with(ed10w, share_of_tail_24 - share_of_tail_19) * 100
+g48 <- ed10w[grepl("G(4|8)$", ed10w$cell), ]
+g12 <- ed10w[grepl("G12$", ed10w$cell), ]
+add("Method: each group's share below the cut comes from its own published score")
+add("distribution (10-point bins) and percentiles, with no assumed tail. Students whose")
+add("economic status is not available take the remainder. Through 2026-09-28 these")
+add("shares came from five percentiles with a normal left tail, which put the ED share")
+add("of the bottom decile 1.4 to 3.6 points higher in grades 4 and 8.")
+add("")
+add("From 2019 to 2024 the ED share of the bottom decile fell by %.1f to %.1f points in",
+    -max(g48$tail_change), -min(g48$tail_change))
+add("grades 4 and 8. The direction is the same in both subjects and both grades, which is")
+add("why it is worth reporting as a pattern.")
 add("")
 add("## 6b. Why p25 is the better target: the population math of take-up")
 add("")
@@ -179,21 +200,25 @@ add("off differently depending on where the target is drawn.")
 add("")
 add("| Target | ED share of the target | Target as %% of population | Share of treated students who are IN the target | Effort landing outside the target |")
 add("|---|---|---|---|---|")
-## ED population share: config ed_population_share, source unconfirmed (see
-## the yaml comment and TODO.md).
-edpop <- cfg_get(cfg, "ed_population_share")
+## ED population share: the measured Reading G4 2019 ECONDIS share from the
+## same table (it replaced the unsourced config value 0.510 on 2026-09-29).
+rg4 <- bd[bd$cell=="Reading G4" & grepl("^Econ", bd$group) & bd$year==2019,]
+edpop <- rg4$pop_share[1]
+outside <- c()     # share of treated students outside the target, by q
 for (q in c(10,25)) {
-  e <- bd[bd$cell=="Reading G4" & grepl("^Econ", bd$group) & bd$target_pct==q & bd$year==2019,]
+  e <- rg4[rg4$target_pct==q,]
   if (!nrow(e)) next
   edt <- e$share_of_tail[1]
   intgt <- (q/100) * edt / edpop
+  outside[as.character(q)] <- (1-intgt)*100
   add("| bottom %d%% | %.1f%% | %d%% | **%.1f%%** | %.1f%% |", q, edt*100, q, intgt*100, (1-intgt)*100)
 }
 add("")
-add("(Grade 4 reading, 2019.) At p10, about five of every six treated students sit")
-add("outside the target group, because the target is only a tenth of the population")
-add("while the screen covers half of it. At p25 that falls to roughly two of three.")
-add("The same screen is far less wasteful against the broader target.")
+out_share <- function(q) outside[[as.character(q)]]
+add("(Grade 4 reading, 2019.) At p10, %.0f percent of treated students sit outside the", out_share(10))
+add("target group, because the target is only a tenth of the population while the")
+add("screen covers half of it. At p25 that falls to %.0f percent. The same screen is", out_share(25))
+add("far less wasteful against the broader target.")
 add("")
 add("There is a reachability constraint pointing the same way. With perfect")
 add("targeting, a program with participation c can reach at most")
@@ -217,12 +242,17 @@ add("   effects. Restoring p90 needs 0.03 to 0.13 SD. It is not one task.")
 add("2. **Participation is the binding constraint, not effect size.** At realistic take-up the")
 add("   requirement rises to 1.3-2.2 SD, beyond anything ever delivered at scale.")
 add("3. **Targeting on economic disadvantage is a decent screen but a blunt instrument.**")
-add("   It captures roughly four-fifths of the bottom decile at grades 4 and 8, while")
-add("   covering about half the population, so a fixed budget buys half the per-student")
-add("   intensity of a program aimed at the bottom decile.")
-add("4. **The screen weakened where the decline is worst.** Grades 4 and 8 lost 1-5 points")
-add("   of targeting lift between 2019 and 2024; grade 12, where the differential decline")
-add("   is small, did not.")
+add("   ED students are %.0f to %.0f percent of the bottom decile at grades 4 and 8 (2019",
+    100 * min(c(g48$share_of_tail_19, g48$share_of_tail_24)),
+    100 * max(c(g48$share_of_tail_19, g48$share_of_tail_24)))
+add("   and 2024), while making up about half the population, so a fixed budget buys")
+add("   half the per-student intensity of a program aimed at the bottom decile.")
+g12_lift <- g12$lift_change
+add("4. **The screen weakened where the decline is worst.** Grades 4 and 8 lost %.1f to %.1f",
+    -max(g48$lift_change), -min(g48$lift_change))
+add("   points of targeting lift between 2019 and 2024; grade 12, where the differential")
+add("   decline is small, %s.", if (all(g12_lift > -0.5)) "did not" else
+    sprintf("changed by %+.1f to %+.1f points", min(g12_lift), max(g12_lift)))
 add("")
 add("## Caveats carried")
 add("")

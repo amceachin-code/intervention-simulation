@@ -76,8 +76,8 @@ run_step 02 Rscript analysis/02-figures.R
 run_step 03 Rscript analysis/03-district-cases.R
 for c in "Reading G4" "Reading G8" "Math G4" "Math G8"; do
   tag="$(echo "$c" | tr 'A-Z ' 'a-z-')"
-  run_step "04-$tag" Rscript analysis/04-district-requirements.R "$c"
-  run_step "06-$tag" Rscript analysis/06-seat-allocation.R "$c"
+  run_step "04-$tag" Rscript analysis/04-district-requirements.R --cell "$c"
+  run_step "06-$tag" Rscript analysis/06-seat-allocation.R --cell "$c"
 done
 run_step 05 Rscript analysis/05-compile-summary.R
 ## 07 (tail sensitivity) was retired on 2026-09-28: the quantile functions are
