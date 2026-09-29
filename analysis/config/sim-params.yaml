@@ -3,13 +3,15 @@
 
 percentiles: [10, 25, 50, 75, 90]
 
+# scale_max is the top of the NAEP reporting scale. It fixes how many 10-point
+# bins the score distribution (DP:DP) must have: 50 on 0-500, 30 on 0-300.
 cells:
-  - {subject: reading,     grade: 4,  subscale: RRPCM, label: "Reading G4"}
-  - {subject: reading,     grade: 8,  subscale: RRPCM, label: "Reading G8"}
-  - {subject: reading,     grade: 12, subscale: RRPCM, label: "Reading G12"}
-  - {subject: mathematics, grade: 4,  subscale: MRPCM, label: "Math G4"}
-  - {subject: mathematics, grade: 8,  subscale: MRPCM, label: "Math G8"}
-  - {subject: mathematics, grade: 12, subscale: MWPCM, label: "Math G12"}   # 0-300 scale, NOT MRPCM
+  - {subject: reading,     grade: 4,  subscale: RRPCM, scale_max: 500, label: "Reading G4"}
+  - {subject: reading,     grade: 8,  subscale: RRPCM, scale_max: 500, label: "Reading G8"}
+  - {subject: reading,     grade: 12, subscale: RRPCM, scale_max: 500, label: "Reading G12"}
+  - {subject: mathematics, grade: 4,  subscale: MRPCM, scale_max: 500, label: "Math G4"}
+  - {subject: mathematics, grade: 8,  subscale: MRPCM, scale_max: 500, label: "Math G8"}
+  - {subject: mathematics, grade: 12, subscale: MWPCM, scale_max: 300, label: "Math G12"}   # 0-300 scale, NOT MRPCM
 
 jurisdiction: NT      # national public + private
 # [reference year, comparison year]. 01-simulations.R queries these and

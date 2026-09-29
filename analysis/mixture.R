@@ -20,12 +20,15 @@
 ##
 ## This file answers the second question, which is the one the rest of the
 ## paper asks: D(p) compares two different cohorts, so nothing in the paper
-## tracks a student. For Reading G4 the difference is 1.17 points under
+## tracks a student. For Reading G4 the difference is 0.25 points under
 ## proportional allocation at half coverage, where the group answer is exactly
 ## no change and the distributional answer is a wider gap. Under bottom-up
 ## allocation at 10 percent of seats the group answer is 2.69 and the
-## distributional answer is 5.96, because the treated bottom decile leapfrogs
+## distributional answer is 5.79, because the treated bottom decile leapfrogs
 ## the untreated students above it and the percentile refills from behind.
+## (With the five-percentile quantile function used before 2026-09-28 these
+## were 1.17 and 5.96; its normal tail met the spline at p90 with a corner
+## that inflated the spreading. See quantile_points below.)
 ##
 ## What is computed here instead: at each rank u, weight (1 - pi(u)) stays at
 ## Q(u) and weight pi(u) moves to Q(u) + delta. Post-program quantiles are the
@@ -48,28 +51,78 @@
 ##      the sampling term here is negligible next to the modelling choices.
 
 ## Rank grid representing the population, equally weighted so that a plain mean
-## over it is a population mean. The exact endpoints are excluded because a
-## normal tail is unbounded there.
+## over it is a population mean. Cell midpoints of 0.01-percent bins would be
+## the textbook choice; the grid keeps its original points (0.01 to 99.99) so
+## that results stay comparable with earlier runs. The ends of the quantile
+## function carry almost no weight, so the choice does not move any result.
 RANK_GRID <- seq(0.01, 99.99, by=0.01)
 
-## Quantile function rebuilt from published percentile knots: monotone
-## interpolation between them, normal tails outside, matched at the boundary
-## knots so the function is continuous. The tails carry no reported quantity.
-## They exist so that the mixture bookkeeping has somewhere to put students who
-## move past the top knot or start below the bottom one.
+## Points the quantile function passes through, for one cell and year.
+##
+## `dist` is that year's score distribution from tables/sim-distribution.csv
+## (NAEP DP:DP: percent of students in each 10-point bin, columns lo, hi,
+## pct). Each non-empty bin contributes the point (cumulative percent at its
+## top, its upper edge), and the bottom of the first non-empty bin anchors 0
+## percent. The published percentiles (`knots_pct`, `knots_val`) are added as
+## points too, so the function reproduces them exactly: D(p), g*(p), and the
+## Table 2(a) validation are read off the percentiles and must not move.
+##
+## Why the histogram: with only the five percentiles, everything beyond p10
+## and p90 had to be an assumed tail, and the normal tail used until
+## 2026-09-28 met the spline at p90 with a slope 1.4 to 1.8 times the
+## spline's. The mixture inherited that corner as a visible kink once treated
+## students passed the p90 score. The histogram puts 30 to 40 published
+## points under the curve, bounded by the scale's own bin edges, so no tail is
+## assumed anywhere. A monotone spline through the bin points alone
+## reproduces the published percentiles to within about 0.1 point
+## (analysis/tests/test-sim.R), so anchoring to them bends the curve only
+## slightly.
+##
+## Cumulative shares are rescaled so the top point is exactly 100 (the bins
+## sum to 100 within 0.01, checked when they are pulled). A bin point that
+## lands on a published percentile is dropped in favor of the percentile.
+## Pass no percentiles (numeric(0)) for the histogram-only curve the tests use
+## as a data-consistency check. Returns data.frame(pct, score, source),
+## strictly increasing in both pct and score.
+##
+## If a bin point and a published percentile are out of order, this stops
+## rather than dropping the bin point (Andrew, 2026-09-28): the two sources
+## agree to about 0.1 point today, so a conflict would mean the data changed
+## and a person should look. The closest pairs on 2026-09-28 were 0.05
+## percentile points apart (Math G4 2024 at p50; Reading G8 2019 at p25).
+quantile_points <- function(dist, knots_pct, knots_val, label="") {
+  dist <- dist[order(dist$lo), ]
+  cum  <- cumsum(dist$pct) / sum(dist$pct) * 100
+  used <- dist$pct > 0
+  first <- which(used)[1]
+  bins <- data.frame(pct=c(0, cum[used]), score=c(dist$lo[first], dist$hi[used]),
+                     source="bin")
+  bins$pct[nrow(bins)] <- 100
+  near_knot <- vapply(bins$pct, function(p) any(abs(p - knots_pct) < 1e-9), logical(1))
+  pts <- rbind(bins[!near_knot, ],
+               data.frame(pct=knots_pct, score=knots_val, source=rep("knot", length(knots_pct))))
+  pts <- pts[order(pts$pct), ]
+  rownames(pts) <- NULL
+  if (any(diff(pts$pct) <= 0) || any(diff(pts$score) <= 0))
+    stop("quantile_points: ", label, " histogram and published percentiles are not ",
+         "jointly increasing; check tables/sim-distribution.csv against sim-quantiles.csv",
+         call.=FALSE)
+  pts
+}
+
+## Quantile function through points that span the whole distribution (pct
+## from 0 to 100, as quantile_points returns): a monotone cubic
+## (Fritsch-Carlson) spline, which has a continuous slope everywhere, so the
+## curve has no corners. No tails are needed because the points reach the
+## ends of the scale.
 make_quantile_fn <- function(pct, vals) {
   o <- order(pct); pct <- pct[o]; vals <- vals[o]
-  if (any(diff(vals) <= 0)) stop("make_quantile_fn: knots must increase")
+  if (pct[1] != 0 || pct[length(pct)] != 100)
+    stop("make_quantile_fn: points must run from 0 to 100 percent (use quantile_points)")
+  if (any(diff(pct) <= 0) || any(diff(vals) <= 0))
+    stop("make_quantile_fn: points must strictly increase")
   inner <- splinefun(pct, vals, method="monoH.FC")
-  lo_p <- pct[1]; hi_p <- pct[length(pct)]
-  lo_v <- vals[1]; hi_v <- vals[length(vals)]
-  sig  <- (hi_v - lo_v) / (qnorm(hi_p/100) - qnorm(lo_p/100))
-  function(u) {
-    u <- pmin(pmax(u, 1e-6), 100 - 1e-6)
-    ifelse(u < lo_p, lo_v + (qnorm(u/100) - qnorm(lo_p/100)) * sig,
-    ifelse(u > hi_p, hi_v + (qnorm(u/100) - qnorm(hi_p/100)) * sig,
-           inner(u)))
-  }
+  function(u) inner(pmin(pmax(u, 0), 100))
 }
 
 ## Weighted quantile, midpoint convention. The midpoint removes the half-bin
@@ -101,11 +154,11 @@ program_quantiles <- function(Qfn, pifn, B, delta, probs) {
 ## percentiles exactly.
 ##
 ## Reading the untreated population off RANK_GRID recovers the knots to about
-## 0.008 points at the default step, an artifact of grid resolution that
+## 0.01 points at the default step, an artifact of grid resolution that
 ## shrinks linearly as the grid refines. Every quantity reported from this
 ## model is a change from the no-program baseline, so pinning that baseline to
 ## the published percentiles removes the artifact from every comparison rather
-## than letting a systematic 0.008 ride along in each one. Returns a function
+## than letting a systematic 0.01 ride along in each one. Returns a function
 ## of (participation rule, budget).
 calibrated_program_quantiles <- function(Qfn, delta, probs, published) {
   no_program <- function(p, B) rep(0, length(p))

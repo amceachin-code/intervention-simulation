@@ -1,5 +1,7 @@
 <!-- memo v2, 2026-09-10, simulation results for co-authors (written as RQ3 of the naep-aera-open article; moved to intervention-simulation 2026-09-28); sources: tables/sim-quantiles.csv, tables/sim-bottom-decile.csv, figures/sim/ -->
 
+==Note added 2026-09-28: this memo is kept as written for the co-authors. Its post-intervention-distribution numbers (the mixture results, including the tail-sensitivity paragraph) used a quantile function rebuilt from the five published percentiles with normal tails. That tail met the spline at p90 with a corner, which inflated the widening from partial coverage. The pipeline now builds the quantile functions from NAEP's published 10-point score distribution, anchored to the percentiles, and 07-tail-sensitivity.R is retired. Current numbers are in tables/sim-seat-allocation-*.csv. For example, proportional coverage of half of Reading G4 now widens the 90-10 gap by 0.25 points, not 1.17. The baseline-distribution numbers, D(p), g*, and the Table 2(a) validation are unchanged.==
+
 ## Executive summary
 
 - This analysis asks what it would take to return the 2024 NAEP score distribution to its 2019 shape. Everything runs on public NAEP percentiles and reproduces the restricted-use differential-change numbers to a tenth of a point, so a reviewer can replicate all of it without a license.

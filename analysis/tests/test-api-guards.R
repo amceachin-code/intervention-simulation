@@ -226,5 +226,51 @@ ok(is.null(r$value) && sum(grepl("population shares sum to", r$msgs)) == 2,
 ok(max(vapply(r$msgs, function(s) as.numeric(sub(".*sum to ([0-9.]+),.*", "\\1", s)), 0)) < 0.98,
    "the rejected population shares are far from 1 (the guard is not firing on rounding)")
 
+cat("\n6. The score distribution (DP:DP): parse_distribution and its gate\n")
+## The committed histogram fixture for Reading G4 2019, fetched by the exact
+## query get_distribution issues (one year per request).
+dist_query <- function(cell, year)
+  list(type="data", subject=cell$subject, grade=cell$grade, subscale=cell$subscale,
+       variable="TOTAL", jurisdiction=juris, stattype=DIST_STAT,
+       Year=as.character(year), ShowDetails="true")
+dist_txt <- local({
+  q <- dist_query(rg4, years[1])
+  qs <- paste0(names(q), "=", vapply(q, function(v) URLencode(as.character(v), reserved=TRUE), ""),
+               collapse="&")
+  paste(readLines(file.path(fixture_cache, paste0(substr(cache_key_hash(qs), 1, 16), ".json")),
+                  warn=FALSE), collapse="")
+})
+dist_d <- jsonlite::fromJSON(dist_txt, simplifyVector=FALSE)
+h <- parse_distribution(dist_d, rg4$scale_max, "Reading G4 2019")
+## (Bin edges are inferred from the bin number, so they are not checked here;
+## test-sim.R checks that they reproduce the published percentiles.)
+ok(nrow(h) == 50 && identical(h$bin, 1:50) && abs(sum(h$pct) - 100) < 0.01,
+   "the committed DP:DP fixture parses to 50 contiguous bins summing to 100")
+ok(length(dist_d$result) == dist_rows_expected(rg4$scale_max),
+   sprintf("the fixture has exactly the rows the gate expects (%d: 50 bins + 6 summary rows)",
+           dist_rows_expected(rg4$scale_max)))
+ok(identical(get_distribution(rg4, years[1], jurisdiction=juris, cache=fixture_cache), h),
+   "get_distribution reads the committed fixture from cache (no network)")
+## What must be refused: a missing bin, a flagged bin, bins that do not sum to
+## 100, and the wrong scale (Math G12's 30 bins read as a 0-500 scale).
+refuses <- function(d, scale_max=500) inherits(tryCatch(parse_distribution(d, scale_max, "t"),
+                                                        error=function(e) e), "error")
+drop_bin <- dist_d; drop_bin$result <- Filter(function(r) r$stattype != "DP:D25", drop_bin$result)
+ok(refuses(drop_bin), "a histogram missing a bin is refused (it would shift every share above it)")
+flag_bin <- dist_d
+flag_bin$result <- lapply(flag_bin$result, function(r) { if (r$stattype == "DP:D25") r$errorFlag <- 257L; r })
+ok(refuses(flag_bin), "a histogram with a flagged bin is refused, not silently dropped")
+off_sum <- dist_d
+off_sum$result <- lapply(off_sum$result, function(r) { if (r$stattype == "DP:D25") r$value <- r$value + 1; r })
+ok(refuses(off_sum), "a histogram whose bins do not sum to 100 is refused")
+ok(refuses(dist_d, scale_max=300), "a 50-bin histogram is refused for a 0-300 scale")
+## The fetch gate: a truncated DP:DP response (half the rows) is not cached.
+half <- with_rows(dist_txt, local({ i <- 0; function(r) { i <<- i + 1; i <= 28 } }))
+cache <- fresh(); fk <- fake_download(list(half))
+r <- capture(fetch_api(dist_query(rg4, years[1]), cache=cache, tries=1, pause=0,
+                       expect_rows=dist_rows_expected(rg4$scale_max), download=fk$fn))
+ok(is.null(r$value) && !length(list.files(cache, pattern="\\.json$")),
+   "a truncated DP:DP response (28 of 56 rows) is rejected and not cached")
+
 cat(sprintf("\n%s: %d failure(s)\n", if (fails == 0) "ALL TESTS PASSED" else "TESTS FAILED", fails))
 quit(status = if (fails == 0) 0 else 1)

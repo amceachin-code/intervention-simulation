@@ -9,7 +9,7 @@
 ##
 ## What it does:
 ##   1. Copies tables/ to a temp directory (the reference).
-##   2. Reruns 01 to 07 and 09 (04 and 06 for all four featured cells), and 08
+##   2. Reruns 01 to 06 and 09 (04 and 06 for all four featured cells), and 08
 ##      only if the local-only raw CCD membership file is present.
 ##   3. cmp's every tables/*.csv against the reference and exits non-zero on
 ##      any difference.
@@ -80,7 +80,9 @@ for c in "Reading G4" "Reading G8" "Math G4" "Math G8"; do
   run_step "06-$tag" Rscript analysis/06-seat-allocation.R "$c"
 done
 run_step 05 Rscript analysis/05-compile-summary.R
-run_step 07 Rscript analysis/07-tail-sensitivity.R
+## 07 (tail sensitivity) was retired on 2026-09-28: the quantile functions are
+## built from the published score distribution, so there is no assumed tail
+## left to vary. The number stays unused so later scripts keep their names.
 ## 08 needs the raw CCD membership file, which is local-only (650 MB, never
 ## committed). Skipping is not a failure: its committed CSVs are then simply
 ## compared against themselves.

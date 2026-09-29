@@ -2,11 +2,19 @@
 // page (methods.html). No libraries: every chart is a handful of SVG paths.
 //
 // Every chart here runs along the percentile axis from the 10th to the 90th,
-// the range the published NAEP percentiles support. Load after cells.js:
+// the range of NAEP's published percentiles. The quantile functions behind
+// the charts use the whole score distribution (quantile_points in
+// analysis/mixture.R), but the charts stop at the outer percentiles because
+// the tails are much less precise: from the score distribution's standard
+// errors, the drop at the 1st or 99th percentile carries a standard error two
+// to four times its size at the median (checked 2026-09-28). A 1st-to-99th
+// axis was tried that day and dropped for that reason. Load after cells.js:
 // frame() marks the published percentiles from it by default.
 "use strict";
 (function () {
   const NS = "http://www.w3.org/2000/svg";
+  // The percentile range every chart spans (see the header).
+  const P_LO = 10, P_HI = 90;
 
   // "10th", "21st", "52nd", "73rd".
   const ord = (p) => p + (p % 10 === 1 && p !== 11 ? "st" : p % 10 === 2 && p !== 12 ? "nd" : p % 10 === 3 && p !== 13 ? "rd" : "th");
@@ -42,7 +50,7 @@
     const m = { l: 44, r: 12, t: 8, b: 26 };
     const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
     box.prepend(svg);
-    const x = (p) => m.l + (p - 10) / 80 * (W - m.l - m.r);
+    const x = (p) => m.l + (p - P_LO) / (P_HI - P_LO) * (W - m.l - m.r);
     const y = (v) => m.t + (yDom[1] - v) / (yDom[1] - yDom[0]) * (H - m.t - m.b);
     const ax = el("g", { class: "axis" }, svg);
     niceTicks(yDom[0], yDom[1], nTicks).forEach((t) => {
@@ -68,8 +76,8 @@
     function move(ev) {
       const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
       const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
-      const p = Math.round(10 + (loc.x - m.l) / (W - m.l - m.r) * 80);
-      const r = curve.find((c) => c.p === Math.min(90, Math.max(10, p)));
+      const p = Math.round(P_LO + (loc.x - m.l) / (W - m.l - m.r) * (P_HI - P_LO));
+      const r = curve.find((c) => c.p === Math.min(P_HI, Math.max(P_LO, p)));
       if (!r) return;
       cross.setAttribute("x1", x(r.p)); cross.setAttribute("x2", x(r.p));
       dot.setAttribute("cx", x(r.p)); dot.setAttribute("cy", yOf(r));
@@ -87,7 +95,7 @@
 
   // The whole-percentile grid every curve is drawn on, p10 to p90 (the range
   // frame() maps).
-  const CURVE_P = Array.from({ length: 81 }, (_, i) => 10 + i);
+  const CURVE_P = Array.from({ length: P_HI - P_LO + 1 }, (_, i) => P_LO + i);
 
   globalThis.NAEPCharts = { ord, el, niceTicks, path, frame, hover, CURVE_P };
 

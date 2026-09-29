@@ -14,18 +14,21 @@
 ## but it can load a <script src>. Assigning to globalThis keeps it usable
 ## from Node as well, which is how the test loads it.
 ##
-## Reads:  tables/sim-quantiles.csv, tables/kraft-2023-benchmarks-by-target.csv,
-##         analysis/config/sim-params.yaml
+## Reads:  tables/sim-quantiles.csv, tables/sim-distribution.csv,
+##         tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml
 ## Writes: docs/cells.js (read by docs/index.html and docs/methods.html)
 ## Usage:  Rscript analysis/10-export-tool-data.R   (from the project root)
 
 source("analysis/config-helpers.R")
+source("analysis/mixture.R")   # quantile_points: the explorer gets the same points R uses
 
 IN     <- "tables/sim-quantiles.csv"
+DIST   <- "tables/sim-distribution.csv"
 KRAFT  <- "tables/kraft-2023-benchmarks-by-target.csv"
 OUT    <- "docs/cells.js"
-if (!file.exists(IN))
-  stop("missing ", IN, ". Run: Rscript analysis/01-simulations.R", call. = FALSE)
+for (f in c(IN, DIST))
+  if (!file.exists(f))
+    stop("missing ", f, ". Run: Rscript analysis/01-simulations.R", call. = FALSE)
 if (!file.exists(KRAFT))
   stop("missing ", KRAFT, ". Run: Rscript analysis/09-kraft-benchmarks.R", call. = FALSE)
 if (!requireNamespace("jsonlite", quietly = TRUE))
@@ -34,6 +37,7 @@ if (!requireNamespace("jsonlite", quietly = TRUE))
 
 cfg <- load_sim_config()
 qd  <- read.csv(IN, stringsAsFactors = FALSE)
+dd  <- read.csv(DIST, stringsAsFactors = FALSE)
 PS  <- as.integer(cfg_get(cfg, "percentiles"))
 
 ## Cells in the config's order, which is the order the menu shows them. Each
@@ -49,11 +53,21 @@ cells <- lapply(cell_labels, function(lab) {
   ## S is constant within a cell; check rather than take the first row on faith.
   if (length(unique(z$sd2019)) != 1)
     stop("cell '", lab, "' has more than one sd2019 in ", IN, call. = FALSE)
+  ## The points each year's quantile function passes through: the score
+  ## distribution's bin points plus the published percentiles, built by the
+  ## same quantile_points() that 06-seat-allocation.R uses, so the explorer's
+  ## curve is the R pipeline's curve. The engine only draws the spline.
+  qf <- function(yr, knots) {
+    pts <- quantile_points(dd[dd$cell == lab & dd$year == yr, ], PS, knots, paste(lab, yr))
+    list(pct = pts$pct, score = pts$score)
+  }
   list(label       = lab,
        q2019       = z$q2019,
        d           = z$d,
        g_star      = z$g_star,
-       sd2019      = z$sd2019[1])
+       sd2019      = z$sd2019[1],
+       qf2019      = qf(2019, z$q2019),
+       qf2024      = qf(2024, z$q2019 + z$d))
 })
 
 ## Kraft (2023) effect sizes by the population a study served, for the
@@ -80,7 +94,7 @@ strip <- function(recs, fields) lapply(recs, function(r) r[fields])
 ## Provenance is an MD5 of each source file rather than a run date, so
 ## rerunning the script on unchanged inputs writes a byte-identical file and
 ## git shows a change only when the data did.
-srcs <- c(IN, KRAFT, attr(cfg, "path"))
+srcs <- c(IN, DIST, KRAFT, attr(cfg, "path"))
 payload <- list(
   sources        = lapply(srcs, function(f) list(path = f, md5 = unname(tools::md5sum(f)))),
   percentiles    = PS,

@@ -29,12 +29,13 @@ suppressPackageStartupMessages({
 
 TABLES <- "tables"; OUT <- "figures/sim"
 dir.create(OUT, showWarnings=FALSE, recursive=TRUE)
-for (f in c("sim-quantiles.csv", "sim-bottom-decile.csv"))
+for (f in c("sim-quantiles.csv", "sim-bottom-decile.csv", "sim-distribution.csv"))
   if (!file.exists(file.path(TABLES, f)))
     stop("missing ", file.path(TABLES, f), ". Run: Rscript analysis/01-simulations.R",
          call.=FALSE)
 qd <- read.csv(file.path(TABLES,"sim-quantiles.csv"), stringsAsFactors=FALSE)
 bd <- read.csv(file.path(TABLES,"sim-bottom-decile.csv"), stringsAsFactors=FALSE)
+dd <- read.csv(file.path(TABLES,"sim-distribution.csv"), stringsAsFactors=FALSE)
 
 CELL <- if (length(commandArgs(TRUE))) commandArgs(TRUE)[1] else "Reading G4"
 ## Fail here rather than 100 lines later with a subscript-out-of-bounds from an
@@ -109,7 +110,12 @@ RULES <- list(
 ## residual_tracked is the linear calculation this script used through
 ## September 2026. It was correct for the group question and mislabelled as an
 ## answer to the distributional one.
-Q2024_fn <- make_quantile_fn(PS, z$q2019 + z$d)
+## The 2024 quantile function: through the 2024 score distribution's bin
+## points and the published percentiles (quantile_points in mixture.R), so no
+## tail shape is assumed.
+q2024_pts <- quantile_points(dd[dd$cell == CELL & dd$year == 2024, ], PS, z$q2019 + z$d,
+                             paste(CELL, 2024))
+Q2024_fn <- make_quantile_fn(q2024_pts$pct, q2024_pts$score)
 after_fn <- calibrated_program_quantiles(Q2024_fn, G*S, PS, z$q2019 + z$d)
 residual         <- function(fn, B) setNames(z$q2019 - after_fn(fn, B), PS)
 residual_tracked <- function(fn, B) setNames(deficit - fn(PS, B) * G * S, PS)

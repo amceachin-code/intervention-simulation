@@ -18,71 +18,6 @@
   "use strict";
 
   // ---------------------------------------------------------------------
-  // Standard normal quantile. Acklam's rational approximation (relative
-  // error about 1e-9) followed by one Halley step on the normal CDF, the
-  // refinement Acklam recommends. With the double-precision CDF below this
-  // reaches about 1e-15, so the tails agree with R's qnorm far below any
-  // displayed digit.
-  function qnorm(p) {
-    if (p <= 0) return -Infinity;
-    if (p >= 1) return Infinity;
-    const a = [-3.969683028665376e1, 2.209460984245205e2, -2.759285104469687e2,
-               1.38357751867269e2, -3.066479806614716e1, 2.506628277459239];
-    const b = [-5.447609879822406e1, 1.615858368580409e2, -1.556989798598866e2,
-               6.680131188771972e1, -1.328068155288572e1];
-    const c = [-7.784894002430293e-3, -3.223964580411365e-1, -2.400758277161838,
-               -2.549732539343734, 4.374664141464968, 2.938163982698783];
-    const d = [7.784695709041462e-3, 3.224671290700398e-1, 2.445134137142996,
-               3.754408661907416];
-    const lo = 0.02425, hi = 1 - lo;
-    let x;
-    if (p < lo) {
-      const q = Math.sqrt(-2 * Math.log(p));
-      x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
-          ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
-    } else if (p <= hi) {
-      const q = p - 0.5, r = q * q;
-      x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
-          (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
-    } else {
-      const q = Math.sqrt(-2 * Math.log(1 - p));
-      x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
-           ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
-    }
-    // One Halley refinement: u = (Phi(x) - p) / phi(x), x <- x - u / (1 + x*u/2).
-    const e = pnorm(x) - p;
-    const u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2);
-    return x - u / (1 + x * u / 2);
-  }
-
-  // Standard normal CDF, West (2005) "Better approximations to cumulative
-  // normal functions" (Hart's algorithm 5666), accurate to about 1e-15. It has
-  // to be that good: the Newton step in qnorm is only as accurate as this CDF.
-  function pnorm(z) {
-    const x = Math.abs(z);
-    let c = 0;
-    if (x <= 37) {
-      const e = Math.exp(-x * x / 2);
-      if (x < 7.07106781186547) {
-        let n = 3.52624965998911e-2 * x + 0.700383064443688;
-        n = n * x + 6.37396220353165; n = n * x + 33.912866078383;
-        n = n * x + 112.079291497871; n = n * x + 221.213596169931;
-        n = n * x + 220.206867912376;
-        let d = 8.83883476483184e-2 * x + 1.75566716318264;
-        d = d * x + 16.064177579207; d = d * x + 86.7807322029461;
-        d = d * x + 296.564248779674; d = d * x + 637.333633378831;
-        d = d * x + 793.826512519948; d = d * x + 440.413735824752;
-        c = e * n / d;
-      } else {
-        let b = x + 0.65;
-        b = x + 4 / b; b = x + 3 / b; b = x + 2 / b; b = x + 1 / b;
-        c = e / b / 2.506628274631;
-      }
-    }
-    return z > 0 ? 1 - c : c;
-  }
-
-  // ---------------------------------------------------------------------
   // Monotone cubic interpolation, identical to R's splinefun(method="monoH.FC"):
   // start from averaged secant slopes, then apply the Fritsch-Carlson
   // adjustment (R's C routine monoFC_mod) and evaluate the cubic Hermite.
@@ -112,24 +47,19 @@
     };
   }
 
-  // Quantile function from published percentile knots: monotone interpolation
-  // inside, normal tails outside with sigma fitted through the outer knots.
-  // Port of make_quantile_fn (analysis/mixture.R). Knots must be sorted and
-  // strictly increasing, which the exported data always are.
+  // Quantile function through points spanning 0 to 100 percent: the score
+  // distribution's bin points plus the published percentiles, built in R by
+  // quantile_points (analysis/mixture.R) and exported in cells.js as qf2019
+  // and qf2024. A monotone spline with a continuous slope, so no corners, and
+  // no tails because the points reach the ends of the scale. Port of
+  // make_quantile_fn.
   function makeQuantileFn(pct, vals) {
+    if (pct[0] !== 0 || pct[pct.length - 1] !== 100)
+      throw new Error("makeQuantileFn: points must run from 0 to 100 percent");
     for (let i = 1; i < vals.length; i++)
-      if (vals[i] <= vals[i - 1]) throw new Error("makeQuantileFn: knots must increase");
+      if (vals[i] <= vals[i - 1] || pct[i] <= pct[i - 1]) throw new Error("makeQuantileFn: points must increase");
     const inner = monoHFC(pct, vals);
-    const loP = pct[0], hiP = pct[pct.length - 1];
-    const loV = vals[0], hiV = vals[vals.length - 1];
-    const zLo = qnorm(loP / 100), zHi = qnorm(hiP / 100);
-    const sig = (hiV - loV) / (zHi - zLo);
-    return function (u) {
-      u = Math.min(Math.max(u, 1e-6), 100 - 1e-6);
-      if (u < loP) return loV + (qnorm(u / 100) - zLo) * sig;
-      if (u > hiP) return hiV + (qnorm(u / 100) - zHi) * sig;
-      return inner(u);
-    };
+    return (u) => inner(Math.min(Math.max(u, 0), 100));
   }
 
   // ---------------------------------------------------------------------
@@ -242,7 +172,7 @@
 
   // Per-cell cache of what does not depend on the program: the pre-program
   // quantile function on RANK_GRID and the no-program mixture at a given set
-  // of percentiles. Both are rebuilt only when the cell's knots or the
+  // of percentiles. Both are rebuilt only when the cell or the
   // requested percentiles change, not on every slider move.
   const baseCache = new Map();
   function baseline(Qfn, key, probs) {
@@ -257,7 +187,7 @@
 
   // DISTRIBUTIONAL answer: whoever stands at percentile p after the program.
   // Calibrated as in calibrated_program_quantiles: the grid reproduces the
-  // knots only to about 0.008 points, so the result is reported as the exact
+  // knots only to about 0.01 points, so the result is reported as the exact
   // pre-program quantile plus the program's change on the grid. At the knots
   // this is the R calibration exactly (Qfn passes through the knots); between
   // knots it applies the same idea at every p. `key` identifies the cell for
@@ -295,9 +225,8 @@
   // construction; shown on the page as a check).
   function scenario(cell, knotsPct, inputs, probs) {
     const S = cell.sd2019;
-    const q2024 = cell.q2019.map((q, i) => q + cell.d[i]);
-    const Q19 = makeQuantileFn(knotsPct, cell.q2019);
-    const Q24 = makeQuantileFn(knotsPct, q2024);
+    const Q19 = makeQuantileFn(cell.qf2019.pct, cell.qf2019.score);
+    const Q24 = makeQuantileFn(cell.qf2024.pct, cell.qf2024.score);
     const piFn = participation(inputs.share, inputs.kPart);
     const dFn = effectPoints(inputs.effect, inputs.kEffect, S);
 
@@ -307,7 +236,7 @@
     const all = [...new Set([...probs, ...knotsPct])].sort((a, b) => a - b);
     const after = inputs.mode === "group"
       ? groupQuantiles(Q24, piFn, dFn, all)
-      : mixtureQuantiles(Q24, piFn, dFn, all, q2024.join(","));
+      : mixtureQuantiles(Q24, piFn, dFn, all, cell.label + "|2024");
     const pr = piFn(all), ef = dFn(all);
     const rows = all.map((p, i) => {
       const q19 = Q19(p), q24 = Q24(p);
@@ -333,6 +262,6 @@
   // page also calls participation) and what the test checks directly (the rest).
   root.NAEPEngine = {
     scenario, tilt, TILT_LEVELS,
-    qnorm, makeQuantileFn, participation, effectPoints, FILL_GRID, mean,
+    makeQuantileFn, participation, effectPoints, FILL_GRID, mean,
   };
 })(globalThis);

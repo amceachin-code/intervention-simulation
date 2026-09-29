@@ -142,6 +142,75 @@ get_stats <- function(cell, variable, stattypes, years, jurisdiction, cache,
   parse_stats(d)
 }
 
+## ------------------------------------------------------ score distribution
+##
+## DP:DP returns the percent of students in each 10-point score bin: one row
+## per bin, DP:D1 (scores 0 to 10) through DP:Dn (n = scale_max / 10; 50 on
+## the 0-500 scales, 30 on Math G12's 0-300 scale), plus six summary rows
+## (DP:DJAM, DJBM, DJMN, DNTAM, DNTBM, DNTMN: the shares above and below the
+## mean, and the mean itself). The bins are what make a quantile function
+## possible without assuming a tail shape (see quantile_points in mixture.R).
+##
+## One request per year. A two-year DP:DP request came back with an empty body
+## on 2026-09-28 (the ECONDIS version; the response is several times larger
+## than a percentile request), so the pull never depends on the API returning
+## both years at once.
+DIST_STAT <- "DP:DP"
+DIST_BIN_RE <- "^DP:D([0-9]+)$"
+DIST_SUMMARY_ROWS <- 6L
+
+## Bins on a scale from 0 to scale_max, and the rows one year of DP:DP must
+## have before it is trusted and cached (every bin plus the summary rows; used
+## as fetch_api's expect_rows gate).
+dist_n_bins <- function(scale_max) as.integer(scale_max / 10)
+dist_rows_expected <- function(scale_max) dist_n_bins(scale_max) + DIST_SUMMARY_ROWS
+
+## Parse and validate one year's DP:DP response for a single group (TOTAL).
+## Returns data.frame(bin, lo, hi, pct), bins in order. Stops, naming the
+## problem, if any bin is missing, duplicated, flagged, or negative, or if
+## the bins do not sum to 100 within `tol` percentage points. The histogram
+## has to be complete: a missing bin would shift every cumulative share above
+## it, which parse_stats' drop-and-count convention would hide.
+##
+## Bin edges are not in the response; DP:Dk is taken to cover scores 10(k-1)
+## to 10k, NAEP's documented "10-point scale score intervals". Checked on
+## 2026-09-28: those edges reproduce the published percentiles to within 0.11
+## points in every cell and year (analysis/tests/test-sim.R, section 10).
+parse_distribution <- function(d, scale_max, label, tol=0.01) {
+  n_bins <- dist_n_bins(scale_max)
+  rows <- Filter(function(r) grepl(DIST_BIN_RE, r$stattype), d$result)
+  if (!length(rows)) stop(label, ": DP:DP response has no bin rows", call.=FALSE)
+  bins <- as.integer(sub(DIST_BIN_RE, "\\1", vapply(rows, function(r) r$stattype, character(1))))
+  if (anyDuplicated(bins))
+    stop(label, ": DP:DP response repeats bins ", paste(unique(bins[duplicated(bins)]), collapse=", "),
+         call.=FALSE)
+  if (!setequal(bins, seq_len(n_bins)))
+    stop(label, ": DP:DP bins are ", min(bins), " to ", max(bins), " (", length(bins),
+         " bins); expected 1 to ", n_bins, " for a 0-", scale_max, " scale", call.=FALSE)
+  ## usable() also counts what it rejects in DROPPED, so a flagged bin shows
+  ## up in the run's dropped-row tally as well as stopping the run here.
+  ok <- vapply(rows, usable, logical(1))
+  if (!all(ok))
+    stop(label, ": DP:DP bins flagged unusable: ", paste(sort(bins[!ok]), collapse=", "), call.=FALSE)
+  pct <- vapply(rows, function(r) as.numeric(r$value), numeric(1))
+  if (any(pct < 0)) stop(label, ": DP:DP has negative bin percentages", call.=FALSE)
+  if (abs(sum(pct) - 100) > tol)
+    stop(label, ": DP:DP bins sum to ", round(sum(pct), 4), ", not 100", call.=FALSE)
+  o <- order(bins)
+  data.frame(bin=bins[o], lo=10 * (bins[o] - 1), hi=10 * bins[o], pct=pct[o])
+}
+
+## The score distribution for one cell and one year, national TOTAL group.
+get_distribution <- function(cell, year, jurisdiction, cache, ...) {
+  d <- fetch_api(list(type="data", subject=cell$subject, grade=cell$grade,
+                      subscale=cell$subscale, variable="TOTAL",
+                      jurisdiction=jurisdiction, stattype=DIST_STAT,
+                      Year=as.character(year), ShowDetails="true"),
+                 cache=cache, expect_rows=dist_rows_expected(cell$scale_max), ...)
+  if (is.null(d)) return(NULL)
+  parse_distribution(d, cell$scale_max, paste(cell$label, year))
+}
+
 ## Composition of the population below a cut, by group, from parsed subgroup
 ## statistics (`raw`, as returned by get_stats for a subgroup variable such as
 ## ECONDIS). `obs` supplies the cut: the reference-year quantile at cut_pct,

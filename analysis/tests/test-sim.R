@@ -22,6 +22,9 @@ bd_path <- "tables/sim-bottom-decile.csv"
 if (!file.exists(qd_path)) stop("Run analysis/01-simulations.R first.")
 qd <- read.csv(qd_path, stringsAsFactors=FALSE)
 bd <- if (file.exists(bd_path)) read.csv(bd_path, stringsAsFactors=FALSE) else NULL
+dd_path <- "tables/sim-distribution.csv"
+if (!file.exists(dd_path)) stop("Run analysis/01-simulations.R first (", dd_path, " is missing).")
+dd <- read.csv(dd_path, stringsAsFactors=FALSE)
 
 cat("\n1. Validation against the companion article's restricted-use analysis\n")
 ## The single most important test: public data must reproduce Table 2 col (a).
@@ -304,13 +307,14 @@ source("analysis/mixture.R")
 zr <- qd[qd$cell=="Reading G4", ]; zr <- zr[order(zr$percentile), ]
 PSr <- zr$percentile; q24 <- zr$q2019 + zr$d
 Sr <- zr$sd2019[1]; deltar <- G_TREAT * Sr
-Qr <- make_quantile_fn(PSr, q24)
+ptsr <- quantile_points(dd[dd$cell=="Reading G4" & dd$year==2024, ], PSr, q24, "Reading G4 2024")
+Qr <- make_quantile_fn(ptsr$pct, ptsr$score)
 none <- function(p, B) rep(0, length(p))
 all1 <- function(p, B) rep(1, length(p))
 afterr <- calibrated_program_quantiles(Qr, deltar, PSr, q24)
 
 ## 1. The reconstruction passes through the published percentiles. Uncalibrated
-##    it is out by about 0.008 points, a grid artifact; calibrated it is exact,
+##    it is out by about 0.01 points, a grid artifact; calibrated it is exact,
 ##    which is what every reported change is measured against.
 raw <- program_quantiles(Qr, none, 0, deltar, PSr)
 ok(max(abs(raw - q24)) < 0.02,
@@ -345,10 +349,19 @@ ok(max(sapply(rules2, function(f) abs(gap_after(f, 0) - obs_gap))) < 1e-9,
 ##    the proportional rule is NOT the arithmetic identity the linear model
 ##    made it look like. Asserted so a regression back to the linear shift,
 ##    which would return exactly obs_gap here, fails loudly.
+##
+##    How much it widens has a rough closed form. Treating half of every
+##    percentile with a shift of delta adds 0.25 * delta^2 to the variance, so
+##    for a near-normal distribution the 90-10 gap grows by about
+##    gap * 0.125 * (delta / SD)^2: 0.3 points for Reading G4. The
+##    five-percentile quantile function this replaced gave 1.17, most of it
+##    from the corner where its normal tail met the spline at p90. The bounds
+##    below keep the widening near the closed form and would catch that
+##    corner coming back.
 prop_mid <- gap_after(alloc_uniform, 0.5)
-ok(prop_mid > obs_gap + 0.5,
-   sprintf("proportional coverage widens the DISTRIBUTIONAL gap at 50 percent (%.2f vs %.2f)",
-           prop_mid, obs_gap))
+ok(prop_mid > obs_gap + 0.1 && prop_mid < obs_gap + 0.6,
+   sprintf("proportional coverage widens the DISTRIBUTIONAL gap at 50 percent by %.2f (%.2f vs %.2f), near the closed form",
+           prop_mid - obs_gap, prop_mid, obs_gap))
 
 ## 4. Bottom-up at a budget equal to the evaluation percentile is the cell the
 ##    linear model got wrong, by reading a step function at its jump. The
@@ -374,6 +387,43 @@ ok(max(abs(coarse - fine)) < 0.05,
 ok(all(sapply(rules2, function(f)
        all(diff(sapply(seq(0,1,by=0.05), function(B) afterr(f,B)[PSr==10])) >= -1e-9))),
    "p10 is non-decreasing in the seat budget under every rule")
+
+cat("\n10. Quantile functions from the score distribution (quantile_points)\n")
+## Every cell and year: the published histogram is complete, the points
+## reproduce it and the published percentiles, and the curve has no corners.
+## Also the data-consistency check that licenses anchoring: a spline through
+## the bin points ALONE lands within 0.15 points of every published
+## percentile (0.11 at worst on 2026-09-28), so the histogram and the
+## percentiles describe the same distribution.
+for (lab in unique(qd$cell)) for (yr in c(2019, 2024)) {
+  z <- qd[qd$cell==lab, ]; z <- z[order(z$percentile), ]
+  kv <- if (yr == 2019) z$q2019 else z$q2019 + z$d
+  h  <- dd[dd$cell==lab & dd$year==yr, ]; h <- h[order(h$bin), ]
+  tag <- paste(lab, yr)
+  ok(nrow(h) > 0 && abs(sum(h$pct) - 100) < 0.01 && identical(h$bin, seq_len(nrow(h))) &&
+       all(h$hi - h$lo == 10),
+     sprintf("%s: histogram has contiguous 10-point bins summing to 100 (%d bins)", tag, nrow(h)))
+  pts <- quantile_points(h, z$percentile, kv, tag)
+  Q <- make_quantile_fn(pts$pct, pts$score)
+  ok(max(abs(Q(pts$pct) - pts$score)) < 1e-9 &&
+       max(abs(Q(z$percentile) - kv)) < 1e-9,
+     sprintf("%s: quantile function passes through all %d points and the published percentiles", tag, nrow(pts)))
+  ok(all(diff(Q(RANK_GRID)) > 0), sprintf("%s: quantile function strictly increases on RANK_GRID", tag))
+  slope_ratio <- function(p, eps=0.01) {
+    l <- (Q(p) - Q(p - eps)) / eps; r <- (Q(p + eps) - Q(p)) / eps; max(l, r) / min(l, r) }
+  worst <- max(vapply(seq(10, 90, by=0.5), slope_ratio, numeric(1)))
+  ok(worst < 1.1, sprintf("%s: no corner in p10 to p90 (largest left/right slope ratio %.3f)", tag, worst))
+  bins_only <- quantile_points(h, numeric(0), numeric(0), tag)
+  Qb <- make_quantile_fn(bins_only$pct, bins_only$score)
+  ok(max(abs(Qb(z$percentile) - kv)) < 0.15,
+     sprintf("%s: histogram alone reproduces the published percentiles (max %.3f pts)",
+             tag, max(abs(Qb(z$percentile) - kv))))
+}
+ok(inherits(tryCatch(make_quantile_fn(c(10, 50, 90), c(1, 2, 3)), error=function(e) e), "error"),
+   "make_quantile_fn refuses points that do not span 0 to 100 percent (no silent tails)")
+bad <- dd[dd$cell=="Reading G4" & dd$year==2024, ]
+ok(inherits(tryCatch(quantile_points(bad, c(10, 50), c(300, 200), "bad"), error=function(e) e), "error"),
+   "quantile_points stops when the histogram and the percentiles disagree in order")
 
 cat(sprintf("\n%s: %d failure(s)\n", if (fails == 0) "ALL TESTS PASSED" else "TESTS FAILED", fails))
 quit(status = if (fails == 0) 0 else 1)

@@ -20,8 +20,9 @@
 //      participation at a uniform effect is a pure shift in both modes;
 //      water-filling conserves the budget and stays in [0, 1] at every tilt
 //      level; each tilt level's named ratio matches its line.
-//   4. Building blocks: qnorm against R values, and the quantile function
-//      passing through its knots.
+//   4. The quantile-function points in cells.js: they reproduce the published
+//      percentiles and the score distribution's bin points, and the curve
+//      through them has no corners.
 // Runs every check, prints each FAIL line, and exits non-zero if any failed.
 
 import fs from "node:fs";
@@ -154,15 +155,53 @@ for (const lvl of E.TILT_LEVELS) {
   check(close(w(90) / w(10), a / b, 1e-12), `${lvl.id} ratio ${w(90) / w(10)} != ${lvl.ratio}`);
 }
 
-// ---- 4. building blocks ---------------------------------------------------
-// Reference values from R: sprintf("%.15f", qnorm(c(...))).
-const QN = [[0.001, -3.090232306167813], [0.02, -2.053748910631823], [0.3, -0.524400512708041],
-            [0.9, 1.281551565544601], [0.975, 1.959963984540053]];
-for (const [p, want] of QN)
-  check(close(E.qnorm(p), want, 1e-12), `qnorm(${p}) = ${E.qnorm(p)}, R gives ${want}`);
+// ---- 4. quantile functions ------------------------------------------------
+// cells.js carries, per cell and year, the points the quantile function
+// passes through (quantile_points in analysis/mixture.R): the score
+// distribution's bin points plus the published percentiles. Checked here
+// against the CSVs directly rather than by re-running the R merge:
+//   - the points run from 0 to 100 percent and strictly increase;
+//   - every published percentile is a point, at its published score;
+//   - every non-empty bin of tables/sim-distribution.csv contributes its
+//     (cumulative percent, upper edge) point, unless it lands on a percentile;
+//   - the spline passes through every point;
+//   - no corners: across the whole p1 to p99 range the explorer draws, the
+//     left and right slopes agree closely.
+//     The five-percentile function this replaced (normal tails joined at p10
+//     and p90) failed this at p90 by a factor of 1.4 to 1.8.
+const DIST = readCsv("tables/sim-distribution.csv");
 for (const cell of DATA.cells) {
-  const Q = E.makeQuantileFn(PS, cell.q2019);
-  PS.forEach((p, i) => check(close(Q(p), cell.q2019[i], 1e-9), `${cell.label} quantile fn misses knot p${p}`));
+  for (const [yr, key, knots] of [[2019, "qf2019", cell.q2019], [2024, "qf2024", cell.q2019.map((q, i) => q + cell.d[i])]]) {
+    const qf = cell[key], tag = `${cell.label} ${yr}`;
+    check(qf && qf.pct.length === qf.score.length && qf.pct.length > PS.length, `${tag}: ${key} missing or malformed`);
+    if (!qf) continue;
+    check(qf.pct[0] === 0 && qf.pct[qf.pct.length - 1] === 100, `${tag}: points do not run from 0 to 100`);
+    check(qf.pct.every((v, i) => i === 0 || v > qf.pct[i - 1]) && qf.score.every((v, i) => i === 0 || v > qf.score[i - 1]),
+      `${tag}: points do not strictly increase`);
+    PS.forEach((p, i) => {
+      const j = qf.pct.indexOf(p);
+      check(j >= 0 && close(qf.score[j], knots[i], 1e-9), `${tag}: published p${p} is not a point`);
+    });
+    const bins = DIST.filter((r) => r.cell === cell.label && Number(r.year) === yr);
+    const total = bins.reduce((t, r) => t + Number(r.pct), 0);
+    let cum = 0;
+    for (const r of bins) {
+      cum += Number(r.pct);
+      if (Number(r.pct) <= 0) continue;
+      const pc = cum / total * 100;
+      if (PS.some((p) => Math.abs(p - pc) < 1e-9)) continue;
+      const j = qf.pct.findIndex((v) => Math.abs(v - pc) < 1e-9);
+      check(j >= 0 && qf.score[j] === Number(r.hi), `${tag}: bin ${r.bin} point (${pc.toFixed(4)}, ${r.hi}) missing`);
+    }
+    const Q = E.makeQuantileFn(qf.pct, qf.score);
+    qf.pct.forEach((p, i) => check(close(Q(p), qf.score[i], 1e-9), `${tag}: spline misses point ${p}`));
+    let worst = 0;
+    for (let p = 1; p <= 99; p += 0.5) {
+      const h = 0.01, left = (Q(p) - Q(p - h)) / h, right = (Q(p + h) - Q(p)) / h;
+      worst = Math.max(worst, Math.max(left, right) / Math.min(left, right));
+    }
+    check(worst < 1.1, `${tag}: slope jumps by ${worst.toFixed(3)} somewhere in p1 to p99 (a corner)`);
+  }
 }
 
 // ---- 5. methods-page data -------------------------------------------------

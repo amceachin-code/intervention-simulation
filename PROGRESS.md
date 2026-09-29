@@ -5,11 +5,148 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: EXPLORER METHODS PAGE (2026-09-28)
+# CURRENT TASK: QUANTILE FUNCTIONS FROM THE NAEP SCORE HISTOGRAM (2026-09-28)
 
-**Status:** Steps 1 to 5 complete, and step 6 complete except the commit.
-Verified and reviewed. Nothing is committed; committing and pushing wait for
-Andrew's approval.
+**Status:** Steps 0 to 9 complete; verified and reviewed. Being committed and
+pushed (Andrew approved updating the GitHub page once the review passed).
+
+## Objective
+
+Remove the kink near the 90th percentile in the explorer's "All students"
+curve, and in the R distributional results, by building each national
+quantile function from NAEP's DP:DP score histogram (percent of students in
+10-point bins) instead of five percentiles plus normal tails. Background: the
+old make_quantile_fn joined a normal tail to the spline at p90 with a slope
+1.4 to 1.8 times the spline's; the mixture inherits that corner once boosted
+students pass the 2024 p90 score (open item (a) of the interactive-tool
+task).
+
+## Plan
+
+- [x] 0. Housekeeping: methods page committed and pushed (58525ca); plan,
+      progress, and README agents launched.
+- [x] 1. Pull and store the histograms (api-helpers.R get_distribution, 01
+      writes tables/sim-distribution.csv, scale_max in the yaml, cache
+      committed).
+- [x] 2. quantile_points() and a tail-free make_quantile_fn in mixture.R.
+- [x] 3. 06-seat-allocation.R builds Q2024 from the new points.
+- [x] 4. Retire 07-tail-sensitivity.R and its table.
+- [x] 5. Explorer: 10 exports qf2019/qf2024 point sets; engine.js uses them.
+- [x] 6. Tests (test-sim.R, test-api-guards.R, test-tool-engine.mjs),
+      including a no-corner check.
+- [x] 7. Regenerate, and compare old versus new seat-allocation results.
+- [x] 8. Prose: methods page, index notes, READMEs, memo note, TODO.
+- [x] 9. Browser check, code review, final README/PROGRESS, commit on
+      approval.
+
+## Step details
+
+- **Step 1.** `get_distribution()` and `parse_distribution()` in
+  `api-helpers.R` (one request per year; `expect_rows` = bins + 6 summary
+  rows; refuses missing, duplicated, flagged, negative, or mis-summed bins and
+  the wrong scale). `scale_max` added to each cell in the yaml. 01 writes
+  `tables/sim-distribution.csv` (cell, year, bin, lo, hi, pct). 12 new cached
+  responses in `analysis/.cache/`. All 12 cell-years pulled with no dropped
+  rows.
+- **Step 2.** `quantile_points()` and a tail-free `make_quantile_fn()` in
+  `mixture.R`. Every curve passes exactly through all bin points and the five
+  percentiles, is monotone, and has left/right slope ratios within 1.033
+  anywhere from p1 to p99 (old function: 1.4 to 1.8 at p90). Uncalibrated
+  grid error at the knots is 0.008 to 0.012 points (comments say about 0.01).
+- **Step 3.** 06 builds Q2024 from `quantile_points`. Old versus new (tables
+  saved to the scratchpad before regenerating): only the distributional
+  columns moved; `gap_remaining_tracked` unchanged to the last digit. Largest
+  changes in `gap_remaining`: Reading G4 0.94 points (Proportional, B=0.39:
+  9.83 to 8.89); Reading G8 0.87; Math G4 0.54; Math G8 0.80. Reading G4 at
+  B=0.50: Proportional 9.83 to 8.91, Opt-in 13.17 to 12.77, Eligibility 6.68
+  to 5.95; bottom-up at B=0.10 5.96 to 5.79; bottom-up at B>=0.13 unchanged
+  (2.69). Proportional widening at half coverage fell from 1.17 to 0.25
+  points; a closed-form check (0.125 x (delta/SD)^2 x gap) gives about 0.3, so
+  most of the old widening was the tail artifact. The finding that partial
+  coverage widens the gap survives but is much smaller.
+- **Step 4.** `07-tail-sensitivity.R` and `sim-tail-sensitivity.csv` removed;
+  `test-regen.sh` and `analysis/README.md` updated.
+- **Step 5.** 10 exports `qf2019`/`qf2024` from `quantile_points`;
+  `engine.js` uses them; `qnorm`/`pnorm` removed as dead code. JS matches R to
+  3.1e-13 points.
+- **Step 6.** `test-sim.R` section 9 threshold for the proportional widening
+  re-based to between 0.1 and 0.6 points with the closed-form reason; new
+  section 10; `test-api-guards.R` section 6; `test-tool-engine.mjs` section 4
+  rewritten (3118 checks).
+- **Step 7.** 02 and 05 outputs unchanged; fig13 and fig14 (four cells each)
+  regenerated. `run-all.sh --regen`: 7 of 7 pass.
+- **Step 8.** `methods.html` sections 1, 2, 8, 9 and the `index.html` notes
+  rewritten and run through /writing-style; the memo got a dated ==note== (not
+  rewritten); the bib title for the NAEP Data Service entry now mentions score
+  distributions; `TODO.md` got the ED/nat_pct follow-up and the stale-memo
+  warning.
+- **Step 9.** Code review found no bugs affecting results; all its
+  suggestions were applied (`quantile_points` with no percentiles; the
+  histogram-only test now calls `quantile_points` directly; a vacuous bin-edge
+  assertion replaced by a comment; the unused `cum_pct` column dropped;
+  `dist_n_bins` helper; stale comments). Andrew chose to keep stopping with an
+  error, rather than dropping the bin point, if a bin point and a percentile
+  are ever out of order; the closest pairs today are 0.05 percentile points
+  apart (Math G4 2024 p50; Reading G8 2019 p25).
+- **Axis.** At Andrew's request the charts were widened to p1 to p99, then
+  returned to p10 to p90 after he found the tails odd. Checked: the tails
+  really bend (e.g., Reading G4 drop -0.26 SD at p10 to -0.17 at p1; +0.04 at
+  p99), but their standard errors, backed out of the histogram's bin SEs
+  (validated against NAEP's published d_se at p10/p50/p90), are 0.04 to 0.07
+  SD at p1 and 0.02 to 0.06 at p99, two to four times the median's. Some
+  bends are within noise (Math G12 bottom); Reading G4's top bend is about 3
+  SE and could be real or an artifact of NAEP's extreme-score estimation. The
+  methods page explains the 10 to 90 range under "Thin tails". The no-corner
+  test still covers p1 to p99.
+- **Closes** open item (a) of the interactive-tool task (the p90 tail kink).
+
+## Key decisions (Andrew, 2026-09-28)
+
+- Anchor the curve to the five published percentiles; the histogram sets the
+  shape elsewhere. D(p), g*, Table 2(a), the group estimand, and the Stata
+  port are unchanged by design.
+- Retire 07-tail-sensitivity.R (no assumed tail remains).
+- Scope: national quantile function only. group_cdf (ED breakdown) and 03's
+  nat_pct are a follow-up. The API does return DP:DP by ECONDIS (checked for
+  Reading G4: three groups, 50 bins, each summing to 100, both years; the
+  "information not available" group has some rows flagged 257 / not
+  displayable), so the follow-up can use public data.
+- Request one year per call: a two-year ECONDIS DP:DP request returned an
+  empty body.
+
+## Pre-plan checks (read-only, 2026-09-28)
+
+- DP:DP exists for all 12 cell-years: 50 bins (30 for Math G12, 0 to 300),
+  each summing to 100, no mass piled at floor or ceiling.
+- A monotone spline through the cumulative bin points reproduces all 60
+  published percentiles within 0.11 points (most within 0.05).
+  Linear-within-bin was off by up to 0.5.
+- Adding the five published percentiles to the histogram points keeps every
+  set strictly increasing.
+
+## Files
+
+- **Created:** `tables/sim-distribution.csv`, 12 `analysis/.cache/*.json`,
+  `PROJECTPLAN.md`.
+- **Modified:** `analysis/api-helpers.R`, `analysis/01-simulations.R`,
+  `analysis/mixture.R`, `analysis/06-seat-allocation.R`,
+  `analysis/10-export-tool-data.R`, `analysis/config/sim-params.yaml`,
+  `analysis/tests/test-sim.R`, `analysis/tests/test-api-guards.R`,
+  `analysis/tests/test-tool-engine.mjs`, `analysis/tests/test-regen.sh`,
+  `analysis/README.md`, `docs/engine.js`, `docs/charts.js`, `docs/cells.js`,
+  `docs/index.html`, `docs/methods.html`, `references/references.bib`,
+  `manuscript/simulation-memo.md`, `TODO.md`, `README.md`, `PROGRESS.md`,
+  `tables/sim-seat-allocation-*.csv`, `figures/sim/fig13-*`,
+  `figures/sim/fig14-*`, run manifests.
+- **Deleted:** `analysis/07-tail-sensitivity.R`,
+  `tables/sim-tail-sensitivity.csv`.
+
+---
+
+# PREVIOUS TASK: EXPLORER METHODS PAGE (2026-09-28, closed)
+
+**Status:** All steps complete. Committed as 58525ca and pushed to main (live
+on GitHub Pages).
 
 ## Objective
 
@@ -39,8 +176,7 @@ of the tool was built:
       test (`analysis/tests/test-tool-engine.mjs`).
 - [x] 4. Write `docs/methods.html` and run it through `/writing-style`.
 - [x] 5. Add the button and per-control links to `docs/index.html`.
-- [ ] 6. Verify, run a code review, and commit and push on Andrew's approval.
-      (Verified and reviewed; commit pending.)
+- [x] 6. Verify, run a code review, and commit and push on Andrew's approval.
 
 ## Step details
 
@@ -109,8 +245,8 @@ of the tool was built:
 
 ## Open items for Andrew
 
-- (a) Approve the commit and push. After committing, rerun 01, 08, and 09 (or
-  the regen test) and commit the manifests with a clean SHA.
+- (a) Done: committed and pushed in 58525ca. The run manifests still record
+  784d489; they are refreshed by the histogram task, which regenerates them.
 - (b) The `TODO.md` "Source check (2026-09-28)" items: Kraft 2020 p25/p75,
   the KSF quote, the Carbonari reach and effect, the Callen bib mirror in the
   article, confirming `fritsch-carlson-1980`, and the `carbonari-etal-2025`
@@ -209,7 +345,7 @@ choose:
 
 ## Open items for Andrew
 
-- (a) `make_quantile_fn`'s normal tail meets the spline at p90 (and p10)
+- (a) Done 2026-09-28 (quantile functions now come from the score distribution; see the histogram task). Was: `make_quantile_fn`'s normal tail meets the spline at p90 (and p10)
   with a slope about twice the spline's end slope, so the implied density
   halves at the knot. The mixture carries that kink into the curve near p85
   to p90, and the committed R p90 results include it. Worth a methods look

@@ -12,6 +12,10 @@
 ##   D. Share of the p10 deficit closed, by program and coverage.
 ##   E. c(p): composition of the bottom decile by economic disadvantage,
 ##      from published within-subgroup percentiles.
+##   F. The national score distribution (percent of students in each 10-point
+##      bin, NAEP stattype DP:DP) for both years, written to
+##      tables/sim-distribution.csv. mixture.R builds the quantile functions
+##      for the distributional results from it, anchored to the percentiles.
 ##
 ## NO restricted-use microdata is used or required. Every input is a public
 ## NAEP statistic or a literature parameter (see analysis/config/sim-params.yaml).
@@ -163,6 +167,22 @@ for (cell in cells) {
 }
 if (!length(res)) stop("No cells retrieved. Check network/TLS: the script shells out to curl.")
 if (length(failed)) message("\n  !! failed cells: ", paste(failed, collapse=", "))
+
+## F. Score distributions, one request per cell and year (see get_distribution
+## in api-helpers.R for why the years are not combined). A cell whose
+## percentiles came back but whose histogram did not is a hard stop, not a
+## silent gap: every distributional result downstream needs both years.
+message("\nPulling score distributions (DP:DP)...")
+dist <- do.call(rbind, lapply(names(res), function(lab) {
+  cell <- res[[lab]]$cell
+  do.call(rbind, lapply(c(REF_YR, CMP_YR), function(yr) {
+    h <- get_distribution(cell, yr, jurisdiction=JURIS, cache=CACHE)
+    if (is.null(h)) stop("score distribution unavailable for ", lab, " ", yr,
+                         "; rerun, or check the API", call.=FALSE)
+    message("  ok   ", lab, " ", yr, " (", nrow(h), " bins)")
+    data.frame(cell=lab, year=as.integer(yr), h, stringsAsFactors=FALSE)
+  }))
+}))
 message("  rows dropped as suppressed/flagged: ", DROPPED$n)
 
 L <- c("# Simulation outputs: benchmarking the recovery requirement", "",
@@ -315,6 +335,9 @@ flat <- do.call(rbind, lapply(names(res), function(lab) {
     stringsAsFactors=FALSE)))
 }))
 write.csv(flat, file.path(OUT, "sim-quantiles.csv"), row.names=FALSE)
+## The histograms, one row per cell x year x bin: published aggregate
+## percentages only, like the percentiles above.
+write.csv(dist, file.path(OUT, "sim-distribution.csv"), row.names=FALSE)
 
 cflat <- NULL
 for (tgt in list(list(10, cps), list(25, cps25))) {
@@ -376,6 +399,8 @@ writeLines(c(
   paste("config:", CFG),
   paste("jurisdiction:", JURIS),
   paste("api:", API),
+  paste("statistics:", paste(c(unname(PCT_CODE), "SD:SD", "RP:RP (ECONDIS)",
+                               paste(DIST_STAT, "(one request per year)")), collapse=", ")),
   paste("cells_ok:", paste(names(res), collapse=", ")),
   paste("cells_failed:", if (length(failed)) paste(failed, collapse=", ") else "none"),
   paste("cache_dir:", CACHE, "(delete to force refresh)"),

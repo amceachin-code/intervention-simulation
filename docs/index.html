@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- draft v1, 2026-09-28; sources: tables/sim-quantiles.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R -->
+<!-- draft v2, 2026-09-28 (quantile functions from the score distribution); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -150,9 +150,9 @@
         <h2>How the tool works</h2>
         <p>This is a summary. <a href="methods.html">The methods page</a> explains each step in full, with the
         sources behind every preset.</p>
-        <p>NAEP publishes scores at five percentiles. The tool draws a smooth curve through those points
-        to estimate the scores in between. That is why the charts run from the 10th to the 90th
-        percentile and no further.</p>
+        <p>NAEP publishes scores at five percentiles, and the share of students in every 10-point band of
+        the score scale. The tool draws a smooth curve through both to fill in every score level. The charts
+        run from the 10th to the 90th percentile, because scores beyond them are measured much less precisely.</p>
         <p>Changing who takes part does not change how many take part. The tool moves the same number
         of seats between low and high scorers. No group can go above 100 percent; any extra seats go to
         groups that still have room. The boost works the same way, so its average across all
@@ -169,9 +169,10 @@
           <summary>Technical notes</summary>
           <p>The dashed curve is D(p)/S, the 2024 quantile minus the 2019 quantile at percentile p,
           divided by the 2019 national standard deviation S for that subject and grade. The restoration
-          requirement g*(p) = &minus;D(p)/S is the same curve with the sign flipped. Quantile functions are
-          rebuilt from the published percentiles by monotone (Fritsch&ndash;Carlson) interpolation with
-          normal tails. Participation and the treated effect are linear in prior rank with mean held
+          requirement g*(p) = &minus;D(p)/S is the same curve with the sign flipped. Quantile functions pass
+          through the published percentiles and the cumulative 10-point score distribution (NAEP DP:DP),
+          joined by monotone (Fritsch&ndash;Carlson) interpolation; the score bins bound the support, so no
+          tails are assumed. Participation and the treated effect are linear in prior rank with mean held
           fixed; participation is capped at 1 and water-filled to conserve the seat budget.</p>
           <p>"All students" is the distributional estimand: post-program quantiles of the exact
           treated/untreated mixture, calibrated to reproduce the published knots. "Same students" is the

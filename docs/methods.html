@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- draft v1, 2026-09-28; sources: docs/cells.js (tables/sim-quantiles.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
+<!-- draft v2, 2026-09-28 (quantile functions from the score distribution); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -38,7 +38,9 @@
     <p>The explorer uses public NAEP results only. For each subject and grade, we took the national scores at
     the 10th, 25th, 50th, 75th, and 90th percentiles in 2019 and 2024, and the 2019 standard deviation, from
     the NAEP Data Service <a href="#ref-naep">(National Center for Education Statistics [NCES], 2025)</a>.
-    "National" covers public and private schools together. The table shows how far each percentile's score fell.</p>
+    "National" covers public and private schools together. The table shows how far each percentile's score fell.
+    From the same source we also took each year's score distribution: the share of students in every 10-point
+    band of the scale.</p>
     <div class="card">
       <div class="tbl-wrap"><table id="data-tbl"></table></div>
     </div>
@@ -55,11 +57,14 @@
     line in the explorer. Its mirror image, <span class="eq">g*(p) = &minus;D(p) / S</span>, is what a program
     would have to add at percentile p to bring that percentile back to its 2019 score. We call g*(p) the
     restoration requirement.</p>
-    <p>NAEP reports only five percentiles, so the curve between them is estimated. We draw a smooth curve
-    through the five points for each year, separately, that never turns back on itself (monotone cubic
-    interpolation; <a href="#ref-fc">Fritsch &amp; Carlson, 1980</a>). Beyond the 10th and 90th percentiles,
-    the curve follows a normal distribution fitted to the outer points. The explorer shows only the 10th to
-    the 90th percentile, the range the data support. The dots mark the five published points.</p>
+    <p>To draw the whole curve, we use the five percentiles and the score bands together. Stacking the bands
+    from the bottom of the scale up shows what share of students scored below each band's upper edge, so each
+    band gives one point on the curve, 30 to 40 points per year. We add the five published percentiles as points too, so the curve matches them exactly. Through all
+    of these points we draw, for each year separately, a smooth curve that never turns back on itself
+    (monotone cubic interpolation; <a href="#ref-fc">Fritsch &amp; Carlson, 1980</a>). Because the bands
+    cover the whole scale, no part of the curve rests on an assumed shape, including the parts below the 10th
+    percentile and above the 90th. The charts still run only from the 10th to the 90th percentile, for the
+    reason given in <a href="#limits">section 9</a>; the dots mark the five published percentiles.</p>
     <div class="card">
       <h3>The drop, in SD <select id="cell" class="inline-select" aria-label="Subject and grade"></select></h3>
       <div class="chart" id="drop-chart"><div class="tip"></div></div>
@@ -222,6 +227,10 @@
       explorer's engine is a separate JavaScript version. An automated test runs both on the same inputs and
       requires them to agree; they match to about 13 decimal places, far below any digit the page shows. The
       test also checks that the data file matches the published tables value for value.</li>
+      <li><strong>The score bands agree with the percentiles.</strong> A curve drawn through the bands alone,
+      without the five percentiles, lands within about a tenth of a point of every published percentile in every
+      subject, grade, and year. The two sources describe the same distribution, so matching the curve to the
+      percentiles bends it very little.</li>
       <li><strong>A second, independent version agrees.</strong> A Stata version of the core calculation,
       written separately, gives the same drops and requirements as the R version to about 14 decimal places.</li>
       <li><strong>Sanity checks.</strong> With no one taking part, the tool returns the 2024 scores exactly. With
@@ -237,9 +246,11 @@
     <ul id="limits-list">
       <li><strong>Different students.</strong> The drop compares two cohorts. Undoing it on the chart means the
       2024 students would score like the 2019 students did, not that any student recovers a loss.</li>
-      <li><strong>Five points.</strong> Scores between the published percentiles are estimated, and the tool
-      does not go below the 10th or above the 90th. The estimated curve can bend where the true one does not,
-      especially near the ends.</li>
+      <li><strong>Thin tails.</strong> Few students score in the top and bottom tenth, so NAEP measures those
+      scores much less precisely. From NAEP's own standard errors, the drop at the 1st or 99th percentile is
+      uncertain by two to four times as much as at the middle. The charts therefore stop at the 10th and 90th
+      percentiles, though the calculation behind them uses the whole distribution. Inside each 10-point band
+      (a quarter to a third of an SD), the curve is also estimated rather than published.</li>
       <li><strong>Straight-line tilts.</strong> Real programs may target by a cutoff (everyone below the 25th
       percentile) rather than a smooth slope. The tilts show the direction of an effect, not any one
       program's rule.</li>
@@ -293,7 +304,8 @@
       <li id="ref-morton">Morton, E., Goldhaber, D., Kane, T. J., &amp; McEachin, A. (2025). <em>School's in for
       summer: A scalable and effective post-pandemic academic intervention</em> [Research brief]. NWEA.</li>
       <li id="ref-naep">National Center for Education Statistics. (2025). <em>NAEP Data Service API: National
-      percentiles and standard deviations, reading and mathematics, grades 4, 8, and 12, 2019 and 2024</em>.
+      percentiles, standard deviations, and score distributions, reading and mathematics, grades 4, 8, and 12,
+      2019 and 2024</em>.
       Institute of Education Sciences, U.S. Department of Education.
       <a href="https://www.nationsreportcard.gov/api_documentation.aspx">https://www.nationsreportcard.gov/api_documentation.aspx</a></li>
       <li id="ref-robinson">Robinson, C. D., Bisht, B., &amp; Loeb, S. (2025). The inequity of opt-in educational
@@ -363,7 +375,7 @@ function drawDrop(cell) {
   res.knots.forEach((r) => el("circle", { cx: F.x(r.p), cy: F.y(v(r)), r: 4, fill: "var(--series-before)",
                                           stroke: "var(--surface-1)", "stroke-width": 2 }, F.svg));
   hover(F, res.curve, (r) => F.y(v(r)), (r) =>
-    `<div>${ord(r.p)} percentile${PS.includes(r.p) ? " (published)" : " (estimated)"}</div>` +
+    `<div>${ord(r.p)} percentile${PS.includes(r.p) ? " (published)" : " (from the score bands)"}</div>` +
     `<div>Drop: <b>${f3(v(r))}</b> SD, <b>${f1(r.q2024_pts - r.q2019_pts)}</b> points</div>`);
 }
 
