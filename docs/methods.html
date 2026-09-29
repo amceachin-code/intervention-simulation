@@ -1,0 +1,503 @@
+<!doctype html>
+<!-- draft v1, 2026-09-28; sources: docs/cells.js (tables/sim-quantiles.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorer Methods</title>
+<meta name="description" content="How the NAEP Recovery Explorer was built: the data, the drop, the program presets, the gradients, the two ways to count, the checks, and the limits.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="doc">
+  <p class="back"><a href="index.html">&larr; Back to the explorer</a></p>
+  <h1>How the explorer works</h1>
+  <p class="lede">This page explains where each number in the explorer comes from, what each control does, and
+  what the tool leaves out. The tables and charts here read the same data file as the explorer, so they
+  always match it.</p>
+
+  <nav class="card" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol class="toc">
+      <li><a href="#data">The data</a></li>
+      <li><a href="#drop">The drop</a></li>
+      <li><a href="#effects">How much the program helps</a></li>
+      <li><a href="#participation">How many students take part</a></li>
+      <li><a href="#who-takes-part">Who takes part</a></li>
+      <li><a href="#who-gains">Who gains the most</a></li>
+      <li><a href="#counting">Two ways to count</a></li>
+      <li><a href="#checks">The checks</a></li>
+      <li><a href="#limits">The limits</a></li>
+      <li><a href="#references">References</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================ 1 -->
+  <section id="data">
+    <h2>1. The data</h2>
+    <p>The explorer uses public NAEP results only. For each subject and grade, we took the national scores at
+    the 10th, 25th, 50th, 75th, and 90th percentiles in 2019 and 2024, and the 2019 standard deviation, from
+    the NAEP Data Service <a href="#ref-naep">(National Center for Education Statistics [NCES], 2025)</a>.
+    "National" covers public and private schools together. The table shows how far each percentile's score fell.</p>
+    <div class="card">
+      <div class="tbl-wrap"><table id="data-tbl"></table></div>
+    </div>
+    <p>Grade 12 math is reported on a 0 to 300 scale and the other five on a 0 to 500 scale, so NAEP points
+    are not comparable across every row. The explorer therefore measures both the drop and the program in
+    standard deviations (SD), using each subject and grade's own 2019 SD.</p>
+  </section>
+
+  <!-- ============================================================ 2 -->
+  <section id="drop">
+    <h2>2. The drop</h2>
+    <p>At each percentile p, the drop is the 2024 score minus the 2019 score at that percentile, written
+    D(p). Dividing by the 2019 SD, S, puts it in SD units: <span class="eq">D(p) / S</span>. That is the dashed
+    line in the explorer. Its mirror image, <span class="eq">g*(p) = &minus;D(p) / S</span>, is what a program
+    would have to add at percentile p to bring that percentile back to its 2019 score. We call g*(p) the
+    restoration requirement.</p>
+    <p>NAEP reports only five percentiles, so the curve between them is estimated. We draw a smooth curve
+    through the five points for each year, separately, that never turns back on itself (monotone cubic
+    interpolation; <a href="#ref-fc">Fritsch &amp; Carlson, 1980</a>). Beyond the 10th and 90th percentiles,
+    the curve follows a normal distribution fitted to the outer points. The explorer shows only the 10th to
+    the 90th percentile, the range the data support. The dots mark the five published points.</p>
+    <div class="card">
+      <h3>The drop, in SD <select id="cell" class="inline-select" aria-label="Subject and grade"></select></h3>
+      <div class="chart" id="drop-chart"><div class="tip"></div></div>
+      <p class="axis-cap">Percentile, from lowest-scoring students (left) to highest (right)</p>
+    </div>
+    <p>These are different students in each year. The 2024 fourth graders are not the 2019 fourth graders, so
+    the drop compares two groups of students. It is a decline across cohorts, not a measure of what any one
+    student lost.</p>
+  </section>
+
+  <!-- ============================================================ 3 -->
+  <section id="effects">
+    <h2>3. How much the program helps</h2>
+    <p>The effect control sets the average boost, in SD, for a student who takes part. The buttons under it
+    load estimates from research.</p>
+    <div class="card">
+      <div class="tbl-wrap"><table id="effects-tbl"></table></div>
+    </div>
+    <p>The two tutoring estimates come from a meta-analysis that sorted tutoring programs by how many
+    students they served <a href="#ref-ksf">(Kraft, Schueler, &amp; Falken, 2024)</a>. We use the averages for
+    U.S. programs measured with standardized tests, with math and reading pooled. Programs serving 1,000 or
+    more students averaged <span data-effect="tut_scale"></span> SD, but that estimate is not statistically
+    different from zero and rests on few studies; the full sample has only nine studies of programs that size.
+    The explorer starts there anyway, because a national recovery effort would have to run at that scale.
+    Programs serving 400 to 999 students averaged <span data-effect="tut_mid"></span> SD.</p>
+    <p>The two summer estimates show how far practice fell short of research. A meta-analysis of summer math
+    programs found an average effect of about <span data-effect="summer_math"></span> SD; it covers math only
+    <a href="#ref-lynch">(Lynch, An, &amp; Mancenido, 2022)</a>. Summer programs that eight districts ran in
+    2022 raised math scores by about <span data-effect="summer_real"></span> SD for students who attended at
+    least one day, and had no detectable effect on reading <a href="#ref-callen">(Callen et al., 2025)</a>. A
+    follow-up found about the same in 2023 <a href="#ref-morton">(Morton et al., 2025)</a>.</p>
+    <p>Each estimate is an effect for students who took part, which is how the effect control is defined.</p>
+    <p>For scale, the last column places each estimate in the distribution of 1,942 effects from 747
+    randomized trials of education programs with standardized test outcomes
+    <a href="#ref-kraft2020">(Kraft, 2020)</a>.</p>
+    <p>One caution applies to every estimate. Studies measure effects in SD of their own samples, and those
+    samples are usually narrower than the whole nation. Scores vary less in a narrow sample, so the same gain
+    in points is a larger number of SD there than on the national scale
+    <a href="#ref-kraft2020">(Kraft, 2020)</a>. The explorer applies each estimate to the national SD without
+    shrinking it, so it gives programs the benefit of the doubt.</p>
+  </section>
+
+  <!-- ============================================================ 4 -->
+  <section id="participation">
+    <h2>4. How many students take part</h2>
+    <p>The share control sets the fraction of all students in the grade who take part. This is the share who
+    actually take part, not the share who are eligible or offered a seat.</p>
+    <div class="card">
+      <div class="tbl-wrap"><table id="part-tbl"></table></div>
+    </div>
+    <p>The district tutoring figure comes from a national survey of schools, the NCES School Pulse Panel.
+    Among districts that offer high-dosage tutoring, about <span data-part="hdt_dist"></span> of district
+    students take part <a href="#ref-ksf">(as reported by Kraft, Schueler, &amp; Falken, 2024, p. 14)</a>. It
+    describes only districts that offer tutoring, so as a national share it is generous.</p>
+    <p>The sign-up rate comes from a California charter network that offered all of its middle and high school
+    students free, on-demand online tutoring in spring 2021. Without any encouragement,
+    <span data-part="optin"></span> of students used it at least once
+    <a href="#ref-robinson">(Robinson, Bisht, &amp; Loeb, 2025)</a>. That is a share of students offered the
+    service, and the service was lighter than high-dosage tutoring.</p>
+    <p>The summer figure is the average share of students in grades 1 to 8 who attended at least one day of
+    summer programs in eight districts in 2022, 12.7 percent, rounded to <span data-part="summer"></span>
+    <a href="#ref-callen">(Callen et al., 2025)</a>. Districts that recruited low performers reached only about
+    one in four of the students they targeted.</p>
+  </section>
+
+  <!-- ============================================================ 5 -->
+  <section id="who-takes-part">
+    <h2>5. Who takes part</h2>
+    <p>The five buttons tilt participation toward low or high scorers. Each is a straight line in percentile,
+    <span class="eq">w(p) = 1 + k(p &minus; 50) / 40</span>, where k sets the slope. The line averages 1 across
+    all students, so a tilt moves seats between score levels without changing how many students take part.
+    The buttons are named by the ratio of the line at the 90th percentile to the line at the 10th: 1:4, 1:2,
+    1:1, 2:1, and 4:1.</p>
+    <p>No score level can have more than 100 percent taking part. When a tilt would push a level past 100
+    percent, the tool fills that level and passes its extra seats to the levels that still have room, in
+    proportion to the line, until every seat is placed. This is called water-filling. It keeps the total
+    number of seats fixed, so a large program with a strong tilt flattens at the top.</p>
+    <div class="card">
+      <h3 id="tilt-title"></h3>
+      <div class="legend" id="tilt-legend"></div>
+      <div class="chart" id="tilt-chart"><div class="tip"></div></div>
+      <p class="axis-cap">Percentile, from lowest-scoring students (left) to highest (right)</p>
+    </div>
+    <p>Who signs up matters. In the charter network described in <a href="#participation">section 4</a>,
+    22.7 percent of students who had passed all their courses used the optional tutoring, compared with 11.6
+    percent of students with a D or F <a href="#ref-robinson">(Robinson, Bisht, &amp; Loeb, 2025)</a>. Stronger
+    students signed up about twice as often, a pattern the "More high scorers" button approximates.</p>
+    <p>Programs can push the other way by recruiting low scorers, but targeting is imperfect. Summer programs
+    that recruited struggling students did enroll more low performers than programs open to all
+    <a href="#ref-callen">(Callen et al., 2025)</a>. In a study of recovery programs, though, 31 percent of the
+    students in a math intervention meant for students at or below the 20th percentile scored above the 40th
+    <a href="#ref-carb24">(Carbonari et al., 2024)</a>. The explorer starts at "All equally."</p>
+  </section>
+
+  <!-- ============================================================ 6 -->
+  <section id="who-gains">
+    <h2>6. Who gains the most</h2>
+    <p>The second set of buttons tilts the boost the same way, with the same five lines. The boost's average
+    across all students stays at the value of the effect control, so a tilt toward low scorers gives them more
+    and high scorers less, with no change in the average.</p>
+    <div class="card">
+      <div class="tbl-wrap"><table id="tilt-tbl"></table></div>
+    </div>
+    <p>The evidence on whether low or high achievers gain more from these programs is thin. The tutoring
+    meta-analysis cites earlier work suggesting tutoring may help lower performers more, but does not test it
+    <a href="#ref-ksf">(Kraft, Schueler, &amp; Falken, 2024)</a>. The summer meta-analysis had no measure of
+    students' prior achievement <a href="#ref-lynch">(Lynch, An, &amp; Mancenido, 2022)</a>. The 2022 summer
+    study found little consistent difference in effects by students' prior scores
+    <a href="#ref-callen">(Callen et al., 2025)</a>. One tutoring evaluation, cited in a study of recovery
+    programs, found larger effects for higher performers <a href="#ref-carb25">(Carbonari et al., 2025)</a>.
+    The explorer therefore starts at "All equally" and treats the other buttons as what-ifs.</p>
+    <div class="card">
+      <h3>Effects in programs for low achievers and programs for everyone</h3>
+      <div class="tbl-wrap"><table id="kraft-tbl"></table></div>
+    </div>
+    <p>The table uses Kraft's <a href="#ref-kraft2023">(2023)</a> collection of randomized trials with
+    standardized test outcomes. We coded each study by the students it served: low achievers, everyone, or
+    another group. <span id="kraft-count"></span> That does not show that targeted programs work better. A study
+    of low achievers measures its effect against a narrower group whose scores vary less, so the same gain in
+    points is a larger number of SD <a href="#ref-kraft2020">(Kraft, 2020)</a>. On the national scale the
+    explorer uses, those effects would be smaller. None of the sources we reviewed compares the effects of
+    targeted and universal versions of the same program.</p>
+  </section>
+
+  <!-- ============================================================ 7 -->
+  <section id="counting">
+    <h2>7. Two ways to count</h2>
+    <p>When only some students at a score level take part, "how much did the 10th percentile gain?" has two
+    reasonable answers, and the fifth control picks between them.</p>
+    <h3>Same students</h3>
+    <p>Follow the students who started at percentile p. If a share &pi;(p) of them take part and each gains
+    &delta;(p), the group's average rises by <span class="eq">&pi;(p) &times; &delta;(p)</span>. This counts
+    everyone who started at p, whether or not they took part.</p>
+    <h3>All students</h3>
+    <p>Line everyone up again after the program and read off the new score at percentile p. Students who took
+    part move up past classmates who did not, so the person standing at the 10th percentile afterward may not
+    be someone who started there. The tool computes this exactly. It treats the population after the program
+    as a mix of students who took part (shifted up by their boost) and students who did not (unchanged), and
+    reads the percentiles of that mix. This is the explorer's main measure, because NAEP itself reports
+    percentiles of whoever is tested.</p>
+    <p>The two agree when everyone at a score level takes part, or no one does. In between they differ, and
+    the difference grows with the boost. A program that reaches only part of each score level spreads scores
+    out, because it splits students at the same starting point into two groups. That is why "All students" can
+    show the 90-10 gap widening even when the program is spread evenly.</p>
+    <div class="card">
+      <h3 id="count-title"></h3>
+      <div class="tbl-wrap"><table id="count-tbl"></table></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 8 -->
+  <section id="checks">
+    <h2>8. The checks</h2>
+    <ul>
+      <li><strong>The public data match the restricted-use analysis.</strong> The companion analysis of NAEP
+      student records reports how much more the 10th percentile fell than the 90th in each subject and grade.
+      The five public percentiles reproduce that figure in all six, to one decimal (the last two columns of the
+      table in <a href="#data">section 1</a>).</li>
+      <li><strong>The explorer matches the research code.</strong> The simulations were written in R, and the
+      explorer's engine is a separate JavaScript version. An automated test runs both on the same inputs and
+      requires them to agree; they match to about 13 decimal places, far below any digit the page shows. The
+      test also checks that the data file matches the published tables value for value.</li>
+      <li><strong>A second, independent version agrees.</strong> A Stata version of the core calculation,
+      written separately, gives the same drops and requirements as the R version to about 14 decimal places.</li>
+      <li><strong>Sanity checks.</strong> With no one taking part, the tool returns the 2024 scores exactly. With
+      everyone taking part and the same boost for all, every percentile moves up by exactly that boost, and the
+      two ways to count agree. Every tilt keeps the share taking part and the average boost where the controls
+      set them.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ 9 -->
+  <section id="limits">
+    <h2>9. The limits</h2>
+    <ul id="limits-list">
+      <li><strong>Different students.</strong> The drop compares two cohorts. Undoing it on the chart means the
+      2024 students would score like the 2019 students did, not that any student recovers a loss.</li>
+      <li><strong>Five points.</strong> Scores between the published percentiles are estimated, and the tool
+      does not go below the 10th or above the 90th. The estimated curve can bend where the true one does not,
+      especially near the ends.</li>
+      <li><strong>Straight-line tilts.</strong> Real programs may target by a cutoff (everyone below the 25th
+      percentile) rather than a smooth slope. The tilts show the direction of an effect, not any one
+      program's rule.</li>
+      <li><strong>Same gain for similar students.</strong> The tool assumes that, among students with the same
+      score, those who take part would gain as much as those who do not. If students who sign up would have
+      gained more (or less), the results are too pessimistic (or too optimistic).</li>
+      <li><strong>One program, one year, no fade-out.</strong> The boost is added once, in full. The tool does
+      not model effects that fade over later years, or that build over several years of a program.</li>
+      <li><strong>Generous effects.</strong> Research effects are applied to the national SD without shrinking,
+      as <a href="#effects">section 3</a> explains. The large-program tutoring estimate is also not
+      statistically different from zero.</li>
+      <li><strong>No costs.</strong> The tool says nothing about what a program costs or whether districts could
+      staff it.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ 10 -->
+  <section id="references">
+    <h2>10. References</h2>
+    <ul class="refs" id="refs-list">
+      <li id="ref-callen">Callen, I., Carbonari, M. V., DeArmond, M., Dewey, D., Dizon-Ross, E., Goldhaber, D.,
+      Isaacs, J., Kane, T. J., Kuhfeld, M., McDonald, A., McEachin, A., Morton, E., Muroga, A., &amp; Staiger,
+      D. O. (2025). Summer school as a learning loss recovery strategy after COVID-19: Evidence from summer 2022.
+      <em>American Educational Research Journal, 62</em>(5), 982&ndash;1018.
+      <a href="https://doi.org/10.3102/00028312251355990">https://doi.org/10.3102/00028312251355990</a></li>
+      <li id="ref-carb24">Carbonari, M. V., Davison, M., DeArmond, M., Dewey, D., Dizon-Ross, E., Goldhaber, D.,
+      Hashim, A. K., Kane, T. J., McEachin, A., Morton, E., Muroga, A., Patterson, T., &amp; Staiger, D. O.
+      (2024). The impact and implementation of academic interventions during COVID-19: Evidence from the Road to
+      Recovery project. <em>AERA Open, 10</em>.</li>
+      <li id="ref-carb25">Carbonari, M. V., DeArmond, M., Dewey, D., Dizon-Ross, E., Goldhaber, D., Kane, T. J.,
+      McDonald, A., McEachin, A., Morton, E., Muroga, A., Salazar, A., &amp; Staiger, D. O. (2025). Impacts of
+      academic recovery interventions on student achievement in 2022 to 2023. <em>Educational Evaluation and
+      Policy Analysis</em>. Advance online publication.
+      <a href="https://doi.org/10.3102/01623737251400377">https://doi.org/10.3102/01623737251400377</a></li>
+      <li id="ref-fc">Fritsch, F. N., &amp; Carlson, R. E. (1980). Monotone piecewise cubic interpolation.
+      <em>SIAM Journal on Numerical Analysis, 17</em>(2), 238&ndash;246.
+      <a href="https://doi.org/10.1137/0717021">https://doi.org/10.1137/0717021</a></li>
+      <li id="ref-kraft2020">Kraft, M. A. (2020). Interpreting effect sizes of education interventions.
+      <em>Educational Researcher, 49</em>(4), 241&ndash;253.
+      <a href="https://doi.org/10.3102/0013189X20912798">https://doi.org/10.3102/0013189X20912798</a></li>
+      <li id="ref-kraft2023">Kraft, M. A. (2023). The effect size benchmark that matters most: Education
+      interventions often fail. <em>Educational Researcher, 52</em>(3), 183&ndash;187.
+      <a href="https://doi.org/10.3102/0013189X231155154">https://doi.org/10.3102/0013189X231155154</a></li>
+      <li id="ref-ksf">Kraft, M. A., Schueler, B. E., &amp; Falken, G. (2024). <em>What impacts should we expect
+      from tutoring at scale? Exploring meta-analytic generalizability</em> (EdWorkingPaper No. 24-1031).
+      Annenberg Institute at Brown University.
+      <a href="https://doi.org/10.26300/zygj-m525">https://doi.org/10.26300/zygj-m525</a></li>
+      <li id="ref-lynch">Lynch, K., An, L., &amp; Mancenido, Z. (2022). <em>The impact of summer programs on
+      student mathematics achievement: A meta-analysis</em> (EdWorkingPaper No. 21-379). Annenberg Institute at
+      Brown University. <a href="https://doi.org/10.26300/da7r-4z83">https://doi.org/10.26300/da7r-4z83</a></li>
+      <li id="ref-morton">Morton, E., Goldhaber, D., Kane, T. J., &amp; McEachin, A. (2025). <em>School's in for
+      summer: A scalable and effective post-pandemic academic intervention</em> [Research brief]. NWEA.</li>
+      <li id="ref-naep">National Center for Education Statistics. (2025). <em>NAEP Data Service API: National
+      percentiles and standard deviations, reading and mathematics, grades 4, 8, and 12, 2019 and 2024</em>.
+      Institute of Education Sciences, U.S. Department of Education.
+      <a href="https://www.nationsreportcard.gov/api_documentation.aspx">https://www.nationsreportcard.gov/api_documentation.aspx</a></li>
+      <li id="ref-robinson">Robinson, C. D., Bisht, B., &amp; Loeb, S. (2025). The inequity of opt-in educational
+      resources and an intervention to increase equitable access. <em>Educational Researcher</em>.
+      <a href="https://doi.org/10.3102/0013189X251331518">https://doi.org/10.3102/0013189X251331518</a></li>
+    </ul>
+    <p class="note" id="provenance"></p>
+  </section>
+
+  <p class="back"><a href="index.html">&larr; Back to the explorer</a></p>
+</main>
+
+<script src="cells.js"></script>
+<script src="engine.js"></script>
+<script src="charts.js"></script>
+<script>
+"use strict";
+// Every table, chart, and config value on this page is read from cells.js
+// or computed by engine.js, the same files the explorer uses, so the page
+// cannot disagree with it. The only numbers typed into the prose are facts
+// from the cited sources (study counts, unrounded rates), each next to its
+// citation.
+const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const { ord, el, path, hover, frame, CURVE_P } = globalThis.NAEPCharts;
+const { f1, f2, f3, fmtPct, cellName, configValue, chipName, tiltName, provenanceText } = globalThis.NAEPShared;
+const PS = D.percentiles;
+const $ = (id) => document.getElementById(id);
+const at = (cell, key, p) => cell[key][PS.indexOf(p)];
+
+const G_DEFAULT = configValue(D.benchmarks, D.treated_effect);
+const C_DEFAULT = configValue(D.participation, "hdt_dist");
+
+// Each preset's readable citation is the config's `cite` field; a preset
+// without one shows the config's `source` key string instead.
+const sourceText = (x) => x.cite || x.source;
+
+// ------------------------------------------------------------ 1. data table
+(function dataTable() {
+  const rows = D.cells.map((c) => {
+    const dc = at(c, "d", 90) - at(c, "d", 10);
+    return `<tr><td>${cellName(c.label)}</td><td>${f1(c.sd2019)}</td>` +
+      PS.map((p) => `<td>${f1(at(c, "d", p))}</td>`).join("") +
+      `<td>${f1(dc)}</td><td>${f1(D.table2a[c.label])}</td></tr>`;
+  }).join("");
+  $("data-tbl").innerHTML = `<thead><tr><th>Subject and grade</th><th>2019 SD</th>` +
+    PS.map((p) => `<th>${ord(p)}</th>`).join("") +
+    `<th>90th minus 10th</th><th>Restricted-use check</th></tr></thead><tbody>${rows}</tbody>` +
+    `<caption>NAEP points. The percentile columns are the 2024 score minus the 2019 score (negative means a
+    drop). "90th minus 10th" is how much more the 10th percentile fell than the 90th; the last column is the
+    same figure from the companion analysis of NAEP student records.</caption>`;
+})();
+
+// ------------------------------------------------------------ 2. drop chart
+const cellSel = $("cell");
+D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
+function currentCell() { return D.cells.find((c) => c.label === cellSel.value); }
+
+function drawDrop(cell) {
+  // The no-program scenario gives the interpolated drop at every percentile.
+  const res = E.scenario(cell, PS, { effect: 0, share: 0, kPart: 0, kEffect: 0, mode: "group" }, CURVE_P);
+  const v = (r) => -r.gStar;
+  const vals = res.curve.map(v);
+  const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals), pad = (hi - lo) * 0.08;
+  const F = frame("drop-chart", 720, 260, [lo - pad, hi > 0 ? hi + pad : 0], f2, 5);
+  el("path", { d: path(res.curve.map((r) => [F.x(r.p), F.y(v(r))])), fill: "none",
+               stroke: "var(--series-before)", "stroke-width": 2, "stroke-dasharray": "5 4" }, F.svg);
+  res.knots.forEach((r) => el("circle", { cx: F.x(r.p), cy: F.y(v(r)), r: 4, fill: "var(--series-before)",
+                                          stroke: "var(--surface-1)", "stroke-width": 2 }, F.svg));
+  hover(F, res.curve, (r) => F.y(v(r)), (r) =>
+    `<div>${ord(r.p)} percentile${PS.includes(r.p) ? " (published)" : " (estimated)"}</div>` +
+    `<div>Drop: <b>${f3(v(r))}</b> SD, <b>${f1(r.q2024_pts - r.q2019_pts)}</b> points</div>`);
+}
+
+// ------------------------------------------------------------ 3, 4. presets
+// Where an effect sits in Kraft's (2020) distribution of RCT effects. Only
+// the 10th, 50th, and 90th: Table 1 reports deciles, so the config's p25 and
+// p75 are interpolations, not published values (see TODO.md).
+const KRAFT2020_REPORTED = ["p10", "p50", "p90"];
+const KRAFT2020 = KRAFT2020_REPORTED.map((k) => {
+  if (!(k in D.kraft2020)) throw new Error(`cells.js kraft2020 has no ${k}`);
+  return [Number(k.slice(1)), D.kraft2020[k]];
+});
+function kraftBracket(g) {
+  const ks = KRAFT2020;
+  if (g < ks[0][1]) return `below the ${ord(ks[0][0])}`;
+  for (let i = 0; i < ks.length; i++) {
+    if (g === ks[i][1]) return `at the ${ord(ks[i][0])}`;
+    if (i + 1 < ks.length && g < ks[i + 1][1]) return `between the ${ord(ks[i][0])} and ${ord(ks[i + 1][0])}`;
+  }
+  return `above the ${ord(ks[ks.length - 1][0])}`;
+}
+$("effects-tbl").innerHTML = `<thead><tr><th>Button</th><th>Effect (SD)</th><th class="txt">Source</th>` +
+  `<th class="txt">Among education RCTs</th></tr></thead><tbody>` +
+  D.benchmarks.map((b) => `<tr><td>${chipName(b)}</td><td>${f3(b.g)}</td><td class="txt">${sourceText(b)}</td>` +
+    `<td class="txt">${kraftBracket(b.g)} percentile</td></tr>`).join("") +
+  `</tbody><caption>The explorer starts at ${f3(G_DEFAULT.g)} SD, the first row.
+  Education RCT effects (Kraft, 2020, Table 1): ${KRAFT2020
+    .map(([p, v]) => `${ord(p)} percentile ${f2(v)}`).join(", ")} SD.</caption>`;
+$("part-tbl").innerHTML = `<thead><tr><th>Button</th><th>Share taking part</th><th class="txt">Source</th></tr></thead><tbody>` +
+  D.participation.map((p) => `<tr><td>${chipName(p)}</td><td>${fmtPct(p.c)}</td><td class="txt">${sourceText(p)}</td></tr>`).join("") +
+  `</tbody><caption>The explorer starts at ${fmtPct(C_DEFAULT.c)}, the district tutoring figure.</caption>`;
+
+// ------------------------------------------------------------ 5, 6. tilts
+// Button names from the explorer (shared labels), so the reader can match
+// them up.
+const PART_NAMES = Object.fromEntries(E.TILT_LEVELS.map((l) => [l.id, tiltName("part", l.id)]));
+const EFFECT_NAMES = Object.fromEntries(E.TILT_LEVELS.map((l) => [l.id, tiltName("effect", l.id)]));
+// Strong tilts solid, mild tilts dashed; low-scorer tilts blue, high-scorer
+// tilts orange, neutral gray.
+const TILT_STYLE = {
+  "strong-neg": { stroke: "var(--series-after)" }, "mild-neg": { stroke: "var(--series-after)", dash: "5 4" },
+  neutral: { stroke: "var(--series-before)" },
+  "mild-pos": { stroke: "var(--series-effect)", dash: "5 4" }, "strong-pos": { stroke: "var(--series-effect)" },
+};
+(function tiltChart() {
+  const B = C_DEFAULT.c;
+  $("tilt-title").textContent = `Share taking part at each percentile when ${fmtPct(B)} of students take part`;
+  $("tilt-legend").innerHTML = E.TILT_LEVELS.map((l) => {
+    const s = TILT_STYLE[l.id];
+    return `<span><i class="sw${s.dash ? " dash" : ""}" style="border-color:${s.stroke}"></i>${PART_NAMES[l.id]} (${l.ratio})</span>`;
+  }).join("");
+  const lines = E.TILT_LEVELS.map((l) => ({ l, v: E.participation(B, l.k)(CURVE_P) }));
+  const top = Math.max(...lines.flatMap((x) => x.v));
+  const F = frame("tilt-chart", 720, 260, [0, Math.min(1, top * 1.1)], (v) => fmtPct(v), 5);
+  lines.forEach(({ l, v }) => {
+    const s = TILT_STYLE[l.id];
+    el("path", { d: path(CURVE_P.map((p, i) => [F.x(p), F.y(v[i])])), fill: "none", stroke: s.stroke,
+                 "stroke-width": 2, ...(s.dash ? { "stroke-dasharray": s.dash } : {}) }, F.svg);
+  });
+  const rows = CURVE_P.map((p, i) => ({ p, v: lines.map((x) => x.v[i]) }));
+  // The hover dot sits on the neutral line, found by id rather than position.
+  const iNeutral = E.TILT_LEVELS.findIndex((l) => l.id === "neutral");
+  hover(F, rows, (r) => F.y(r.v[iNeutral]), (r) => `<div>${ord(r.p)} percentile</div>` +
+    E.TILT_LEVELS.map((l, j) => `<div>${PART_NAMES[l.id]}: <b>${fmtPct(r.v[j])}</b></div>`).join(""));
+})();
+(function tiltTable() {
+  const B = C_DEFAULT.c, g = G_DEFAULT.g;
+  const rows = E.TILT_LEVELS.map((l) => {
+    const pr = E.participation(B, l.k)([10, 90]);
+    const w = E.tilt(l.k);
+    return `<tr><td>${l.ratio}</td><td>${f2(l.k)}</td><td class="txt">${PART_NAMES[l.id]}</td><td>${fmtPct(pr[0])}</td><td>${fmtPct(pr[1])}</td>` +
+      `<td class="txt">${EFFECT_NAMES[l.id]}</td><td>${f3(g * w(10))}</td><td>${f3(g * w(90))}</td></tr>`;
+  }).join("");
+  $("tilt-tbl").innerHTML = `<thead><tr><th>90th:10th</th><th>k</th><th class="txt">"Who takes part"</th><th>10th</th><th>90th</th>` +
+    `<th class="txt">"Who gains the most"</th><th>10th (SD)</th><th>90th (SD)</th></tr></thead><tbody>${rows}</tbody>` +
+    `<caption>The same five lines drive both controls. Participation is shown with ${fmtPct(B)} taking part,
+    and the boost with an average of ${f3(g)} SD, the explorer's starting values.</caption>`;
+})();
+
+// Kraft (2023): programs for low achievers versus programs for everyone.
+(function kraftTable() {
+  const NAMES = { universal: "Everyone", targeted_low: "Low achievers", pooled: "All studies" };
+  const groups = [...new Set(D.kraft_target.map((r) => `${r.grade}|${r.subject}`))];
+  const COLS = ["targeted_low", "universal", "pooled"];
+  const td = (r) => r ? `<td${r.thin ? ' class="thin"' : ""}>${f2(r.p50)} <span class="thin-note">(${r.studies}${r.thin ? ", few" : ""})</span></td>` : "<td>n/a</td>";
+  // One lookup per grade and subject, used by both the table and the count.
+  const byGroup = groups.map((gs) => {
+    const [grade, subject] = gs.split("|");
+    const pick = Object.fromEntries(COLS.map((t) => [t, D.kraft_target.find((r) =>
+      String(r.grade) === grade && r.subject === subject && r.target === t)]));
+    return { grade, subject, pick };
+  });
+  const rows = byGroup.map(({ grade, subject, pick }) =>
+    `<tr><td>${subject}, grade ${grade}</td>${COLS.map((t) => td(pick[t])).join("")}</tr>`).join("");
+  const pairs = byGroup.map(({ pick }) => [pick.targeted_low, pick.universal]).filter(([a, b]) => a && b);
+  const larger = pairs.filter(([a, b]) => a.p50 > b.p50).length;
+  const words = ["none", "one", "two", "three", "four", "five", "six", "seven", "eight"];
+  $("kraft-count").textContent = `In ${words[larger] || larger} of the ${words[pairs.length] || pairs.length} ` +
+    `subject and grade combinations, the median effect is larger in studies of low achievers.`;
+  $("kraft-tbl").innerHTML = `<thead><tr><th>Subject and grade</th>${COLS
+    .map((t) => `<th>${NAMES[t]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody>` +
+    `<caption>Median effect in SD across randomized trials with standardized tests in Kraft's (2023) data, by
+    whom the study served; number of studies in parentheses ("few" means fewer than 10). "All studies"
+    includes studies that served other groups or could not be classified.</caption>`;
+})();
+
+// ------------------------------------------------------------ 7. counting
+function drawCounting(cell) {
+  const g = G_DEFAULT.g, B = C_DEFAULT.c;
+  const run = (mode, share) => E.scenario(cell, PS, { effect: g, share, kPart: 0, kEffect: 0, mode }, [10, 50, 90]);
+  const grp = run("group", B), dist = run("distributional", B);
+  $("count-title").textContent = `Example: ${cellName(cell.label)}, ${fmtPct(B)} taking part at every score level, ` +
+    `${f3(g)} SD boost`;
+  const rows = [10, 50, 90].map((p) => {
+    const a = grp.knots.find((r) => r.p === p), b = dist.knots.find((r) => r.p === p);
+    return `<tr><td>${ord(p)}</td><td>${f3(a.gain)}</td><td>${f3(b.gain)}</td></tr>`;
+  }).join("");
+  $("count-tbl").innerHTML = `<thead><tr><th>Percentile</th><th>Same students</th><th>All students</th></tr></thead>` +
+    `<tbody>${rows}<tr><td>90-10 gap, points</td><td>${f1(grp.gap9010.post)}</td><td>${f1(dist.gap9010.post)}</td></tr></tbody>` +
+    `<caption>Drop undone, in SD, under each way of counting. Without the program the 90-10 gap is
+    ${f1(grp.gap9010.y2024)} points (${f1(grp.gap9010.y2019)} in 2019). Change the subject and grade in
+    <a href="#drop">section 2</a> to update this example.</caption>`;
+}
+
+// ------------------------------------------------------------ prose numbers
+document.querySelectorAll("[data-effect]").forEach((n) => { n.textContent = f3(configValue(D.benchmarks, n.dataset.effect).g); });
+document.querySelectorAll("[data-part]").forEach((n) => { n.textContent = fmtPct(configValue(D.participation, n.dataset.part).c); });
+
+// ------------------------------------------------------------ provenance
+$("provenance").textContent = provenanceText(D);
+
+function render() { const c = currentCell(); drawDrop(c); drawCounting(c); }
+cellSel.addEventListener("change", render);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+/* Shared styles for the explorer (index.html) and its methods page
+   (methods.html). One copy, so the two pages cannot drift apart. */
+/* Colors are role tokens. Light is the default; dark is its own set of
+   steps (not an automatic inversion), applied for an OS dark preference
+   unless the page is stamped light, or when stamped dark. */
+:root {
+  color-scheme: light;
+  --surface-0: #f5f4f1;
+  --surface-1: #fcfcfb;
+  --border: #dddcd7;
+  --grid: #ebeae6;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #77766f;
+  --accent: #2a78d6;
+  --accent-soft: #cde2fb;
+  --series-before: #77766f;   /* D(p)/S: the neutral reference */
+  --series-after: #2a78d6;    /* position after the program */
+  --series-part: #2a78d6;
+  --series-effect: #eb6834;
+  --closed-fill: rgba(42, 120, 214, 0.16);
+  --over-fill: rgba(235, 104, 52, 0.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-0: #121211;
+    --surface-1: #1a1a19;
+    --border: #383835;
+    --grid: #2a2a28;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a998f;
+    --accent: #3987e5;
+    --accent-soft: #1c3a5e;
+    --series-before: #9a998f;
+    --series-after: #3987e5;
+    --series-part: #3987e5;
+    --series-effect: #d95926;
+    --closed-fill: rgba(57, 135, 229, 0.22);
+    --over-fill: rgba(217, 89, 38, 0.25);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-0: #121211;
+  --surface-1: #1a1a19;
+  --border: #383835;
+  --grid: #2a2a28;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #9a998f;
+  --accent: #3987e5;
+  --accent-soft: #1c3a5e;
+  --series-before: #9a998f;
+  --series-after: #3987e5;
+  --series-part: #3987e5;
+  --series-effect: #d95926;
+  --closed-fill: rgba(57, 135, 229, 0.22);
+  --over-fill: rgba(217, 89, 38, 0.25);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--surface-0); color: var(--text-primary);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.5rem; margin: 0 0 4px; }
+h2 { font-size: 1rem; margin: 0 0 8px; }
+.lede { color: var(--text-secondary); margin: 0 0 20px; max-width: 70ch; }
+.layout { display: grid; grid-template-columns: 330px 1fr; gap: 20px; align-items: start; }
+/* minmax(0, 1fr) and min-width: 0 let a wide table scroll inside its own
+   box instead of stretching the whole page past a phone's width. */
+.layout > * { min-width: 0; }
+@media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
+.stack > * + * { margin-top: 16px; }
+
+/* Controls */
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+legend, .ctl-label { font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 6px; display: block; }
+.ctl-help { color: var(--text-muted); font-size: 0.8rem; margin: 4px 0 0; }
+.ctl-row { display: flex; align-items: center; gap: 10px; }
+.ctl-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
+.ctl-value { font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600; }
+select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface-1); color: var(--text-primary);
+         border: 1px solid var(--border); border-radius: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; cursor: pointer;
+        border: 1px solid var(--border); background: transparent; color: var(--text-secondary); text-align: left; }
+.chip:hover { border-color: var(--accent); color: var(--text-primary); }
+.seg { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.seg.two { grid-template-columns: repeat(2, 1fr); }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; cursor: pointer;
+             color: var(--text-secondary); border-left: 1px solid var(--border); }
+.seg label:first-of-type { border-left: 0; }
+.seg input:checked + label { background: var(--accent-soft); color: var(--text-primary); font-weight: 600; }
+.seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* Headline tiles */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } }
+.tile .k { color: var(--text-secondary); font-size: 0.8rem; }
+.tile .v { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tile .s { color: var(--text-muted); font-size: 0.78rem; }
+
+/* Charts */
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.axis text { fill: var(--text-muted); font-size: 11px; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.zero { stroke: var(--text-muted); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
+.sw.dash { border-top-style: dashed; }
+.sw.box { height: 10px; border: 0; border-radius: 2px; }
+.small-multiples { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .small-multiples { grid-template-columns: 1fr; } }
+.tip { position: absolute; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border);
+       border-radius: 6px; padding: 6px 8px; font-size: 0.78rem; box-shadow: 0 2px 8px rgba(0,0,0,.12);
+       white-space: nowrap; display: none; z-index: 2; }
+.tip b { font-variant-numeric: tabular-nums; }
+
+/* Table */
+.tbl-wrap { overflow-x: auto; }
+caption { caption-side: bottom; text-align: left; color: var(--text-muted); font-size: 0.78rem; padding-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--text-secondary); font-weight: 600; font-size: 0.78rem; }
+.note { color: var(--text-muted); font-size: 0.8rem; max-width: 80ch; }
+.note p { margin: 0 0 8px; }
+.note h2 { color: var(--text-primary); }
+.note details { margin-top: 8px; }
+.note summary { cursor: pointer; color: var(--text-secondary); font-weight: 600; }
+.intro { margin-bottom: 20px; }
+.intro > summary { cursor: pointer; font-weight: 650; font-size: 1rem; }
+.intro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 24px; margin-top: 12px; }
+@media (max-width: 860px) { .intro-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .intro-grid { grid-template-columns: 1fr; } }
+.intro h3 { font-size: 0.9rem; margin: 0 0 2px; }
+.intro p { margin: 0 0 10px; color: var(--text-secondary); font-size: 0.88rem; }
+.sub { color: var(--text-muted); font-size: 0.8rem; margin: -4px 0 8px; }
+.axis-cap { color: var(--text-muted); font-size: 0.78rem; text-align: center; margin: 2px 0 0; }
+.chips-label { color: var(--text-muted); font-size: 0.78rem; margin: 8px 0 0; }
+.chips-label + .chips { margin-top: 4px; }
+code { font-size: 0.9em; }
+
+/* Link from the explorer to the methods page, and the small per-control
+   "how this was chosen" links. */
+.btn { display: inline-block; font: inherit; font-size: 0.88rem; font-weight: 600; padding: 7px 14px;
+       border-radius: 6px; border: 1px solid var(--accent); color: var(--accent); background: transparent;
+       text-decoration: none; }
+.btn:hover { background: var(--accent-soft); color: var(--text-primary); }
+.lede-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin: 0 0 20px; }
+.lede-row .lede { margin: 0; }
+.why { font-size: 0.78rem; color: var(--accent); text-decoration: none; font-weight: 400; margin-left: 6px; }
+.why:hover { text-decoration: underline; }
+
+/* Methods page: one readable column of prose, with tables and charts in
+   cards inside it and a table of contents at the top. */
+.doc { max-width: 820px; }
+.doc > section { margin-top: 28px; scroll-margin-top: 12px; }
+.doc h2 { font-size: 1.2rem; margin: 0 0 8px; }
+.doc h3 { font-size: 0.95rem; margin: 16px 0 4px; }
+.doc p, .doc li { max-width: 72ch; }
+.doc p { margin: 0 0 10px; }
+.doc .card { margin: 12px 0; }
+.doc .card h3 { margin-top: 0; }
+.toc { columns: 2; column-gap: 32px; padding-left: 1.2em; margin: 8px 0 0; }
+@media (max-width: 560px) { .toc { columns: 1; } }
+.toc li { margin: 2px 0; }
+.doc a { color: var(--accent); }
+.back { font-size: 0.88rem; }
+.refs li { margin-bottom: 8px; padding-left: 2em; text-indent: -2em; list-style: none; }
+.refs { padding-left: 0; }
+.eq { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88rem; background: var(--grid);
+      padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+.inline-select { display: inline-block; width: auto; margin-left: 6px; }
+td.thin, .thin-note { color: var(--text-muted); }
+/* Text columns in the methods tables: left-aligned and allowed to wrap, so a
+   long source name does not push the table past the card. */
+th.txt, td.txt { text-align: left; white-space: normal; min-width: 16ch; }
+/* On a narrow screen, the methods tables' label and text columns wrap and
+   share the width, rather than one column squeezing the others to a letter. */
+.doc td:first-child { white-space: normal; min-width: 12ch; }

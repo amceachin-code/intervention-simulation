@@ -5,10 +5,138 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: INTERACTIVE HTML MOCKUP TOOL (2026-09-28, closed)
+# CURRENT TASK: EXPLORER METHODS PAGE (2026-09-28)
 
-**Status:** all plan steps complete. Nothing for this task is committed;
-committing is Andrew's call.
+**Status:** Steps 1 to 5 complete, and step 6 complete except the commit.
+Verified and reviewed. Nothing is committed; committing and pushing wait for
+Andrew's approval.
+
+## Objective
+
+Add a "Show me the details" button to the explorer (`docs/index.html`) that
+links to a new `docs/methods.html`. The methods page explains how each part
+of the tool was built:
+
+1. The data.
+2. The drop (the 2019-to-2024 decline curve).
+3. The effect presets.
+4. The participation presets.
+5. Who takes part.
+6. Who gains most, including the thin evidence on effects by prior
+   achievement and the Kraft (2023) comparison of targeted and universal
+   programs.
+7. The two ways to count (group and distributional views).
+8. The checks.
+9. The limits.
+10. References.
+
+## Plan
+
+- [x] 1. Verify sources from the PDFs.
+- [x] 2. Move the shared CSS and chart helpers into `docs/style.css` and
+      `docs/charts.js`.
+- [x] 3. Add `kraft_target` to `analysis/10-export-tool-data.R` and the Node
+      test (`analysis/tests/test-tool-engine.mjs`).
+- [x] 4. Write `docs/methods.html` and run it through `/writing-style`.
+- [x] 5. Add the button and per-control links to `docs/index.html`.
+- [ ] 6. Verify, run a code review, and commit and push on Andrew's approval.
+      (Verified and reviewed; commit pending.)
+
+## Step details
+
+- **Step 1.** The source-check agent read each PDF (report in the session
+  scratchpad; the findings that matter are logged in `TODO.md` under "Source
+  check (2026-09-28)").
+  - Verified: KSF 2024 Table 5 panel D (0.155 n.s., 58 effect sizes; 0.214,
+    75), math and reading pooled; only nine full-sample studies at 1,000+.
+    Lynch 2022 0.10 is math only (0.096 all math, 0.101 standardized). 0.027
+    summer is per attendee (at least one day), math only, Callen 2025 Table 6;
+    Morton 2025 0.024 in 2023. Robinson 2025 18.69 percent take-up; 22.69 vs
+    11.64 percent by course grades. Callen 12.7 percent attended; one in four
+    targeted students.
+  - Problems found: Kraft 2020 Table 1 has deciles only, so config p25/p75
+    are interpolated; the narrow-sample argument is in Kraft 2020, not Kraft
+    2023; the config's KSF 28 percent quote is not verbatim; the Carbonari
+    2025 expert-teacher reach (26 percent of eligible grades or 32 percent of
+    the analytic sample, not "20 to 32 percent") and its 0.22 figure; the Yaow
+    range is 3 to 8 percent (6 to 8 in North Carolina only; TODO corrected);
+    the `callen-etal-2025` bib entry was a broken placeholder.
+- **Step 2.** `style.css` and `charts.js` created; `index.html` links them.
+  `charts.js` exports `NAEPCharts` (frame, hover, ticks, path, ord, CURVE_P;
+  frame marks the five published percentiles by default) and `NAEPShared`
+  (formats, CHIP_NAMES, tilt labels, configValue, provenanceText), per the
+  code review.
+- **Step 3.** The export adds `kraft_target` (grades 4 and 8, all sizes;
+  universal, targeted_low, pooled; fields grade, subject, target, studies,
+  p50, thin), `kraft2020`, `table2a`, and each preset's `cite`. It errors
+  unless there is exactly one row per grade, subject, and target.
+  Deterministic on rerun. Test section 5 added; mutation-tested (a tampered
+  p50 and a tampered Table 2(a) value each fail). 2117 checks pass.
+- **Step 4.** `methods.html` has ten sections. All tables, charts, and config
+  numbers come from `cells.js` and `engine.js`; prose numbers from the
+  sources sit next to their citations. It uses only Kraft 2020 p10, p50, and
+  p90, and cites Kraft 2020 for the narrow-sample point. APA reference list.
+  Passed through `/writing-style`.
+- **Step 5.** "Show me the details" button beside the lede; small links by
+  each control (Data, Sources, How this works) to the matching section; a
+  pointer in the "How the tool works" note.
+- **Step 6.** Headless Chrome at 1000 to 1300px and 500px (the tables scroll
+  inside their own boxes). `bash analysis/tests/run-all.sh --regen`: 7 of 7
+  pass, all tables byte-identical. The three run manifests the regen touched
+  (timestamp and SHA only) were restored with `git checkout`. A code review
+  found no bugs, and Andrew approved all of its suggestions, which were
+  applied: shared helpers, shared tilt labels, a single-pass Kraft lookup, the
+  neutral hover index found by id, merged CSS rules, updated comments, cite
+  moved into the config, unused `k` and `weighted_mean` dropped from the
+  export, and the explorer's provenance limited to the files it uses. The
+  dark-theme `data-theme` block was kept for a future toggle.
+
+## Key decisions
+
+- The methods page is a separate static page in `docs/`, served by the same
+  GitHub Pages site as the explorer.
+- Shared styling and chart code move into their own files so both pages use
+  one copy.
+- `kraft_target` exports the Kraft (2023) all-sizes rows for grades 4 and 8
+  (universal, targeted_low, pooled) from
+  `tables/kraft-2023-benchmarks-by-target.csv`, so the methods page shows the
+  targeted versus universal comparison without hand-typed numbers.
+- Preset citations live in the config's `cite` field, next to the numbers.
+- The broken `callen-etal-2025` bib entry was replaced by the real AERJ entry
+  under that key (the config uses it); `fritsch-carlson-1980` was added.
+- Config values flagged by the source check were not changed; they are logged
+  in `TODO.md` for Andrew.
+
+## Open items for Andrew
+
+- (a) Approve the commit and push. After committing, rerun 01, 08, and 09 (or
+  the regen test) and commit the manifests with a clean SHA.
+- (b) The `TODO.md` "Source check (2026-09-28)" items: Kraft 2020 p25/p75,
+  the KSF quote, the Carbonari reach and effect, the Callen bib mirror in the
+  article, confirming `fritsch-carlson-1980`, and the `carbonari-etal-2025`
+  year.
+
+## Files
+
+- **Created:** `docs/methods.html`, `docs/style.css`, `docs/charts.js`.
+- **Modified:** `docs/index.html`, `docs/cells.js` (regenerated),
+  `docs/engine.js` (comment only), `docs/README.md`,
+  `analysis/10-export-tool-data.R`, `analysis/tests/test-tool-engine.mjs`,
+  `analysis/config/sim-params.yaml` (cite fields and a comment),
+  `analysis/README.md`, `references/references.bib`, `TODO.md`, `README.md`,
+  `PROGRESS.md`.
+- **Deleted:** none.
+
+---
+
+# PREVIOUS TASK: INTERACTIVE HTML MOCKUP TOOL (2026-09-28, closed)
+
+**Status:** all plan steps complete and committed. The explorer was first
+committed in 5057e5f, then rewritten in plain language with an introduction
+(commit 784d489). It is live at
+https://amceachin-code.github.io/intervention-simulation/. The repository is
+private at github.com/amceachin-code/intervention-simulation, with GitHub
+Pages serving `main:/docs`.
 
 ## Objective
 
@@ -86,8 +214,9 @@ choose:
   halves at the knot. The mixture carries that kink into the curve near p85
   to p90, and the committed R p90 results include it. Worth a methods look
   alongside `07-tail-sensitivity`.
-- (b) Create the GitHub repo and enable Pages from `/docs`.
-- (c) Nothing is committed.
+- (b) Done: the repository is github.com/amceachin-code/intervention-simulation
+  (private), with Pages serving `main:/docs`.
+- (c) Done: committed in 5057e5f and 784d489.
 
 ## Files
 
@@ -100,7 +229,7 @@ choose:
 
 ---
 
-# PREVIOUS TASK: MOVE THE SIMULATIONS OUT OF NAEP-AERA-OPEN (2026-09-28, closed)
+# EARLIER TASK: MOVE THE SIMULATIONS OUT OF NAEP-AERA-OPEN (2026-09-28, closed)
 
 **Status:** all plan steps complete. The review-fix changes from step 9 are
 applied but uncommitted; committing them is Andrew's call.

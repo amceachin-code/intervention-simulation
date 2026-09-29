@@ -10,13 +10,18 @@ A static page (`index.html`) that starts from the restoration requirement g\*(p)
 
 The settings are kept in the URL hash, so a configuration can be shared as a link.
 
+A second page (`methods.html`), reached from the "Show me the details" button and the small links beside each control, explains how each part was built: the data, the drop, the effect and participation presets and their sources, the two gradients, the two ways to count, the checks, and the limits. Its tables and charts read the same `cells.js` and `engine.js`, so it cannot disagree with the explorer.
+
 ## Files
 
 | File | Role |
 |---|---|
-| `index.html` | The page: controls, SVG charts, tables. No libraries, no build step. |
+| `index.html` | The explorer: controls, SVG charts, tables. No libraries, no build step. |
+| `methods.html` | The methods page. |
+| `style.css` | Styles shared by both pages (color tokens, light and dark). |
+| `charts.js` | SVG chart helpers shared by both pages (frame, ticks, hover). |
 | `engine.js` | The computation, a port of `analysis/mixture.R` and `water_fill` in `analysis/alloc-rules.R`. |
-| `cells.js` | Data, generated. Do not edit by hand. |
+| `cells.js` | Data, generated: the six cells, the presets, the Kraft (2020) percentiles, the Table 2(a) validation targets, and the Kraft (2023) targeted versus universal rows. Do not edit by hand. |
 
 ## Updating the data
 
@@ -25,8 +30,8 @@ Rscript analysis/10-export-tool-data.R      # from the project root; rewrites do
 node analysis/tests/test-tool-engine.mjs    # checks cells.js and engine.js against tables/
 ```
 
-The test compares the engine with the committed R outputs for proportional allocation (both estimands, every budget, four cells). The two agree to about 1e-13 NAEP points.
+The test compares the engine with the committed R outputs for proportional allocation (both estimands, every budget, four cells); the two agree to about 1e-13 NAEP points. It also checks the methods-page data: the Kraft (2023) rows against `tables/kraft-2023-benchmarks-by-target.csv`, and the Table 2(a) targets against the differential change computed from the cells.
 
 ## Viewing and hosting
 
-Open `index.html` directly, or serve the folder (`python3 -m http.server -d docs`). For GitHub Pages, set the repository's Pages source to the `main` branch, `/docs` folder.
+Open `index.html` (or `methods.html`) directly, or serve the folder (`python3 -m http.server -d docs`). For GitHub Pages, set the repository's Pages source to the `main` branch, `/docs` folder.

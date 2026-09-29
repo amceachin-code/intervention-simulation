@@ -165,5 +165,34 @@ for (const cell of DATA.cells) {
   PS.forEach((p, i) => check(close(Q(p), cell.q2019[i], 1e-9), `${cell.label} quantile fn misses knot p${p}`));
 }
 
+// ---- 5. methods-page data -------------------------------------------------
+// kraft_target is copied from the by-target benchmark table: every exported
+// row must match its CSV row, and the export must hold exactly one row per
+// grade 4/8 x subject x group, so the methods page shows no stale or missing
+// cells. The filter repeats KRAFT_TARGETS and the grade/size filter in
+// analysis/10-export-tool-data.R on purpose, as an independent check; change
+// both together.
+const KT = readCsv("tables/kraft-2023-benchmarks-by-target.csv")
+  .filter((r) => ["4", "8"].includes(r.grade) && r.size_bin === "All sizes" &&
+                 ["universal", "targeted_low", "pooled"].includes(r.target));
+check(DATA.kraft_target.length === KT.length && KT.length === 12,
+  `kraft_target has ${DATA.kraft_target.length} rows, CSV has ${KT.length}, expected 12`);
+for (const r of KT) {
+  const hit = DATA.kraft_target.filter((x) => String(x.grade) === r.grade && x.subject === r.subject && x.target === r.target);
+  check(hit.length === 1, `kraft_target has ${hit.length} rows for grade ${r.grade} ${r.subject} ${r.target}`);
+  if (hit.length !== 1) continue;
+  for (const key of ["studies", "p50"])
+    check(close(hit[0][key], Number(r[key]), 1e-12), `kraft_target ${r.grade} ${r.subject} ${r.target} ${key}: ${hit[0][key]} vs CSV ${r[key]}`);
+  check(hit[0].thin === (r.thin === "TRUE"), `kraft_target ${r.grade} ${r.subject} ${r.target} thin flag`);
+}
+// The methods page reports the validation: the differential change (p90
+// difference minus p10 difference) from the public data rounds to the
+// article's Table 2(a) value in every cell.
+check(Object.keys(DATA.table2a).length === DATA.cells.length, "table2a does not cover every cell");
+for (const c of DATA.cells) {
+  const dc = c.d[PS.indexOf(90)] - c.d[PS.indexOf(10)];
+  check(dc.toFixed(1) === DATA.table2a[c.label].toFixed(1), `${c.label} differential change ${dc.toFixed(1)} vs Table 2(a) ${DATA.table2a[c.label]}`);
+}
+
 console.log(`${checks} checks, ${failures} failed`);
 process.exit(failures ? 1 : 0);

@@ -18,7 +18,7 @@ Rscript analysis/05-compile-summary.R        # tables/SIM-SUMMARY.md
 Rscript analysis/07-tail-sensitivity.R       # tables/sim-tail-sensitivity.csv
 Rscript analysis/08-district-enrollment.R    # needs the raw CCD membership file (local-only)
 Rscript analysis/09-kraft-benchmarks.R       # needs kraft-2023-data/kraft2023effectsize.xls
-Rscript analysis/10-export-tool-data.R       # docs/cells.js for the interactive explorer (rerun after 01 or a config change)
+Rscript analysis/10-export-tool-data.R       # docs/cells.js for the explorer and methods page (rerun after 01, 09, or a config change)
 
 bash analysis/tests/run-all.sh               # every tests/test-*.R (and test-*.mjs when node is installed); exits non-zero on any failure
 bash analysis/tests/run-all.sh --regen       # the same, plus test-regen.sh (reruns 01 to 09, cmp's tables/*.csv)
@@ -55,7 +55,7 @@ The R tests check the committed outputs, need no network, and exit non-zero on f
 | `07-tail-sensitivity.R` | `11-tail-sensitivity.R` | Recomputes the bottom-up boundary case under alternative lower-tail specifications |
 | `08-district-enrollment.R` | `12-district-enrollment.R` | CCD 2023-24 district size distributions (total, grade 4, K-5), district- and student-weighted. Downloads the directory file with curl if missing |
 | `09-kraft-benchmarks.R` | `13-kraft-benchmarks.R` | Kraft (2023) effect-size benchmarks by grade, subject, and study size, with g\* reference lines. Refuses to run unless the file reproduces Kraft's Table 1 |
-| `10-export-tool-data.R` | (new) | Copies `tables/sim-quantiles.csv` and the config presets into `docs/cells.js` for the interactive explorer |
+| `10-export-tool-data.R` | (new) | Copies `tables/sim-quantiles.csv`, the Kraft (2023) all-sizes rows from `tables/kraft-2023-benchmarks-by-target.csv`, and the config presets into `docs/cells.js` for the explorer and its methods page |
 | `config-helpers.R` | new | `load_sim_config()` and the key lookups (`cfg_get`, `cfg_g`, `cfg_c`, `cfg_treated_g`, `cfg_kraft2020`, `cfg_table2a`). Stops on a missing package, file, or key |
 | `api-helpers.R` | new (from 01) | NAEP API access and its input guards: `fetch_api` with the `expect_rows` partial-response gate, `usable()`, `get_stats`, and `group_composition()` with the population-share guard behind 01's `c_of_p`. Takes cache, jurisdiction, and downloader as arguments so the tests can drive it offline |
 | `alloc-rules.R` | same | The four allocation rules and the water-filling cap, kept apart from 06 so the tests can load them without writing files |

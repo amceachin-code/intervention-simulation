@@ -14,16 +14,20 @@
 ## but it can load a <script src>. Assigning to globalThis keeps it usable
 ## from Node as well, which is how the test loads it.
 ##
-## Reads:  tables/sim-quantiles.csv, analysis/config/sim-params.yaml
-## Writes: docs/cells.js
+## Reads:  tables/sim-quantiles.csv, tables/kraft-2023-benchmarks-by-target.csv,
+##         analysis/config/sim-params.yaml
+## Writes: docs/cells.js (read by docs/index.html and docs/methods.html)
 ## Usage:  Rscript analysis/10-export-tool-data.R   (from the project root)
 
 source("analysis/config-helpers.R")
 
-IN  <- "tables/sim-quantiles.csv"
-OUT <- "docs/cells.js"
+IN     <- "tables/sim-quantiles.csv"
+KRAFT  <- "tables/kraft-2023-benchmarks-by-target.csv"
+OUT    <- "docs/cells.js"
 if (!file.exists(IN))
   stop("missing ", IN, ". Run: Rscript analysis/01-simulations.R", call. = FALSE)
+if (!file.exists(KRAFT))
+  stop("missing ", KRAFT, ". Run: Rscript analysis/09-kraft-benchmarks.R", call. = FALSE)
 if (!requireNamespace("jsonlite", quietly = TRUE))
   stop("package 'jsonlite' is required. Install it with install.packages(\"jsonlite\").",
        call. = FALSE)
@@ -52,20 +56,44 @@ cells <- lapply(cell_labels, function(lab) {
        sd2019      = z$sd2019[1])
 })
 
+## Kraft (2023) effect sizes by the population a study served, for the
+## methods page's comparison of programs aimed at low achievers with programs
+## for everyone. Only the all-sizes rows for grades 4 and 8 (the grades the
+## explorer's cells share with Kraft's file) and the three groups the page
+## compares. The comparison is descriptive: targeted studies standardize on a
+## narrower sample, so their SD effects are not on the same scale as
+## universal ones (see kraft-2023-data/CODEBOOK.md, section 1).
+KRAFT_TARGETS <- c("universal", "targeted_low", "pooled")
+kt <- read.csv(KRAFT, stringsAsFactors = FALSE, check.names = FALSE)
+kt <- kt[kt$grade %in% c("4", "8") & kt$size_bin == "All sizes" & kt$target %in% KRAFT_TARGETS, ]
+## One row per grade x subject x group, or the page would show duplicates or gaps.
+if (nrow(kt) != 2 * 2 * length(KRAFT_TARGETS) || anyDuplicated(kt[c("grade", "subject", "target")]))
+  stop(KRAFT, " does not have exactly one all-sizes row per grade 4/8, subject, and target", call. = FALSE)
+kt <- kt[order(kt$grade, kt$subject, match(kt$target, KRAFT_TARGETS)), ]
+kraft_target <- lapply(seq_len(nrow(kt)), function(i) with(kt[i, ], list(
+  grade = as.integer(grade), subject = subject, target = target, studies = studies,
+  p50 = p50, thin = as.logical(thin))))
+
 ## Presets for the effect and participation controls, with their sources, so
 ## the page can show where each chip comes from.
 strip <- function(recs, fields) lapply(recs, function(r) r[fields])
 ## Provenance is an MD5 of each source file rather than a run date, so
 ## rerunning the script on unchanged inputs writes a byte-identical file and
 ## git shows a change only when the data did.
-srcs <- c(IN, attr(cfg, "path"))
+srcs <- c(IN, KRAFT, attr(cfg, "path"))
 payload <- list(
   sources        = lapply(srcs, function(f) list(path = f, md5 = unname(tools::md5sum(f)))),
   percentiles    = PS,
   cells          = cells,
-  benchmarks     = strip(cfg_get(cfg, "benchmarks"),    c("id", "g", "label", "source")),
-  participation  = strip(cfg_get(cfg, "participation"), c("id", "c", "label", "source")),
-  treated_effect = cfg_get(cfg, "treated_effect")
+  benchmarks     = strip(cfg_get(cfg, "benchmarks"),    c("id", "g", "label", "source", "cite")),
+  participation  = strip(cfg_get(cfg, "participation"), c("id", "c", "label", "source", "cite")),
+  treated_effect = cfg_get(cfg, "treated_effect"),
+  ## For the methods page: where the presets sit among education RCT effects
+  ## (Kraft 2020), the validation targets the pipeline reproduces, and the
+  ## targeted versus universal comparison above.
+  kraft2020      = cfg_get(cfg, "kraft2020_effect_percentiles"),
+  table2a        = cfg_get(cfg, "table2a_diff_change"),
+  kraft_target   = kraft_target
 )
 
 dir.create(dirname(OUT), showWarnings = FALSE, recursive = TRUE)

@@ -6,8 +6,12 @@ globalThis.TOOL_DATA = {
       "md5": "8a378d3af1cfae5df2c3fb66560c6513"
     },
     {
+      "path": "tables/kraft-2023-benchmarks-by-target.csv",
+      "md5": "22b0bc8e316a1e26237cecd7d20e1928"
+    },
+    {
       "path": "analysis/config/sim-params.yaml",
-      "md5": "09047c2f6dc8098485782961f5bc956d"
+      "md5": "b9a1b38c55fa6252c4bb68e35cf4e0fc"
     }
   ],
   "percentiles": [10, 25, 50, 75, 90],
@@ -60,25 +64,29 @@ globalThis.TOOL_DATA = {
       "id": "tut_scale",
       "g": 0.155,
       "label": "Tutoring, programs >=1000 students",
-      "source": "kraft-schueler-falken-2024 Table 5 (n.s.)"
+      "source": "kraft-schueler-falken-2024 Table 5 (n.s.)",
+      "cite": "Kraft, Schueler, & Falken (2024), Table 5: U.S. programs, standardized tests; not statistically significant"
     },
     {
       "id": "tut_mid",
       "g": 0.214,
       "label": "Tutoring, programs 400-999 students",
-      "source": "kraft-schueler-falken-2024 Table 5"
+      "source": "kraft-schueler-falken-2024 Table 5",
+      "cite": "Kraft, Schueler, & Falken (2024), Table 5: U.S. programs, standardized tests"
     },
     {
       "id": "summer_math",
       "g": 0.1,
       "label": "Summer programs, math",
-      "source": "lynch-an-mancenido-2022 Table 2"
+      "source": "lynch-an-mancenido-2022 Table 2",
+      "cite": "Lynch, An, & Mancenido (2022), Table 2: math only"
     },
     {
       "id": "summer_real",
       "g": 0.027,
       "label": "Summer, realized post-COVID",
-      "source": "callen-etal-2025 / morton-etal-2025"
+      "source": "callen-etal-2025 / morton-etal-2025",
+      "cite": "Callen et al. (2025), Table 6; Morton et al. (2025): math, students who attended"
     }
   ],
   "participation": [
@@ -86,26 +94,144 @@ globalThis.TOOL_DATA = {
       "id": "universal",
       "c": 1,
       "label": "Universal, full participation",
-      "source": "definitional"
+      "source": "definitional",
+      "cite": "Every student takes part"
     },
     {
       "id": "hdt_dist",
       "c": 0.28,
       "label": "District HDT participation",
-      "source": "kraft-schueler-falken-2024 p.14 (NCES SPP)"
+      "source": "kraft-schueler-falken-2024 p.14 (NCES SPP)",
+      "cite": "NCES School Pulse Panel, via Kraft, Schueler, & Falken (2024), p. 14"
     },
     {
       "id": "optin",
       "c": 0.187,
       "label": "Opt-in tutoring take-up",
-      "source": "robinson-bisht-loeb-2025"
+      "source": "robinson-bisht-loeb-2025",
+      "cite": "Robinson, Bisht, & Loeb (2025): students offered free online tutoring"
     },
     {
       "id": "summer",
       "c": 0.13,
       "label": "Summer program reach",
-      "source": "callen-etal-2025"
+      "source": "callen-etal-2025",
+      "cite": "Callen et al. (2025): 12.7 percent, rounded"
     }
   ],
-  "treated_effect": "tut_scale"
+  "treated_effect": "tut_scale",
+  "kraft2020": {
+    "p10": -0.08,
+    "p25": 0,
+    "p50": 0.1,
+    "p75": 0.25,
+    "p90": 0.47,
+    "source": "kraft-2020 Table 1, 1942 effects from 747 RCTs"
+  },
+  "table2a": {
+    "Reading G4": 8.7,
+    "Reading G8": 7,
+    "Reading G12": 1.5,
+    "Math G4": 7.9,
+    "Math G8": 6.4,
+    "Math G12": 4.5
+  },
+  "kraft_target": [
+    {
+      "grade": 4,
+      "subject": "Math",
+      "target": "universal",
+      "studies": 49,
+      "p50": 0.04,
+      "thin": false
+    },
+    {
+      "grade": 4,
+      "subject": "Math",
+      "target": "targeted_low",
+      "studies": 15,
+      "p50": 0.09,
+      "thin": false
+    },
+    {
+      "grade": 4,
+      "subject": "Math",
+      "target": "pooled",
+      "studies": 153,
+      "p50": 0.09,
+      "thin": false
+    },
+    {
+      "grade": 4,
+      "subject": "Reading",
+      "target": "universal",
+      "studies": 52,
+      "p50": 0.052,
+      "thin": false
+    },
+    {
+      "grade": 4,
+      "subject": "Reading",
+      "target": "targeted_low",
+      "studies": 33,
+      "p50": 0.09,
+      "thin": false
+    },
+    {
+      "grade": 4,
+      "subject": "Reading",
+      "target": "pooled",
+      "studies": 161,
+      "p50": 0.076,
+      "thin": false
+    },
+    {
+      "grade": 8,
+      "subject": "Math",
+      "target": "universal",
+      "studies": 37,
+      "p50": 0.06,
+      "thin": false
+    },
+    {
+      "grade": 8,
+      "subject": "Math",
+      "target": "targeted_low",
+      "studies": 4,
+      "p50": 0,
+      "thin": true
+    },
+    {
+      "grade": 8,
+      "subject": "Math",
+      "target": "pooled",
+      "studies": 84,
+      "p50": 0.071,
+      "thin": false
+    },
+    {
+      "grade": 8,
+      "subject": "Reading",
+      "target": "universal",
+      "studies": 39,
+      "p50": 0.05,
+      "thin": false
+    },
+    {
+      "grade": 8,
+      "subject": "Reading",
+      "target": "targeted_low",
+      "studies": 13,
+      "p50": 0.1,
+      "thin": false
+    },
+    {
+      "grade": 8,
+      "subject": "Reading",
+      "target": "pooled",
+      "studies": 108,
+      "p50": 0.071,
+      "thin": false
+    }
+  ]
 };

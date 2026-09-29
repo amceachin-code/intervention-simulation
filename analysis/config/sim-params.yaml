@@ -17,22 +17,34 @@ jurisdiction: NT      # national public + private
 # keep their names as a fixed schema that downstream scripts read.
 years: [2019, 2024]
 
+# Each benchmark and participation entry has a `source` (a bib key plus
+# location, for the pipeline) and a `cite` (the readable citation the
+# explorer's methods page shows; checked against the PDFs 2026-09-28).
+
 # Treated effect sizes, in SD. phi = 1.0 (no deflation): optimistic by construction.
 # Literature SDs come from restricted, lower-variance samples, so any correction
 # moves conclusions the same way. See kraft-schueler-falken-2024 notes.
 benchmarks:
-  - {id: tut_scale,   g: 0.155, label: "Tutoring, programs >=1000 students",  source: "kraft-schueler-falken-2024 Table 5 (n.s.)"}
-  - {id: tut_mid,     g: 0.214, label: "Tutoring, programs 400-999 students", source: "kraft-schueler-falken-2024 Table 5"}
-  - {id: summer_math, g: 0.100, label: "Summer programs, math",               source: "lynch-an-mancenido-2022 Table 2"}
-  - {id: summer_real, g: 0.027, label: "Summer, realized post-COVID",         source: "callen-etal-2025 / morton-etal-2025"}
+  - {id: tut_scale,   g: 0.155, label: "Tutoring, programs >=1000 students",  source: "kraft-schueler-falken-2024 Table 5 (n.s.)",
+     cite: "Kraft, Schueler, & Falken (2024), Table 5: U.S. programs, standardized tests; not statistically significant"}
+  - {id: tut_mid,     g: 0.214, label: "Tutoring, programs 400-999 students", source: "kraft-schueler-falken-2024 Table 5",
+     cite: "Kraft, Schueler, & Falken (2024), Table 5: U.S. programs, standardized tests"}
+  - {id: summer_math, g: 0.100, label: "Summer programs, math",               source: "lynch-an-mancenido-2022 Table 2",
+     cite: "Lynch, An, & Mancenido (2022), Table 2: math only"}
+  - {id: summer_real, g: 0.027, label: "Summer, realized post-COVID",         source: "callen-etal-2025 / morton-etal-2025",
+     cite: "Callen et al. (2025), Table 6; Morton et al. (2025): math, students who attended"}
 
 # Participation rates: the share of a percentile's students who actually
 # take part in the intervention. Not the same as eligibility.
 participation:
-  - {id: universal, c: 1.000, label: "Universal, full participation",  source: "definitional"}
-  - {id: hdt_dist,  c: 0.280, label: "District HDT participation", source: "kraft-schueler-falken-2024 p.14 (NCES SPP)"}
-  - {id: optin,     c: 0.187, label: "Opt-in tutoring take-up",    source: "robinson-bisht-loeb-2025"}
-  - {id: summer,    c: 0.130, label: "Summer program reach",       source: "callen-etal-2025"}
+  - {id: universal, c: 1.000, label: "Universal, full participation",  source: "definitional",
+     cite: "Every student takes part"}
+  - {id: hdt_dist,  c: 0.280, label: "District HDT participation", source: "kraft-schueler-falken-2024 p.14 (NCES SPP)",
+     cite: "NCES School Pulse Panel, via Kraft, Schueler, & Falken (2024), p. 14"}
+  - {id: optin,     c: 0.187, label: "Opt-in tutoring take-up",    source: "robinson-bisht-loeb-2025",
+     cite: "Robinson, Bisht, & Loeb (2025): students offered free online tutoring"}
+  - {id: summer,    c: 0.130, label: "Summer program reach",       source: "callen-etal-2025",
+     cite: "Callen et al. (2025): 12.7 percent, rounded"}
 
 # The treated effect applied wherever the pipeline needs ONE program effect:
 # 01-simulations.R Table C3, the seat allocation (06), the tail sensitivity

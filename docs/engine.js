@@ -329,8 +329,8 @@
 
   function mean(a) { let s = 0; for (const v of a) s += v; return s / a.length; }
 
-  // Exported: what the page uses (scenario, tilt, TILT_LEVELS) and what the
-  // test checks directly (the rest).
+  // Exported: what the pages use (scenario, tilt, TILT_LEVELS; the methods
+  // page also calls participation) and what the test checks directly (the rest).
   root.NAEPEngine = {
     scenario, tilt, TILT_LEVELS,
     qnorm, makeQuantileFn, participation, effectPoints, FILL_GRID, mean,

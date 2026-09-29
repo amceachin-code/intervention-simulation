@@ -6,166 +6,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NAEP Recovery Explorer</title>
 <meta name="description" content="How much of the 2019-to-2024 drop in NAEP scores a tutoring or summer program could undo, for low, middle, and high scorers.">
-<style>
-  /* Colors are role tokens. Light is the default; dark is its own set of
-     steps (not an automatic inversion), applied for an OS dark preference
-     unless the page is stamped light, or when stamped dark. */
-  :root {
-    color-scheme: light;
-    --surface-0: #f5f4f1;
-    --surface-1: #fcfcfb;
-    --border: #dddcd7;
-    --grid: #ebeae6;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted: #77766f;
-    --accent: #2a78d6;
-    --accent-soft: #cde2fb;
-    --series-before: #77766f;   /* D(p)/S: the neutral reference */
-    --series-after: #2a78d6;    /* position after the program */
-    --series-part: #2a78d6;
-    --series-effect: #eb6834;
-    --closed-fill: rgba(42, 120, 214, 0.16);
-    --over-fill: rgba(235, 104, 52, 0.18);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --surface-0: #121211;
-      --surface-1: #1a1a19;
-      --border: #383835;
-      --grid: #2a2a28;
-      --text-primary: #ffffff;
-      --text-secondary: #c3c2b7;
-      --text-muted: #9a998f;
-      --accent: #3987e5;
-      --accent-soft: #1c3a5e;
-      --series-before: #9a998f;
-      --series-after: #3987e5;
-      --series-part: #3987e5;
-      --series-effect: #d95926;
-      --closed-fill: rgba(57, 135, 229, 0.22);
-      --over-fill: rgba(217, 89, 38, 0.25);
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --surface-0: #121211;
-    --surface-1: #1a1a19;
-    --border: #383835;
-    --grid: #2a2a28;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted: #9a998f;
-    --accent: #3987e5;
-    --accent-soft: #1c3a5e;
-    --series-before: #9a998f;
-    --series-after: #3987e5;
-    --series-part: #3987e5;
-    --series-effect: #d95926;
-    --closed-fill: rgba(57, 135, 229, 0.22);
-    --over-fill: rgba(217, 89, 38, 0.25);
-  }
-
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--surface-0); color: var(--text-primary);
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  }
-  main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
-  h1 { font-size: 1.5rem; margin: 0 0 4px; }
-  h2 { font-size: 1rem; margin: 0 0 8px; }
-  .lede { color: var(--text-secondary); margin: 0 0 20px; max-width: 70ch; }
-  .layout { display: grid; grid-template-columns: 330px 1fr; gap: 20px; align-items: start; }
-  /* minmax(0, 1fr) and min-width: 0 let a wide table scroll inside its own
-     box instead of stretching the whole page past a phone's width. */
-  .layout > * { min-width: 0; }
-  @media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
-  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
-  .stack > * + * { margin-top: 16px; }
-
-  /* Controls */
-  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
-  legend, .ctl-label { font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 6px; display: block; }
-  .ctl-help { color: var(--text-muted); font-size: 0.8rem; margin: 4px 0 0; }
-  .ctl-row { display: flex; align-items: center; gap: 10px; }
-  .ctl-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
-  .ctl-value { font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600; }
-  select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface-1); color: var(--text-primary);
-           border: 1px solid var(--border); border-radius: 6px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .chip { font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; cursor: pointer;
-          border: 1px solid var(--border); background: transparent; color: var(--text-secondary); text-align: left; }
-  .chip:hover { border-color: var(--accent); color: var(--text-primary); }
-  .seg { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-  .seg.two { grid-template-columns: repeat(2, 1fr); }
-  .seg input { position: absolute; opacity: 0; pointer-events: none; }
-  .seg label { text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; cursor: pointer;
-               color: var(--text-secondary); border-left: 1px solid var(--border); }
-  .seg label:first-of-type { border-left: 0; }
-  .seg input:checked + label { background: var(--accent-soft); color: var(--text-primary); font-weight: 600; }
-  .seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
-
-  /* Headline tiles */
-  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } }
-  .tile .k { color: var(--text-secondary); font-size: 0.8rem; }
-  .tile .v { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2; }
-  .tile .s { color: var(--text-muted); font-size: 0.78rem; }
-
-  /* Charts */
-  .chart { position: relative; width: 100%; }
-  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .axis text { fill: var(--text-muted); font-size: 11px; }
-  .gridline { stroke: var(--grid); stroke-width: 1; }
-  .zero { stroke: var(--text-muted); stroke-width: 1; }
-  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .sw { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
-  .sw.dash { border-top-style: dashed; }
-  .sw.box { height: 10px; border: 0; border-radius: 2px; }
-  .small-multiples { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 560px) { .small-multiples { grid-template-columns: 1fr; } }
-  .tip { position: absolute; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border);
-         border-radius: 6px; padding: 6px 8px; font-size: 0.78rem; box-shadow: 0 2px 8px rgba(0,0,0,.12);
-         white-space: nowrap; display: none; z-index: 2; }
-  .tip b { font-variant-numeric: tabular-nums; }
-
-  /* Table */
-  .tbl-wrap { overflow-x: auto; }
-  caption { caption-side: bottom; text-align: left; color: var(--text-muted); font-size: 0.78rem; padding-top: 6px; }
-  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
-  th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
-  th:first-child, td:first-child { text-align: left; }
-  th { color: var(--text-secondary); font-weight: 600; font-size: 0.78rem; }
-  .note { color: var(--text-muted); font-size: 0.8rem; max-width: 80ch; }
-  .note p { margin: 0 0 8px; }
-  .note h2 { color: var(--text-primary); }
-  .note details { margin-top: 8px; }
-  .note summary { cursor: pointer; color: var(--text-secondary); font-weight: 600; }
-  .intro { margin-bottom: 20px; }
-  .intro > summary { cursor: pointer; font-weight: 650; font-size: 1rem; }
-  .intro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 24px; margin-top: 12px; }
-  @media (max-width: 860px) { .intro-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .intro-grid { grid-template-columns: 1fr; } }
-  .intro h3 { font-size: 0.9rem; margin: 0 0 2px; }
-  .intro p { margin: 0 0 10px; color: var(--text-secondary); font-size: 0.88rem; }
-  .sub { color: var(--text-muted); font-size: 0.8rem; margin: -4px 0 8px; }
-  .axis-cap { color: var(--text-muted); font-size: 0.78rem; text-align: center; margin: 2px 0 0; }
-  .chips-label { color: var(--text-muted); font-size: 0.78rem; margin: 8px 0 0; }
-  .chips-label + .chips { margin-top: 4px; }
-  code { font-size: 0.9em; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
   <h1>Could a program undo the drop in NAEP scores?</h1>
+  <div class="lede-row">
   <p class="lede">
     Between 2019 and 2024, scores on the National Assessment of Educational Progress (NAEP) fell in
     reading and math, and the lowest-scoring students fell the furthest. Use this tool to design a
     program, such as tutoring or summer school, and see how much of that drop it would undo for
     students at different score levels.
   </p>
+  <a class="btn" href="methods.html">Show me the details</a>
+  </div>
 
   <details class="card intro" open>
     <summary>What you are looking at</summary>
@@ -211,12 +65,12 @@
     <!-- Controls -->
     <form class="card stack" id="controls" onsubmit="return false">
       <div>
-        <label class="ctl-label" for="cell">Subject and grade</label>
+        <label class="ctl-label" for="cell">Subject and grade <a class="why" href="methods.html#data">Data</a></label>
         <select id="cell"></select>
       </div>
 
       <div>
-        <label class="ctl-label" for="effect">1. How much the program helps</label>
+        <label class="ctl-label" for="effect">1. How much the program helps <a class="why" href="methods.html#effects">Sources</a></label>
         <div class="ctl-row">
           <input type="range" id="effect" min="0" max="0.5" step="0.005">
           <span class="ctl-value" id="effect-v"></span>
@@ -227,7 +81,7 @@
       </div>
 
       <div>
-        <label class="ctl-label" for="share">2. How many students take part</label>
+        <label class="ctl-label" for="share">2. How many students take part <a class="why" href="methods.html#participation">Sources</a></label>
         <div class="ctl-row">
           <input type="range" id="share" min="0" max="100" step="0.1">
           <span class="ctl-value" id="share-v"></span>
@@ -237,19 +91,19 @@
       </div>
 
       <fieldset>
-        <legend>3. Who takes part</legend>
+        <legend>3. Who takes part <a class="why" href="methods.html#who-takes-part">How this works</a></legend>
         <div class="seg" id="kPart"></div>
         <p class="ctl-help" id="kPart-help"></p>
       </fieldset>
 
       <fieldset>
-        <legend>4. Who gains the most</legend>
+        <legend>4. Who gains the most <a class="why" href="methods.html#who-gains">How this works</a></legend>
         <div class="seg" id="kEffect"></div>
         <p class="ctl-help" id="kEffect-help"></p>
       </fieldset>
 
       <fieldset>
-        <legend>5. How to count the result</legend>
+        <legend>5. How to count the result <a class="why" href="methods.html#counting">How this works</a></legend>
         <div class="seg two" id="mode"></div>
         <p class="ctl-help" id="mode-help"></p>
       </fieldset>
@@ -294,6 +148,8 @@
 
       <section class="card note">
         <h2>How the tool works</h2>
+        <p>This is a summary. <a href="methods.html">The methods page</a> explains each step in full, with the
+        sources behind every preset.</p>
         <p>NAEP publishes scores at five percentiles. The tool draws a smooth curve through those points
         to estimate the scores in between. That is why the charts run from the 10th to the 90th
         percentile and no further.</p>
@@ -331,22 +187,17 @@
 
 <script src="cells.js"></script>
 <script src="engine.js"></script>
+<script src="charts.js"></script>
 <script>
 "use strict";
 const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const { ord, el, path, hover, frame, CURVE_P } = globalThis.NAEPCharts;
+const { f0, f1, f2, f3, fmtPct, cellName, configValue, chipName, TILT_LABELS, provenanceText } = globalThis.NAEPShared;
 const PS = D.percentiles;
-const CURVE_P = Array.from({ length: 81 }, (_, i) => 10 + i);   // p10 to p90
 
 // ---------------------------------------------------------------- state
 // Defaults: the pipeline's treated effect, the district tutoring share,
 // neutral gradients, the distributional reading (the paper's estimand).
-// Look up a config entry by id and fail loudly if it is missing, rather than
-// falling back to a hand-typed number (parameters live only in the config).
-function configValue(list, id) {
-  const hit = list.find((x) => x.id === id);
-  if (!hit) throw new Error(`cells.js has no config entry '${id}'; rerun analysis/10-export-tool-data.R`);
-  return hit;
-}
 const defaults = {
   cell: D.cells[0].label,
   effect: configValue(D.benchmarks, D.treated_effect).g,
@@ -383,31 +234,15 @@ function writeHash() {
 // ---------------------------------------------------------------- controls
 const $ = (id) => document.getElementById(id);
 const cellSel = $("cell");
-// Display names. The data keys stay as the pipeline writes them ("Reading
-// G4"); only what the reader sees changes ("Reading, grade 4").
-const cellName = (label) => label.replace(/ G(\d+)$/, ", grade $1");
 D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
-const ord = (p) => p + (p % 10 === 1 && p !== 11 ? "st" : p % 10 === 2 && p !== 12 ? "nd" : p % 10 === 3 && p !== 13 ? "rd" : "th");
 
 function chip(parent, text, title, onClick) {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chip"; b.textContent = text; b.title = title;
   b.addEventListener("click", onClick); parent.appendChild(b);
 }
-// Plain-language chip names, keyed by config id. The numbers still come from
-// the config; an id without an entry here falls back to the config's label.
-// Hovering a chip shows the source the config cites.
-const CHIP_NAMES = {
-  tut_scale:   "Tutoring, large programs (1,000+ students)",
-  tut_mid:     "Tutoring, mid-size programs (400 to 999 students)",
-  summer_math: "Summer school, math (average across studies)",
-  summer_real: "Summer school since COVID (what districts saw)",
-  universal:   "Every student",
-  hdt_dist:    "District tutoring (common planning figure)",
-  optin:       "Sign-up rate for optional tutoring",
-  summer:      "Summer school attendance",
-};
-const chipName = (x) => CHIP_NAMES[x.id] || x.label;
+// Chips use the shared plain-language names; hovering one shows the source
+// the config cites.
 D.benchmarks.forEach((b) => chip($("effect-chips"), `${b.g.toFixed(3)} SD: ${chipName(b)}`, "Source: " + b.source,
   () => { state.effect = b.g; sync(); }));
 D.participation.forEach((p) => chip($("share-chips"), `${fmtPct(p.c)}: ${chipName(p)}`, "Source: " + p.source,
@@ -424,18 +259,8 @@ function segmented(id, options, key) {
     root.append(inp, lab);
   });
 }
-// Button labels for the five levels, by engine level id. The same levels
-// drive both controls, so each gets its own wording.
-const PART_LABELS = {
-  "strong-neg": "Mostly<br>low scorers", "mild-neg": "More<br>low scorers", neutral: "All<br>equally",
-  "mild-pos": "More<br>high scorers", "strong-pos": "Mostly<br>high scorers",
-};
-const EFFECT_LABELS = {
-  "strong-neg": "Low scorers,<br>much more", "mild-neg": "Low scorers,<br>more", neutral: "All<br>equally",
-  "mild-pos": "High scorers,<br>more", "strong-pos": "High scorers,<br>much more",
-};
-segmented("kPart", E.TILT_LEVELS.map((l) => ({ id: l.id, html: PART_LABELS[l.id] })), "kPart");
-segmented("kEffect", E.TILT_LEVELS.map((l) => ({ id: l.id, html: EFFECT_LABELS[l.id] })), "kEffect");
+segmented("kPart", E.TILT_LEVELS.map((l) => ({ id: l.id, html: TILT_LABELS.part[l.id] })), "kPart");
+segmented("kEffect", E.TILT_LEVELS.map((l) => ({ id: l.id, html: TILT_LABELS.effect[l.id] })), "kEffect");
 segmented("mode", [{ id: "distributional", html: "All students" }, { id: "group", html: "Same students" }], "mode");
 
 // Plain-language reading of each level, built from its p90:p10 ratio.
@@ -477,8 +302,6 @@ function sync() {
 }
 
 // ---------------------------------------------------------------- format
-function fmtPct(x) { const v = x * 100; return (Math.abs(v - Math.round(v)) < 0.05 ? v.toFixed(0) : v.toFixed(1)) + "%"; }
-const f2 = (x) => x.toFixed(2), f3 = (x) => x.toFixed(3), f1 = (x) => x.toFixed(1), f0 = (x) => x.toFixed(0);
 function shareClosed(k) { return k.gStar > 0 ? k.gain / k.gStar : NaN; }
 function fmtShare(s) { return Number.isFinite(s) ? Math.round(s * 100) + "%" : "n/a"; }
 
@@ -529,46 +352,10 @@ function render() {
   drawProfile("eff-chart", res.curve, (r) => r.effect, [0, effMax], (v) => f2(v), "var(--series-effect)", "Boost (SD)");
   drawTable(res, cell);
 
-  $("provenance").textContent = `Data: ${D.sources.map((f) => `${f.path} (md5 ${f.md5.slice(0, 8)})`).join(", ")}. ` +
+  // Only the files this page uses; the Kraft (2023) table feeds the methods page.
+  $("provenance").textContent = provenanceText(D, ["tables/sim-quantiles.csv", "analysis/config/sim-params.yaml"]) + " " +
     `Mean participation across all percentiles: ${fmtPct(res.meanPart)}.`;
 }
-
-// Shared chart frame. Returns scales and an SVG element to draw into.
-const NS = "http://www.w3.org/2000/svg";
-function el(tag, attrs, parent) {
-  const e = document.createElementNS(NS, tag);
-  for (const [a, v] of Object.entries(attrs)) e.setAttribute(a, v);
-  if (parent) parent.appendChild(e);
-  return e;
-}
-function frame(containerId, W, H, yDom, yFmt, nTicks) {
-  const box = $(containerId);
-  box.querySelector("svg")?.remove();
-  const m = { l: 44, r: 12, t: 8, b: 26 };
-  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
-  box.prepend(svg);
-  const x = (p) => m.l + (p - 10) / 80 * (W - m.l - m.r);
-  const y = (v) => m.t + (yDom[1] - v) / (yDom[1] - yDom[0]) * (H - m.t - m.b);
-  const ax = el("g", { class: "axis" }, svg);
-  niceTicks(yDom[0], yDom[1], nTicks).forEach((t) => {
-    el("line", { class: "gridline", x1: m.l, x2: W - m.r, y1: y(t), y2: y(t) }, ax);
-    el("text", { x: m.l - 6, y: y(t) + 4, "text-anchor": "end" }, ax).textContent = yFmt(t);
-  });
-  PS.forEach((p) => {
-    el("text", { x: x(p), y: H - 8, "text-anchor": "middle" }, ax).textContent = ord(p);
-    el("line", { class: "gridline", x1: x(p), x2: x(p), y1: m.t, y2: H - m.b }, ax);
-  });
-  if (yDom[0] < 0 && yDom[1] > 0) el("line", { class: "zero", x1: m.l, x2: W - m.r, y1: y(0), y2: y(0) }, svg);
-  return { svg, x, y, m, W, H, box };
-}
-function niceTicks(lo, hi, n) {
-  const span = hi - lo, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
-  const step = [1, 2, 2.5, 5, 10].map((s) => s * mag).find((s) => span / s <= n) || 10 * mag;
-  const out = [];
-  for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-12; t += step) out.push(Math.abs(t) < 1e-12 ? 0 : t);
-  return out;
-}
-const path = (pts) => pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join("");
 
 function drawMain(curve) {
   // The chart plots the decline, not the requirement: D(p)/S is 2024 minus
@@ -610,32 +397,6 @@ function drawProfile(id, curve, acc, yDom, yFmt, color, name) {
   const F = frame(id, 340, 180, yDom, yFmt, 4);
   el("path", { d: path(curve.map((r) => [F.x(r.p), F.y(acc(r))])), fill: "none", stroke: color, "stroke-width": 2 }, F.svg);
   hover(F, curve, (r) => F.y(acc(r)), (r) => `<div>${ord(r.p)} percentile</div><div>${name}: <b>${yFmt(acc(r))}</b></div>`);
-}
-
-// Crosshair and tooltip: snap to the nearest whole percentile.
-function hover(F, curve, yOf, html) {
-  const { svg, x, m, W, H, box } = F;
-  const tip = box.querySelector(".tip");
-  const cross = el("line", { x1: 0, x2: 0, y1: m.t, y2: H - m.b, stroke: "var(--text-muted)", "stroke-width": 1, visibility: "hidden" }, svg);
-  const dot = el("circle", { r: 5, fill: "none", stroke: "var(--text-primary)", "stroke-width": 2, visibility: "hidden" }, svg);
-  const hit = el("rect", { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent" }, svg);
-  function move(ev) {
-    const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
-    const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
-    const p = Math.round(10 + (loc.x - m.l) / (W - m.l - m.r) * 80);
-    const r = curve.find((c) => c.p === Math.min(90, Math.max(10, p)));
-    cross.setAttribute("x1", x(r.p)); cross.setAttribute("x2", x(r.p));
-    dot.setAttribute("cx", x(r.p)); dot.setAttribute("cy", yOf(r));
-    cross.setAttribute("visibility", "visible"); dot.setAttribute("visibility", "visible");
-    tip.innerHTML = html(r); tip.style.display = "block";
-    const bb = box.getBoundingClientRect(), px = ev.clientX - bb.left;
-    tip.style.left = Math.min(px + 12, bb.width - tip.offsetWidth - 4) + "px";
-    tip.style.top = "8px";
-  }
-  function leave() { cross.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); tip.style.display = "none"; }
-  hit.addEventListener("pointermove", move);
-  hit.addEventListener("pointerdown", move);
-  hit.addEventListener("pointerleave", leave);
 }
 
 function drawTable(res, cell) {
