@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Today's explorer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:#f5f4f1}
+a{color:#2a78d6}a:hover{color:#1d5fae}
+table{border-collapse:collapse;width:100%;font-size:0.85rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid #ebeae6;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:#52514e;font-weight:600;font-size:0.78rem}
+caption{caption-side:bottom;text-align:left;color:#77766f;font-size:0.78rem;padding-top:6px}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #f5f4f1; color: #0b0b0b; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5">
+<main style="max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px">
+  <h1 style="font-size: 1.5rem; margin: 0 0 4px">Could a program undo the drop in NAEP scores?</h1>
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin: 0 0 20px">
+    <p style="color: #52514e; margin: 0; max-width: 70ch">Between 2019 and 2024, scores on the National Assessment of Educational Progress (NAEP) fell in reading and math, and the lowest-scoring students fell the furthest. Use this tool to design a program, such as tutoring or summer school, and see how much of that drop it would undo for students at different score levels.</p>
+    <a href="#" style="display: inline-block; font-size: 0.88rem; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid #2a78d6; color: #2a78d6; text-decoration: none">Show me the details</a>
+  </div>
+
+  <details open="open" style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px; margin-bottom: 20px">
+    <summary style="cursor: pointer; font-weight: 650; font-size: 1rem">What you are looking at</summary>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4px 24px; margin-top: 12px">
+      <div>
+        <h3 style="font-size: 0.9rem; margin: 0 0 2px">NAEP</h3>
+        <p style="margin: 0 0 10px; color: #52514e; font-size: 0.88rem">NAEP, often called the Nation's Report Card, tests a nationally representative sample of students in grades 4, 8, and 12. It gives the same test the same way every time, so scores can be compared across years.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; margin: 0 0 2px">Different students each time</h3>
+        <p style="margin: 0 0 10px; color: #52514e; font-size: 0.88rem">The students tested in 2024 are not the ones tested in 2019. The tool compares 2024's fourth graders with 2019's fourth graders, and the same for grades 8 and 12. It does not measure how much any one student lost.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; margin: 0 0 2px">Percentiles</h3>
+        <p style="margin: 0 0 10px; color: #52514e; font-size: 0.88rem">Line up every student from lowest score to highest. A student at the 10th percentile scored above 10 percent of students; the 50th percentile is the middle; the 90th is near the top. NAEP reports scores at the 10th, 25th, 50th, 75th, and 90th percentiles.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; margin: 0 0 2px">The widening gap</h3>
+        <p style="margin: 0 0 10px; color: #52514e; font-size: 0.88rem">In every subject and grade here, scores fell more at the 10th percentile than at the 90th, so low and high scorers ended up further apart. In Math, grade 8, students at the 10th percentile scored 11 points lower in 2024 than in 2019; students at the 90th scored 5 points lower. The tool tracks the distance between the 90th and 10th percentiles, called the 90-10 gap.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; margin: 0 0 2px">Standard deviations</h3>
+        <p style="margin: 0 0 10px; color: #52514e; font-size: 0.88rem">Researchers usually report a program's effect in standard deviations (SD), a unit that lets different tests be compared. The tool uses SD for both the drop and the program. In Math, grade 8, 1 SD is about 40 NAEP points, so a 0.1 SD boost adds about 4 points.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; margin: 0 0 2px">How to use it</h3>
+        <p style="margin: 0 0 10px; color: #52514e; font-size: 0.88rem">Pick a subject and grade, then set up the program on the left. The chart shows how far each percentile sits below its 2019 score, with and without the program. Zero means back to 2019.</p>
+      </div>
+    </div>
+  </details>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+    <form style="flex-basis: 330px; flex-grow: 1; min-width: 0; background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+      <div>
+        <label for="t-cell" style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 6px">Subject and grade <a href="#" style="font-size: 0.78rem; font-weight: 400; margin-left: 6px; text-decoration: none">Data</a></label>
+        <select id="t-cell" style="width: 100%; padding: 6px 8px; font: inherit; background: #fcfcfb; color: #0b0b0b; border: 1px solid #dddcd7; border-radius: 6px">
+          <option>Math, grade 8</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="t-effect" style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 6px">1. How much the program helps <a href="#" style="font-size: 0.78rem; font-weight: 400; margin-left: 6px; text-decoration: none">Sources</a></label>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <input id="t-effect" type="range" min="0" max="0.5" step="0.005" value="0.155" style="flex-grow: 1; min-width: 0; accent-color: #2a78d6">
+          <span style="font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600">0.155 SD</span>
+        </div>
+        <p style="color: #77766f; font-size: 0.8rem; margin: 4px 0 0">The average boost for a student who takes part, in SD. 0.155 SD is about 6.2 NAEP points in Math, grade 8.</p>
+        <p style="color: #77766f; font-size: 0.78rem; margin: 8px 0 0">Estimates from research:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px">
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">0.155 SD: Tutoring, large programs (1,000+ students)</button>
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">0.214 SD: Tutoring, mid-size programs (400 to 999 students)</button>
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">0.100 SD: Summer school, math (average across studies)</button>
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">0.027 SD: Summer school since COVID (what districts saw)</button>
+        </div>
+      </div>
+
+      <div>
+        <label for="t-share" style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 6px">2. How many students take part <a href="#" style="font-size: 0.78rem; font-weight: 400; margin-left: 6px; text-decoration: none">Sources</a></label>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <input id="t-share" type="range" min="0" max="100" step="0.1" value="28" style="flex-grow: 1; min-width: 0; accent-color: #2a78d6">
+          <span style="font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600">28%</span>
+        </div>
+        <p style="color: #77766f; font-size: 0.78rem; margin: 8px 0 0">Examples from research:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px">
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">100%: Every student</button>
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">28%: District tutoring (common planning figure)</button>
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">18.7%: Sign-up rate for optional tutoring</button>
+          <button type="button" style="font: inherit; font-size: 0.78rem; padding: 3px 8px; border-radius: 999px; border: 1px solid #dddcd7; background: transparent; color: #52514e; text-align: left">13%: Summer school attendance</button>
+        </div>
+      </div>
+
+      <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+        <legend style="font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 6px">3. Who takes part <a href="#" style="font-size: 0.78rem; font-weight: 400; margin-left: 6px; text-decoration: none">How this works</a></legend>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid #dddcd7; border-radius: 6px; overflow: hidden">
+          <input id="t-rule-tilt" type="radio" name="t-rule" checked="checked" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-rule-tilt" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; background: #cde2fb; color: #0b0b0b; font-weight: 600">Any student</label>
+          <input id="t-rule-ed" type="radio" name="t-rule" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-rule-ed" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">Economically<br>disadvantaged only</label>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid #dddcd7; border-radius: 6px; overflow: hidden; margin-top: 8px">
+          <input id="t-kp-1" type="radio" name="t-kp" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-kp-1" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e">Mostly<br>low scorers</label>
+          <input id="t-kp-2" type="radio" name="t-kp" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-kp-2" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">More<br>low scorers</label>
+          <input id="t-kp-3" type="radio" name="t-kp" checked="checked" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-kp-3" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; background: #cde2fb; color: #0b0b0b; font-weight: 600; border-left: 1px solid #dddcd7">All<br>equally</label>
+          <input id="t-kp-4" type="radio" name="t-kp" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-kp-4" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">More<br>high scorers</label>
+          <input id="t-kp-5" type="radio" name="t-kp" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-kp-5" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">Mostly<br>high scorers</label>
+        </div>
+        <p style="color: #77766f; font-size: 0.8rem; margin: 4px 0 0">Students at every score level are equally likely to take part.</p>
+      </fieldset>
+
+      <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+        <legend style="font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 6px">4. Who gains the most <a href="#" style="font-size: 0.78rem; font-weight: 400; margin-left: 6px; text-decoration: none">How this works</a></legend>
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid #dddcd7; border-radius: 6px; overflow: hidden">
+          <input id="t-ke-1" type="radio" name="t-ke" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-ke-1" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e">Low scorers,<br>much more</label>
+          <input id="t-ke-2" type="radio" name="t-ke" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-ke-2" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">Low scorers,<br>more</label>
+          <input id="t-ke-3" type="radio" name="t-ke" checked="checked" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-ke-3" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; background: #cde2fb; color: #0b0b0b; font-weight: 600; border-left: 1px solid #dddcd7">All<br>equally</label>
+          <input id="t-ke-4" type="radio" name="t-ke" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-ke-4" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">High scorers,<br>more</label>
+          <input id="t-ke-5" type="radio" name="t-ke" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-ke-5" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">High scorers,<br>much more</label>
+        </div>
+        <p style="color: #77766f; font-size: 0.8rem; margin: 4px 0 0">Every student who takes part gets the same boost.</p>
+      </fieldset>
+
+      <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+        <legend style="font-weight: 600; font-size: 0.9rem; padding: 0; margin-bottom: 6px">5. How to count the result <a href="#" style="font-size: 0.78rem; font-weight: 400; margin-left: 6px; text-decoration: none">How this works</a></legend>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid #dddcd7; border-radius: 6px; overflow: hidden">
+          <input id="t-mode-d" type="radio" name="t-mode" checked="checked" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-mode-d" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; background: #cde2fb; color: #0b0b0b; font-weight: 600">All students</label>
+          <input id="t-mode-g" type="radio" name="t-mode" style="position: absolute; opacity: 0; pointer-events: none">
+          <label for="t-mode-g" style="text-align: center; font-size: 0.75rem; line-height: 1.2; padding: 6px 2px; color: #52514e; border-left: 1px solid #dddcd7">Same students</label>
+        </div>
+        <p style="color: #77766f; font-size: 0.8rem; margin: 4px 0 0">Line everyone up again after the program and compare each percentile with its 2019 score. Students who took part can move past classmates who did not. This is the tool's main measure.</p>
+      </fieldset>
+    </form>
+
+    <div style="flex-basis: 0; flex-grow: 999; min-width: 60%; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+        <div style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+          <div style="color: #52514e; font-size: 0.8rem">Drop undone at the 10th percentile</div>
+          <div style="font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2">14%</div>
+          <div style="color: #77766f; font-size: 0.78rem">0.039 of a 0.288 SD drop</div>
+        </div>
+        <div style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+          <div style="color: #52514e; font-size: 0.8rem">Drop undone at the middle (50th)</div>
+          <div style="font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2">20%</div>
+          <div style="color: #77766f; font-size: 0.78rem">0.043 of a 0.213 SD drop</div>
+        </div>
+        <div style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+          <div style="color: #52514e; font-size: 0.8rem">Gap between the 90th and 10th percentiles</div>
+          <div style="font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2">109.3 points</div>
+          <div style="color: #77766f; font-size: 0.78rem">It was 102.5 in 2019 and 108.9 in 2024. The program widens it by 0.3 more points.</div>
+        </div>
+      </div>
+
+      <section style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+        <h2 style="font-size: 1rem; margin: 0 0 8px">How far each percentile sits below its 2019 score: Math, grade 8</h2>
+        <p style="color: #77766f; font-size: 0.8rem; margin: -4px 0 8px">In standard deviations. Below zero means below the 2019 score.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: #52514e; margin-bottom: 6px">
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px dashed #77766f; display: inline-block"></i>2024, no program</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px solid #2a78d6; display: inline-block"></i>2024, with the program</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 10px; border-radius: 2px; background: rgba(42, 120, 214, 0.16); display: inline-block"></i>Drop the program undoes</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 10px; border-radius: 2px; background: rgba(235, 104, 52, 0.18); display: inline-block"></i>Above the 2019 score</span>
+        </div>
+        <div style="position: relative; width: 100%">
+<svg viewBox="0 0 720 320" width="100%" role="img" aria-label="Decline curve" style="display: block; overflow: visible"><line x1="44.0" x2="708.0" y1="284.1" y2="284.1" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="288.1" text-anchor="end" fill="#77766f" font-size="11">-0.30</text><line x1="44.0" x2="708.0" y1="192.1" y2="192.1" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="196.1" text-anchor="end" fill="#77766f" font-size="11">-0.20</text><line x1="44.0" x2="708.0" y1="100.0" y2="100.0" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="104.0" text-anchor="end" fill="#77766f" font-size="11">-0.10</text><line x1="44.0" x2="708.0" y1="8.0" y2="8.0" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="12.0" text-anchor="end" fill="#77766f" font-size="11">0.00</text><line x1="44.0" x2="44.0" y1="8.0" y2="294.0" stroke="#ebeae6" stroke-width="1"></line><text x="44.0" y="312.0" text-anchor="middle" fill="#77766f" font-size="11">10th</text><line x1="168.5" x2="168.5" y1="8.0" y2="294.0" stroke="#ebeae6" stroke-width="1"></line><text x="168.5" y="312.0" text-anchor="middle" fill="#77766f" font-size="11">25th</text><line x1="376.0" x2="376.0" y1="8.0" y2="294.0" stroke="#ebeae6" stroke-width="1"></line><text x="376.0" y="312.0" text-anchor="middle" fill="#77766f" font-size="11">50th</text><line x1="583.5" x2="583.5" y1="8.0" y2="294.0" stroke="#ebeae6" stroke-width="1"></line><text x="583.5" y="312.0" text-anchor="middle" fill="#77766f" font-size="11">75th</text><line x1="708.0" x2="708.0" y1="8.0" y2="294.0" stroke="#ebeae6" stroke-width="1"></line><text x="708.0" y="312.0" text-anchor="middle" fill="#77766f" font-size="11">90th</text><line x1="44.0" x2="708.0" y1="8.0" y2="8.0" stroke="#77766f" stroke-width="1"></line><path d="M44.0,272.8L52.3,270.9L60.6,269.2L68.9,267.0L77.2,264.5L85.5,261.8L93.8,259.3L102.1,256.9L110.4,254.8L118.7,252.9L127.0,251.1L135.3,249.4L143.6,247.7L151.9,246.0L160.2,244.4L168.5,242.8L176.8,241.1L185.1,239.2L193.4,237.3L201.7,235.6L210.0,234.0L218.3,232.4L226.6,230.9L234.9,229.4L243.2,227.9L251.5,226.5L259.8,225.0L268.1,223.5L276.4,222.1L284.7,220.7L293.0,219.3L301.3,217.9L309.6,216.5L317.9,215.1L326.2,213.6L334.5,212.0L342.8,210.3L351.1,208.6L359.4,206.9L367.7,205.3L376.0,203.6L384.3,201.9L392.6,200.4L400.9,198.8L409.2,197.1L417.5,195.3L425.8,193.4L434.1,191.6L442.4,189.9L450.7,188.2L459.0,186.3L467.3,184.3L475.6,182.3L483.9,180.2L492.2,178.0L500.5,175.8L508.8,173.7L517.1,171.8L525.4,170.0L533.7,168.5L542.0,167.1L550.3,165.7L558.6,164.3L566.9,162.8L575.2,160.7L583.5,157.7L591.8,155.8L600.1,154.3L608.4,152.3L616.7,149.9L625.0,146.8L633.3,143.8L641.6,141.6L649.9,140.1L658.2,138.8L666.5,137.4L674.8,135.4L683.1,132.6L691.4,128.8L699.7,124.8L708.0,123.7L708.0,80.1L699.7,83.1L691.4,86.6L683.1,90.0L674.8,93.0L666.5,95.2L658.2,96.9L649.9,98.6L641.6,100.4L633.3,102.5L625.0,105.0L616.7,107.8L608.4,110.9L600.1,113.3L591.8,114.9L583.5,116.3L575.2,119.1L566.9,121.6L558.6,123.6L550.3,125.1L542.0,126.5L533.7,127.9L525.4,129.4L517.1,131.2L508.8,133.0L500.5,135.1L492.2,137.3L483.9,139.5L475.6,141.7L467.3,143.9L459.0,146.0L450.7,147.9L442.4,149.7L434.1,151.3L425.8,153.0L417.5,154.8L409.2,156.8L400.9,158.8L392.6,160.5L384.3,162.2L376.0,163.8L367.7,165.4L359.4,167.0L351.1,168.6L342.8,170.2L334.5,172.0L326.2,173.7L317.9,175.4L309.6,177.1L301.3,178.6L293.0,180.1L284.7,181.4L276.4,182.7L268.1,184.1L259.8,185.6L251.5,187.2L243.2,188.7L234.9,190.3L226.6,191.9L218.3,193.6L210.0,195.4L201.7,197.1L193.4,198.8L185.1,200.3L176.8,202.0L168.5,203.9L160.2,206.1L151.9,208.1L143.6,209.6L135.3,210.4L127.0,212.4L118.7,214.6L110.4,216.9L102.1,219.3L93.8,221.8L85.5,224.1L77.2,226.3L68.9,228.5L60.6,230.6L52.3,233.8L44.0,236.7Z" fill="rgba(42, 120, 214, 0.16)"></path><path d="M44.0,272.8L52.3,270.9L60.6,269.2L68.9,267.0L77.2,264.5L85.5,261.8L93.8,259.3L102.1,256.9L110.4,254.8L118.7,252.9L127.0,251.1L135.3,249.4L143.6,247.7L151.9,246.0L160.2,244.4L168.5,242.8L176.8,241.1L185.1,239.2L193.4,237.3L201.7,235.6L210.0,234.0L218.3,232.4L226.6,230.9L234.9,229.4L243.2,227.9L251.5,226.5L259.8,225.0L268.1,223.5L276.4,222.1L284.7,220.7L293.0,219.3L301.3,217.9L309.6,216.5L317.9,215.1L326.2,213.6L334.5,212.0L342.8,210.3L351.1,208.6L359.4,206.9L367.7,205.3L376.0,203.6L384.3,201.9L392.6,200.4L400.9,198.8L409.2,197.1L417.5,195.3L425.8,193.4L434.1,191.6L442.4,189.9L450.7,188.2L459.0,186.3L467.3,184.3L475.6,182.3L483.9,180.2L492.2,178.0L500.5,175.8L508.8,173.7L517.1,171.8L525.4,170.0L533.7,168.5L542.0,167.1L550.3,165.7L558.6,164.3L566.9,162.8L575.2,160.7L583.5,157.7L591.8,155.8L600.1,154.3L608.4,152.3L616.7,149.9L625.0,146.8L633.3,143.8L641.6,141.6L649.9,140.1L658.2,138.8L666.5,137.4L674.8,135.4L683.1,132.6L691.4,128.8L699.7,124.8L708.0,123.7" fill="none" stroke="#77766f" stroke-width="2" stroke-dasharray="5 4"></path><path d="M44.0,236.7L52.3,233.8L60.6,230.6L68.9,228.5L77.2,226.3L85.5,224.1L93.8,221.8L102.1,219.3L110.4,216.9L118.7,214.6L127.0,212.4L135.3,210.4L143.6,209.6L151.9,208.1L160.2,206.1L168.5,203.9L176.8,202.0L185.1,200.3L193.4,198.8L201.7,197.1L210.0,195.4L218.3,193.6L226.6,191.9L234.9,190.3L243.2,188.7L251.5,187.2L259.8,185.6L268.1,184.1L276.4,182.7L284.7,181.4L293.0,180.1L301.3,178.6L309.6,177.1L317.9,175.4L326.2,173.7L334.5,172.0L342.8,170.2L351.1,168.6L359.4,167.0L367.7,165.4L376.0,163.8L384.3,162.2L392.6,160.5L400.9,158.8L409.2,156.8L417.5,154.8L425.8,153.0L434.1,151.3L442.4,149.7L450.7,147.9L459.0,146.0L467.3,143.9L475.6,141.7L483.9,139.5L492.2,137.3L500.5,135.1L508.8,133.0L517.1,131.2L525.4,129.4L533.7,127.9L542.0,126.5L550.3,125.1L558.6,123.6L566.9,121.6L575.2,119.1L583.5,116.3L591.8,114.9L600.1,113.3L608.4,110.9L616.7,107.8L625.0,105.0L633.3,102.5L641.6,100.4L649.9,98.6L658.2,96.9L666.5,95.2L674.8,93.0L683.1,90.0L691.4,86.6L699.7,83.1L708.0,80.1" fill="none" stroke="#2a78d6" stroke-width="2"></path><circle cx="44.0" cy="236.7" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="44.0" cy="272.8" r="4" fill="#77766f" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="168.5" cy="203.9" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="168.5" cy="242.8" r="4" fill="#77766f" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="376.0" cy="163.8" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="376.0" cy="203.6" r="4" fill="#77766f" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="583.5" cy="116.3" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="583.5" cy="157.7" r="4" fill="#77766f" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="708.0" cy="80.1" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"></circle><circle cx="708.0" cy="123.7" r="4" fill="#77766f" stroke="#fcfcfb" stroke-width="2"></circle></svg>
+        </div>
+        <p style="color: #77766f; font-size: 0.78rem; text-align: center; margin: 2px 0 0">Percentile, from lowest-scoring students (left) to highest (right)</p>
+      </section>
+
+      <section style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+        <h2 style="font-size: 1rem; margin: 0 0 8px">Who takes part, and how much they gain</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+          <div>
+            <div style="display: flex; gap: 14px; font-size: 0.8rem; color: #52514e; margin-bottom: 6px"><span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px solid #2a78d6; display: inline-block"></i>Share of students taking part</span></div>
+<svg viewBox="0 0 340 180" width="100%" role="img" aria-label="Participation profile" style="display: block; overflow: visible"><line x1="44.0" x2="328.0" y1="154.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="158.0" text-anchor="end" fill="#77766f" font-size="11">0%</text><line x1="44.0" x2="328.0" y1="117.5" y2="117.5" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="121.5" text-anchor="end" fill="#77766f" font-size="11">25%</text><line x1="44.0" x2="328.0" y1="81.0" y2="81.0" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="85.0" text-anchor="end" fill="#77766f" font-size="11">50%</text><line x1="44.0" x2="328.0" y1="44.5" y2="44.5" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="48.5" text-anchor="end" fill="#77766f" font-size="11">75%</text><line x1="44.0" x2="328.0" y1="8.0" y2="8.0" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="12.0" text-anchor="end" fill="#77766f" font-size="11">100%</text><line x1="44.0" x2="44.0" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="44.0" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">10th</text><line x1="97.3" x2="97.3" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="97.3" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">25th</text><line x1="186.0" x2="186.0" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="186.0" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">50th</text><line x1="274.8" x2="274.8" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="274.8" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">75th</text><line x1="328.0" x2="328.0" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="328.0" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">90th</text><path d="M44.0,113.1L328.0,113.1" fill="none" stroke="#2a78d6" stroke-width="2"></path></svg>
+          </div>
+          <div>
+            <div style="display: flex; gap: 14px; font-size: 0.8rem; color: #52514e; margin-bottom: 6px"><span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px solid #eb6834; display: inline-block"></i>Boost for students who take part (SD)</span></div>
+<svg viewBox="0 0 340 180" width="100%" role="img" aria-label="Effect profile" style="display: block; overflow: visible"><line x1="44.0" x2="328.0" y1="154.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="158.0" text-anchor="end" fill="#77766f" font-size="11">0.00</text><line x1="44.0" x2="328.0" y1="111.2" y2="111.2" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="115.2" text-anchor="end" fill="#77766f" font-size="11">0.05</text><line x1="44.0" x2="328.0" y1="68.4" y2="68.4" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="72.4" text-anchor="end" fill="#77766f" font-size="11">0.10</text><line x1="44.0" x2="328.0" y1="25.6" y2="25.6" stroke="#ebeae6" stroke-width="1"></line><text x="36.0" y="29.6" text-anchor="end" fill="#77766f" font-size="11">0.15</text><line x1="44.0" x2="44.0" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="44.0" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">10th</text><line x1="97.3" x2="97.3" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="97.3" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">25th</text><line x1="186.0" x2="186.0" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="186.0" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">50th</text><line x1="274.8" x2="274.8" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="274.8" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">75th</text><line x1="328.0" x2="328.0" y1="8.0" y2="154.0" stroke="#ebeae6" stroke-width="1"></line><text x="328.0" y="172.0" text-anchor="middle" fill="#77766f" font-size="11">90th</text><path d="M44.0,21.3L328.0,21.3" fill="none" stroke="#eb6834" stroke-width="2"></path></svg>
+          </div>
+        </div>
+      </section>
+
+      <section style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+        <h2 style="font-size: 1rem; margin: 0 0 8px">Economically disadvantaged students and everyone else</h2>
+        <p style="color: #77766f; font-size: 0.8rem; margin: -4px 0 8px">Each group against its own 2019 score, in standard deviations. Percentiles are within each group.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: #52514e; margin-bottom: 6px">
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px dashed #4a3aa7; display: inline-block"></i>Disadvantaged, no program</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px solid #4a3aa7; display: inline-block"></i>Disadvantaged, with the program</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px dashed #1baf7a; display: inline-block"></i>Not disadvantaged, no program</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><i style="width: 18px; height: 0; border-top: 2px solid #1baf7a; display: inline-block"></i>Not disadvantaged, with the program</span>
+        </div>
+        <div style="height: 300px; border: 1px dashed #dddcd7; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #77766f; font-size: 0.85rem">[Four-line group chart and group gap table, as on the live page; not redrawn here]</div>
+      </section>
+
+      <section style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px">
+        <h2 style="font-size: 1rem; margin: 0 0 8px">At the five percentiles NAEP reports</h2>
+        <div style="overflow-x: auto">
+          <table>
+            <thead><tr><th>Percentile</th><th>Drop, 2019 to 2024</th><th>Taking part</th><th>Boost</th><th>Drop undone</th><th>With the program</th><th>Share undone</th></tr></thead>
+            <tbody>
+              <tr><td>10th</td><td>-0.288</td><td>28%</td><td>0.155</td><td>0.039</td><td>-0.248</td><td>14%</td></tr>
+              <tr><td>25th</td><td>-0.255</td><td>28%</td><td>0.155</td><td>0.042</td><td>-0.213</td><td>17%</td></tr>
+              <tr><td>50th</td><td>-0.213</td><td>28%</td><td>0.155</td><td>0.043</td><td>-0.169</td><td>20%</td></tr>
+              <tr><td>75th</td><td>-0.163</td><td>28%</td><td>0.155</td><td>0.045</td><td>-0.118</td><td>28%</td></tr>
+              <tr><td>90th</td><td>-0.126</td><td>28%</td><td>0.155</td><td>0.047</td><td>-0.078</td><td>38%</td></tr>
+            </tbody>
+            <caption>All columns except the two shares are in SD, measured against the 2019 score.</caption>
+          </table>
+        </div>
+        <div style="overflow-x: auto; margin-top: 12px">
+          <table>
+            <thead><tr><th>90-10 gap, NAEP points</th><th>2019</th><th>2024</th><th>2024 with the program</th></tr></thead>
+            <tbody><tr><td>Math, grade 8</td><td>102.5</td><td>108.9</td><td>109.3</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="background: #fcfcfb; border: 1px solid #dddcd7; border-radius: 10px; padding: 16px; color: #77766f; font-size: 0.8rem">
+        <h2 style="font-size: 1rem; margin: 0 0 8px; color: #0b0b0b">How the tool works</h2>
+        <p style="margin: 0 0 8px; max-width: 80ch">This is a summary. <a href="#">The methods page</a> explains each step in full, with the sources behind every preset.</p>
+        <p style="margin: 0 0 8px; max-width: 80ch">NAEP publishes scores at five percentiles, and the share of students in every 10-point band of the score scale. The tool draws a smooth curve through both to fill in every score level. The charts run from the 10th to the 90th percentile, because scores beyond them are measured much less precisely.</p>
+        <p style="margin: 0 0 8px; max-width: 80ch">Changing who takes part does not change how many take part. The tool moves the same number of seats between low and high scorers. No group can go above 100 percent; any extra seats go to groups that still have room. The boost works the same way, so its average across all students stays at the value you set. The one exception is "Economically disadvantaged only": seats go at random to eligible students, so a program with more seats than eligible students leaves the extra seats empty.</p>
+        <p style="margin: 0 0 8px; max-width: 80ch">The two ways of counting give different answers when only some students at a score level take part. "All students" lines everyone up again after the program. Students who took part can move past classmates who did not, so a program that reaches only some students spreads scores out. "Same students" follows each starting group and averages its gain. The two agree when everyone at a score level takes part, or no one does.</p>
+        <p style="margin: 0 0 8px; max-width: 80ch">The tool assumes that, among students with the same score, those who take part would gain as much as those who do not. A share above 100 percent means a percentile ends up above its 2019 score.</p>
+        <details style="margin-top: 8px">
+          <summary style="cursor: pointer; color: #52514e; font-weight: 600">Technical notes</summary>
+          <p style="margin: 8px 0 0">[Technical notes and provenance line, as on the live page]</p>
+        </details>
+      </section>
+    </div>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

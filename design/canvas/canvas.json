@@ -1,0 +1,101 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "A-Phone-Edit.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "A · Phone, editing the program",
+      "w": 390,
+      "x": 3510,
+      "y": 0
+    },
+    "A-Phone-Results.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "A · Phone, results",
+      "w": 390,
+      "x": 3040,
+      "y": 0
+    },
+    "A-Tuned.dc.html": {
+      "expand": "fill",
+      "h": 1900,
+      "title": "A · Tuned explorer",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "B1-Requirement.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "B1 · What would it take? (rounds)",
+      "w": 1440,
+      "x": 0,
+      "y": 2980
+    },
+    "B2-Seats.dc.html": {
+      "expand": "fill",
+      "h": 1420,
+      "is_interactive": true,
+      "title": "B2 · Who should get the seats?",
+      "w": 1440,
+      "x": 1520,
+      "y": 2980
+    },
+    "C-Compare.dc.html": {
+      "expand": "fill",
+      "h": 1360,
+      "title": "C · Compare programs",
+      "w": 1440,
+      "x": 0,
+      "y": 5800
+    },
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 2600,
+      "title": "Today's explorer (Math, grade 8)",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-30T23:08:30Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "row1": {
+      "kind": "title1",
+      "maxW": 3900,
+      "text": "Today, and Direction A: the same explorer, tuned",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "row2": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "Direction B: built around the paper's two questions",
+      "w": 240,
+      "x": 0,
+      "y": 2700
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "A-Tuned.dc.html",
+    "A-Phone-Results.dc.html",
+    "A-Phone-Edit.dc.html",
+    "B1-Requirement.dc.html",
+    "B2-Seats.dc.html",
+    "C-Compare.dc.html"
+  ],
+  "pages": [],
+  "title": "Simulation Tool Redesign"
+}

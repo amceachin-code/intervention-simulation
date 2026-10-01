@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tuned explorer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0;background:#F3F4F6}
+a{color:#1B5FB8}a:hover{color:#123F7A}
+button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #1B5FB8;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F6; color: #101418; font-family: 'Public Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #D9DDE3">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 12px 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+      <a href="#" style="font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: #101418; text-decoration: none">NAEP Recovery Explorer</a>
+      <nav aria-label="Subject and grade" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Reading</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <button type="button" aria-label="Reading, grade 4" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">4</button>
+            <button type="button" aria-label="Reading, grade 8" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">8</button>
+            <button type="button" aria-label="Reading, grade 12" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">12</button>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Math</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <button type="button" aria-label="Math, grade 4" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">4</button>
+            <button type="button" aria-label="Math, grade 8" aria-pressed="true" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #101418; background: #101418; color: #FFFFFF; font: inherit; font-weight: 700; cursor: pointer">8</button>
+            <button type="button" aria-label="Math, grade 12" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">12</button>
+          </div>
+        </div>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 16px">
+        <a href="#" style="font-weight: 600; text-decoration: none">Methods and sources</a>
+        <button type="button" style="min-height: 44px; padding: 0 16px; border: 1px solid #1B5FB8; border-radius: 10px; background: #FFFFFF; color: #1B5FB8; font: inherit; font-weight: 600; cursor: pointer">Copy link</button>
+      </div>
+    </div>
+  </header>
+
+  <div style="max-width: 1320px; margin: 0 auto; padding: 16px 32px 0">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; background: #E3EEFB; border-radius: 12px; padding: 4px 8px 4px 16px">
+      <p style="margin: 0; flex-grow: 1; color: #10305E; font-size: 14px">New to NAEP percentiles and standard deviations? A two-minute primer explains what the chart shows.</p>
+      <a href="#" style="font-weight: 600; font-size: 14px; color: #10305E">Read the primer</a>
+      <button type="button" aria-label="Dismiss" style="width: 44px; height: 44px; border: 0; background: transparent; color: #10305E; cursor: pointer; display: flex; align-items: center; justify-content: center">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3L13 13M13 3L3 13"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <section style="max-width: 1320px; margin: 0 auto; padding: 28px 32px 4px">
+    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5B6370">Math, grade 8 · 2019 to 2024</p>
+    <h1 style="margin: 0; max-width: 960px; font-family: 'Source Serif 4', Georgia, serif; font-size: 36px; font-weight: 600; line-height: 1.2">This program would undo <span style="color: #1B5FB8">14%</span> of the drop at the 10th percentile and <span style="color: #1B5FB8">38%</span> at the 90th, so the gap between them would widen slightly.</h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px">
+      <span style="padding: 6px 12px; border-radius: 999px; background: #FFFFFF; border: 1px solid #D9DDE3; font-size: 13px; font-weight: 600; color: #3F4752">0.155 SD boost, about 6 points</span>
+      <span style="padding: 6px 12px; border-radius: 999px; background: #FFFFFF; border: 1px solid #D9DDE3; font-size: 13px; font-weight: 600; color: #3F4752">28% of students take part</span>
+      <span style="padding: 6px 12px; border-radius: 999px; background: #FFFFFF; border: 1px solid #D9DDE3; font-size: 13px; font-weight: 600; color: #3F4752">Equal chance at every score level</span>
+      <span style="padding: 6px 12px; border-radius: 999px; background: #FFFFFF; border: 1px solid #D9DDE3; font-size: 13px; font-weight: 600; color: #3F4752">Counted across all students</span>
+    </div>
+  </section>
+
+  <div style="max-width: 1320px; margin: 0 auto; padding: 20px 32px 56px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+    <form aria-label="Design the program" style="flex-basis: 360px; flex-grow: 1; min-width: 0; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 28px">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700">Design the program</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+          <label for="a-effect" style="font-weight: 700">How much it helps</label>
+          <span style="font-size: 20px; font-weight: 700">0.155 SD</span>
+        </div>
+        <input id="a-effect" type="range" min="0" max="0.5" step="0.005" value="0.155" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+        <p style="margin: 0; font-size: 13px; color: #5B6370">The average boost for a student who takes part. 0.155 SD is about 6.2 NAEP points in Math, grade 8.</p>
+        <fieldset style="border: 0; margin: 4px 0 0; padding: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #3F4752">From research</legend>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #1B5FB8; border-radius: 10px; background: #F2F7FD; cursor: pointer">
+              <input type="radio" name="a-eff" checked="checked" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Tutoring, large programs (1,000+ students)</span>
+              <span style="font-size: 14px; font-weight: 700">0.155</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+              <input type="radio" name="a-eff" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Tutoring, mid-size programs (400 to 999 students)</span>
+              <span style="font-size: 14px; font-weight: 600; color: #3F4752">0.214</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+              <input type="radio" name="a-eff" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Summer school, math (average across studies)</span>
+              <span style="font-size: 14px; font-weight: 600; color: #3F4752">0.100</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+              <input type="radio" name="a-eff" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Summer school since COVID (what districts saw)</span>
+              <span style="font-size: 14px; font-weight: 600; color: #3F4752">0.027</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+          <label for="a-share" style="font-weight: 700">How many take part</label>
+          <span style="font-size: 20px; font-weight: 700">28%</span>
+        </div>
+        <input id="a-share" type="range" min="0" max="100" step="0.1" value="28" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+        <fieldset style="border: 0; margin: 4px 0 0; padding: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #3F4752">From research</legend>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+              <input type="radio" name="a-sh" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Every student</span>
+              <span style="font-size: 14px; font-weight: 600; color: #3F4752">100%</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #1B5FB8; border-radius: 10px; background: #F2F7FD; cursor: pointer">
+              <input type="radio" name="a-sh" checked="checked" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">District tutoring (common planning figure)</span>
+              <span style="font-size: 14px; font-weight: 700">28%</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+              <input type="radio" name="a-sh" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Sign-up rate for optional tutoring</span>
+              <span style="font-size: 14px; font-weight: 600; color: #3F4752">18.7%</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+              <input type="radio" name="a-sh" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+              <span style="flex-grow: 1; font-size: 14px">Summer school attendance</span>
+              <span style="font-size: 14px; font-weight: 600; color: #3F4752">13%</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+        <legend style="padding: 0; margin-bottom: 4px; font-weight: 700">Who takes part</legend>
+        <p style="margin: 0 0 10px; font-size: 13px; color: #5B6370">The same seats, handed out differently. Each option shows seats by score, from the 10th percentile to the 90th, and the 90-10 gap it leaves (108.9 points in 2024 with no program).</p>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+            <input type="radio" name="a-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+            <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Mostly low scorers</span><span style="font-size: 12px; color: #5B6370">4 times as likely at the 10th as at the 90th</span></span>
+            <svg width="72" height="32" viewBox="0 0 72 32" aria-hidden="true" style="flex-shrink: 0"><path d="M2.0,5.7L3.7,6.1L5.4,6.6L7.1,7.0L8.8,7.5L10.5,7.9L12.2,8.3L13.9,8.8L15.6,9.2L17.3,9.6L19.0,10.1L20.7,10.5L22.4,10.9L24.1,11.4L25.8,11.8L27.5,12.3L29.2,12.7L30.9,13.1L32.6,13.6L34.3,14.0L36.0,14.4L37.7,14.9L39.4,15.3L41.1,15.8L42.8,16.2L44.5,16.6L46.2,17.1L47.9,17.5L49.6,17.9L51.3,18.4L53.0,18.8L54.7,19.2L56.4,19.7L58.1,20.1L59.8,20.6L61.5,21.0L63.2,21.4L64.9,21.9L66.6,22.3L68.3,22.7L70.0,23.2L70.0,29.0L2.0,29.0Z" fill="rgba(91, 99, 112, 0.14)"></path><path d="M2.0,5.7L3.7,6.1L5.4,6.6L7.1,7.0L8.8,7.5L10.5,7.9L12.2,8.3L13.9,8.8L15.6,9.2L17.3,9.6L19.0,10.1L20.7,10.5L22.4,10.9L24.1,11.4L25.8,11.8L27.5,12.3L29.2,12.7L30.9,13.1L32.6,13.6L34.3,14.0L36.0,14.4L37.7,14.9L39.4,15.3L41.1,15.8L42.8,16.2L44.5,16.6L46.2,17.1L47.9,17.5L49.6,17.9L51.3,18.4L53.0,18.8L54.7,19.2L56.4,19.7L58.1,20.1L59.8,20.6L61.5,21.0L63.2,21.4L64.9,21.9L66.6,22.3L68.3,22.7L70.0,23.2" fill="none" stroke="#5B6370" stroke-width="1.5"></path><line x1="2" x2="70" y1="29" y2="29" stroke="#D9DDE3" stroke-width="1"></line></svg>
+            <span style="width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #101418">107.2</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+            <input type="radio" name="a-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+            <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">More low scorers</span><span style="font-size: 12px; color: #5B6370">2 times as likely at the 10th</span></span>
+            <svg width="72" height="32" viewBox="0 0 72 32" aria-hidden="true" style="flex-shrink: 0"><path d="M2.0,9.6L3.7,9.8L5.4,10.1L7.1,10.3L8.8,10.6L10.5,10.8L12.2,11.0L13.9,11.3L15.6,11.5L17.3,11.8L19.0,12.0L20.7,12.3L22.4,12.5L24.1,12.7L25.8,13.0L27.5,13.2L29.2,13.5L30.9,13.7L32.6,14.0L34.3,14.2L36.0,14.4L37.7,14.7L39.4,14.9L41.1,15.2L42.8,15.4L44.5,15.7L46.2,15.9L47.9,16.1L49.6,16.4L51.3,16.6L53.0,16.9L54.7,17.1L56.4,17.4L58.1,17.6L59.8,17.8L61.5,18.1L63.2,18.3L64.9,18.6L66.6,18.8L68.3,19.1L70.0,19.3L70.0,29.0L2.0,29.0Z" fill="rgba(91, 99, 112, 0.14)"></path><path d="M2.0,9.6L3.7,9.8L5.4,10.1L7.1,10.3L8.8,10.6L10.5,10.8L12.2,11.0L13.9,11.3L15.6,11.5L17.3,11.8L19.0,12.0L20.7,12.3L22.4,12.5L24.1,12.7L25.8,13.0L27.5,13.2L29.2,13.5L30.9,13.7L32.6,14.0L34.3,14.2L36.0,14.4L37.7,14.7L39.4,14.9L41.1,15.2L42.8,15.4L44.5,15.7L46.2,15.9L47.9,16.1L49.6,16.4L51.3,16.6L53.0,16.9L54.7,17.1L56.4,17.4L58.1,17.6L59.8,17.8L61.5,18.1L63.2,18.3L64.9,18.6L66.6,18.8L68.3,19.1L70.0,19.3" fill="none" stroke="#5B6370" stroke-width="1.5"></path><line x1="2" x2="70" y1="29" y2="29" stroke="#D9DDE3" stroke-width="1"></line></svg>
+            <span style="width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #101418">108.1</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border: 1px solid #1B5FB8; border-radius: 10px; background: #F2F7FD; cursor: pointer">
+            <input type="radio" name="a-who" checked="checked" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+            <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">Equal chance</span><span style="font-size: 12px; color: #5B6370">The same at every score level</span></span>
+            <svg width="72" height="32" viewBox="0 0 72 32" aria-hidden="true" style="flex-shrink: 0"><path d="M2.0,14.4L70.0,14.4L70.0,29.0L2.0,29.0Z" fill="rgba(42, 120, 214, 0.18)"></path><path d="M2.0,14.4L70.0,14.4" fill="none" stroke="#2A78D6" stroke-width="2"></path><line x1="2" x2="70" y1="29" y2="29" stroke="#9CC0EE" stroke-width="1"></line></svg>
+            <span style="width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #101418">109.3</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+            <input type="radio" name="a-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+            <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">More high scorers</span><span style="font-size: 12px; color: #5B6370">2 times as likely at the 90th</span></span>
+            <svg width="72" height="32" viewBox="0 0 72 32" aria-hidden="true" style="flex-shrink: 0"><path d="M2.0,19.3L3.7,19.1L5.4,18.8L7.1,18.6L8.8,18.3L10.5,18.1L12.2,17.8L13.9,17.6L15.6,17.4L17.3,17.1L19.0,16.9L20.7,16.6L22.4,16.4L24.1,16.1L25.8,15.9L27.5,15.7L29.2,15.4L30.9,15.2L32.6,14.9L34.3,14.7L36.0,14.4L37.7,14.2L39.4,14.0L41.1,13.7L42.8,13.5L44.5,13.2L46.2,13.0L47.9,12.7L49.6,12.5L51.3,12.3L53.0,12.0L54.7,11.8L56.4,11.5L58.1,11.3L59.8,11.0L61.5,10.8L63.2,10.6L64.9,10.3L66.6,10.1L68.3,9.8L70.0,9.6L70.0,29.0L2.0,29.0Z" fill="rgba(91, 99, 112, 0.14)"></path><path d="M2.0,19.3L3.7,19.1L5.4,18.8L7.1,18.6L8.8,18.3L10.5,18.1L12.2,17.8L13.9,17.6L15.6,17.4L17.3,17.1L19.0,16.9L20.7,16.6L22.4,16.4L24.1,16.1L25.8,15.9L27.5,15.7L29.2,15.4L30.9,15.2L32.6,14.9L34.3,14.7L36.0,14.4L37.7,14.2L39.4,14.0L41.1,13.7L42.8,13.5L44.5,13.2L46.2,13.0L47.9,12.7L49.6,12.5L51.3,12.3L53.0,12.0L54.7,11.8L56.4,11.5L58.1,11.3L59.8,11.0L61.5,10.8L63.2,10.6L64.9,10.3L66.6,10.1L68.3,9.8L70.0,9.6" fill="none" stroke="#5B6370" stroke-width="1.5"></path><line x1="2" x2="70" y1="29" y2="29" stroke="#D9DDE3" stroke-width="1"></line></svg>
+            <span style="width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #101418">110.4</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+            <input type="radio" name="a-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+            <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Mostly high scorers</span><span style="font-size: 12px; color: #5B6370">4 times as likely at the 90th</span></span>
+            <svg width="72" height="32" viewBox="0 0 72 32" aria-hidden="true" style="flex-shrink: 0"><path d="M2.0,23.2L3.7,22.7L5.4,22.3L7.1,21.9L8.8,21.4L10.5,21.0L12.2,20.6L13.9,20.1L15.6,19.7L17.3,19.2L19.0,18.8L20.7,18.4L22.4,17.9L24.1,17.5L25.8,17.1L27.5,16.6L29.2,16.2L30.9,15.8L32.6,15.3L34.3,14.9L36.0,14.4L37.7,14.0L39.4,13.6L41.1,13.1L42.8,12.7L44.5,12.3L46.2,11.8L47.9,11.4L49.6,10.9L51.3,10.5L53.0,10.1L54.7,9.6L56.4,9.2L58.1,8.8L59.8,8.3L61.5,7.9L63.2,7.5L64.9,7.0L66.6,6.6L68.3,6.1L70.0,5.7L70.0,29.0L2.0,29.0Z" fill="rgba(91, 99, 112, 0.14)"></path><path d="M2.0,23.2L3.7,22.7L5.4,22.3L7.1,21.9L8.8,21.4L10.5,21.0L12.2,20.6L13.9,20.1L15.6,19.7L17.3,19.2L19.0,18.8L20.7,18.4L22.4,17.9L24.1,17.5L25.8,17.1L27.5,16.6L29.2,16.2L30.9,15.8L32.6,15.3L34.3,14.9L36.0,14.4L37.7,14.0L39.4,13.6L41.1,13.1L42.8,12.7L44.5,12.3L46.2,11.8L47.9,11.4L49.6,10.9L51.3,10.5L53.0,10.1L54.7,9.6L56.4,9.2L58.1,8.8L59.8,8.3L61.5,7.9L63.2,7.5L64.9,7.0L66.6,6.6L68.3,6.1L70.0,5.7" fill="none" stroke="#5B6370" stroke-width="1.5"></path><line x1="2" x2="70" y1="29" y2="29" stroke="#D9DDE3" stroke-width="1"></line></svg>
+            <span style="width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #101418">111.3</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; border: 1px solid #D9DDE3; border-radius: 10px; cursor: pointer">
+            <input type="radio" name="a-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+            <span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Economically disadvantaged only</span><span style="font-size: 12px; color: #5B6370">At random among the 47% who are eligible</span></span>
+            <svg width="72" height="32" viewBox="0 0 72 32" aria-hidden="true" style="flex-shrink: 0"><path d="M2.0,7.0L3.7,7.2L5.4,7.5L7.1,7.8L8.8,8.1L10.5,8.5L12.2,8.9L13.9,9.3L15.6,9.7L17.3,10.1L19.0,10.5L20.7,10.9L22.4,11.3L24.1,11.6L25.8,12.0L27.5,12.4L29.2,12.8L30.9,13.1L32.6,13.5L34.3,13.9L36.0,14.2L37.7,14.6L39.4,15.0L41.1,15.3L42.8,15.7L44.5,16.1L46.2,16.5L47.9,16.9L49.6,17.3L51.3,17.7L53.0,18.1L54.7,18.5L56.4,18.9L58.1,19.3L59.8,19.7L61.5,20.2L63.2,20.6L64.9,21.0L66.6,21.5L68.3,21.9L70.0,22.4L70.0,29.0L2.0,29.0Z" fill="rgba(91, 99, 112, 0.14)"></path><path d="M2.0,7.0L3.7,7.2L5.4,7.5L7.1,7.8L8.8,8.1L10.5,8.5L12.2,8.9L13.9,9.3L15.6,9.7L17.3,10.1L19.0,10.5L20.7,10.9L22.4,11.3L24.1,11.6L25.8,12.0L27.5,12.4L29.2,12.8L30.9,13.1L32.6,13.5L34.3,13.9L36.0,14.2L37.7,14.6L39.4,15.0L41.1,15.3L42.8,15.7L44.5,16.1L46.2,16.5L47.9,16.9L49.6,17.3L51.3,17.7L53.0,18.1L54.7,18.5L56.4,18.9L58.1,19.3L59.8,19.7L61.5,20.2L63.2,20.6L64.9,21.0L66.6,21.5L68.3,21.9L70.0,22.4" fill="none" stroke="#5B6370" stroke-width="1.5"></path><line x1="2" x2="70" y1="29" y2="29" stroke="#D9DDE3" stroke-width="1"></line></svg>
+            <span style="width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #101418">107.4</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <details style="border-top: 1px solid #E8EBEF; padding-top: 12px">
+        <summary style="cursor: pointer; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 700">More settings<span style="font-size: 13px; font-weight: 400; color: #5B6370">Equal boost · counted across all students</span></summary>
+        <p style="margin: 8px 0 0; font-size: 13px; color: #5B6370">Who gains the most, and how to count the result.</p>
+      </details>
+    </form>
+
+    <div style="flex-basis: 0; flex-grow: 999; min-width: 60%; display: flex; flex-direction: column; gap: 24px">
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 24px">
+          <div>
+            <h2 style="margin: 0; font-size: 18px; font-weight: 700">How far each percentile sits below its 2019 score</h2>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #5B6370">Zero is the 2019 score. Standard deviations on the left, NAEP points on the right.</p>
+          </div>
+          <div style="display: flex; gap: 16px; font-size: 13px; color: #3F4752">
+            <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 18px; height: 10px; border-radius: 2px; background: rgba(42, 120, 214, 0.16); display: inline-block"></span>Drop undone</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 18px; height: 10px; border-radius: 2px; background: rgba(235, 104, 52, 0.18); display: inline-block"></span>Above the 2019 score</span>
+          </div>
+        </div>
+        <div style="margin-top: 16px">
+<svg viewBox="0 0 880 380" width="100%" role="img" aria-label="How far each percentile sits below its 2019 score" style="display: block; overflow: visible"><line x1="56.0" x2="816.0" y1="327.3" y2="327.3" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="331.3" text-anchor="end" fill="#5B6370" font-size="12">−0.30</text><line x1="56.0" x2="816.0" y1="280.5" y2="280.5" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="284.5" text-anchor="end" fill="#5B6370" font-size="12">−0.25</text><line x1="56.0" x2="816.0" y1="233.8" y2="233.8" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="237.8" text-anchor="end" fill="#5B6370" font-size="12">−0.20</text><line x1="56.0" x2="816.0" y1="187.0" y2="187.0" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="191.0" text-anchor="end" fill="#5B6370" font-size="12">−0.15</text><line x1="56.0" x2="816.0" y1="140.2" y2="140.2" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="144.2" text-anchor="end" fill="#5B6370" font-size="12">−0.10</text><line x1="56.0" x2="816.0" y1="93.5" y2="93.5" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="97.5" text-anchor="end" fill="#5B6370" font-size="12">−0.05</text><line x1="56.0" x2="816.0" y1="46.7" y2="46.7" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="50.7" text-anchor="end" fill="#5B6370" font-size="12">0.00</text><text x="824.0" y="50.7" text-anchor="start" fill="#5B6370" font-size="12">0</text><text x="824.0" y="97.8" text-anchor="start" fill="#5B6370" font-size="12">−2</text><text x="824.0" y="144.8" text-anchor="start" fill="#5B6370" font-size="12">−4</text><text x="824.0" y="191.9" text-anchor="start" fill="#5B6370" font-size="12">−6</text><text x="824.0" y="239.0" text-anchor="start" fill="#5B6370" font-size="12">−8</text><text x="824.0" y="286.0" text-anchor="start" fill="#5B6370" font-size="12">−10</text><text x="824.0" y="333.1" text-anchor="start" fill="#5B6370" font-size="12">−12</text><text x="56.0" y="364.0" text-anchor="middle" fill="#5B6370" font-size="12">10th</text><text x="198.5" y="364.0" text-anchor="middle" fill="#5B6370" font-size="12">25th</text><text x="436.0" y="364.0" text-anchor="middle" fill="#5B6370" font-size="12">50th</text><text x="673.5" y="364.0" text-anchor="middle" fill="#5B6370" font-size="12">75th</text><text x="816.0" y="364.0" text-anchor="middle" fill="#5B6370" font-size="12">90th</text><line x1="56.0" x2="816.0" y1="46.7" y2="46.7" stroke="#5B6370" stroke-width="1"></line><path d="M56.0,315.8L75.0,312.2L94.0,307.4L113.0,302.1L132.0,297.5L151.0,293.8L170.0,290.3L189.0,287.0L208.0,283.6L227.0,279.8L246.0,276.4L265.0,273.2L284.0,270.2L303.0,267.3L322.0,264.3L341.0,261.5L360.0,258.6L379.0,255.6L398.0,252.3L417.0,248.9L436.0,245.5L455.0,242.2L474.0,238.9L493.0,235.1L512.0,231.6L531.0,227.9L550.0,223.9L569.0,219.5L588.0,215.1L607.0,211.4L626.0,208.4L645.0,205.6L664.0,201.9L683.0,196.9L702.0,193.4L721.0,187.8L740.0,182.5L759.0,179.7L778.0,176.2L797.0,169.5L816.0,164.3L816.0,119.9L797.0,126.6L778.0,133.1L759.0,137.1L740.0,140.6L721.0,145.3L702.0,151.3L683.0,155.3L664.0,159.6L645.0,164.1L626.0,167.1L607.0,170.1L588.0,173.8L569.0,178.1L550.0,182.6L531.0,186.9L512.0,190.7L493.0,194.1L474.0,198.0L455.0,201.7L436.0,205.0L417.0,208.3L398.0,211.6L379.0,215.1L360.0,218.5L341.0,221.6L322.0,224.3L303.0,227.2L284.0,230.3L265.0,233.6L246.0,237.1L227.0,240.6L208.0,243.9L189.0,248.0L170.0,251.6L151.0,254.5L132.0,259.1L113.0,264.0L94.0,268.6L75.0,272.9L56.0,279.1Z" fill="rgba(42, 120, 214, 0.16)"></path><path d="M56.0,315.8L75.0,312.2L94.0,307.4L113.0,302.1L132.0,297.5L151.0,293.8L170.0,290.3L189.0,287.0L208.0,283.6L227.0,279.8L246.0,276.4L265.0,273.2L284.0,270.2L303.0,267.3L322.0,264.3L341.0,261.5L360.0,258.6L379.0,255.6L398.0,252.3L417.0,248.9L436.0,245.5L455.0,242.2L474.0,238.9L493.0,235.1L512.0,231.6L531.0,227.9L550.0,223.9L569.0,219.5L588.0,215.1L607.0,211.4L626.0,208.4L645.0,205.6L664.0,201.9L683.0,196.9L702.0,193.4L721.0,187.8L740.0,182.5L759.0,179.7L778.0,176.2L797.0,169.5L816.0,164.3" fill="none" stroke="#7B818B" stroke-width="2" stroke-dasharray="6 5"></path><path d="M56.0,279.1L75.0,272.9L94.0,268.6L113.0,264.0L132.0,259.1L151.0,254.5L170.0,251.6L189.0,248.0L208.0,243.9L227.0,240.6L246.0,237.1L265.0,233.6L284.0,230.3L303.0,227.2L322.0,224.3L341.0,221.6L360.0,218.5L379.0,215.1L398.0,211.6L417.0,208.3L436.0,205.0L455.0,201.7L474.0,198.0L493.0,194.1L512.0,190.7L531.0,186.9L550.0,182.6L569.0,178.1L588.0,173.8L607.0,170.1L626.0,167.1L645.0,164.1L664.0,159.6L683.0,155.3L702.0,151.3L721.0,145.3L740.0,140.6L759.0,137.1L778.0,133.1L797.0,126.6L816.0,119.9" fill="none" stroke="#2A78D6" stroke-width="2.5"></path><circle cx="56.0" cy="315.8" r="4" fill="#7B818B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="56.0" cy="279.1" r="4.5" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="436.0" cy="245.5" r="4" fill="#7B818B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="436.0" cy="205.0" r="4.5" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="816.0" cy="164.3" r="4" fill="#7B818B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="816.0" cy="119.9" r="4.5" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><text x="531.0" y="247.9" fill="#101418" font-size="13" font-weight="600">2024, no program</text><text x="531.0" y="174.9" fill="#1B5FB8" font-size="13" font-weight="600">2024, with the program</text><text x="246.0" y="260.8" fill="#1B5FB8" font-size="12" text-anchor="middle">Drop undone</text><text x="48.0" y="20.0" text-anchor="end" fill="#101418" font-size="12" font-weight="600">SD</text><text x="824.0" y="20.0" text-anchor="start" fill="#101418" font-size="12" font-weight="600">Points</text></svg>
+        </div>
+        <p style="margin: 4px 0 0; text-align: center; font-size: 13px; color: #5B6370">Percentile, from lowest-scoring students (left) to highest (right)</p>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">Share of the drop undone</h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #5B6370">At the five percentiles NAEP reports. The same program undoes more of the drop near the top, where the drop was smaller.</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; margin-top: 20px">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">10th percentile</div>
+            <div style="font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 4px">14%</div>
+            <div style="height: 8px; margin-top: 10px; border-radius: 4px; background: #E8EBEF; overflow: hidden"><div style="width: 14%; height: 8px; background: #2A78D6"></div></div>
+            <div style="margin-top: 8px; font-size: 12px; color: #5B6370">0.039 of a 0.288 SD drop</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">25th</div>
+            <div style="font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 4px">17%</div>
+            <div style="height: 8px; margin-top: 10px; border-radius: 4px; background: #E8EBEF; overflow: hidden"><div style="width: 17%; height: 8px; background: #2A78D6"></div></div>
+            <div style="margin-top: 8px; font-size: 12px; color: #5B6370">0.042 of a 0.255 SD drop</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">50th (middle)</div>
+            <div style="font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 4px">20%</div>
+            <div style="height: 8px; margin-top: 10px; border-radius: 4px; background: #E8EBEF; overflow: hidden"><div style="width: 20%; height: 8px; background: #2A78D6"></div></div>
+            <div style="margin-top: 8px; font-size: 12px; color: #5B6370">0.043 of a 0.213 SD drop</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">75th</div>
+            <div style="font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 4px">28%</div>
+            <div style="height: 8px; margin-top: 10px; border-radius: 4px; background: #E8EBEF; overflow: hidden"><div style="width: 28%; height: 8px; background: #2A78D6"></div></div>
+            <div style="margin-top: 8px; font-size: 12px; color: #5B6370">0.045 of a 0.163 SD drop</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">90th percentile</div>
+            <div style="font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 4px">38%</div>
+            <div style="height: 8px; margin-top: 10px; border-radius: 4px; background: #E8EBEF; overflow: hidden"><div style="width: 38%; height: 8px; background: #2A78D6"></div></div>
+            <div style="margin-top: 8px; font-size: 12px; color: #5B6370">0.047 of a 0.126 SD drop</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px">
+          <button type="button" style="min-height: 44px; padding: 0 16px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #101418; font: inherit; font-weight: 600; cursor: pointer">Show the full table</button>
+          <button type="button" style="min-height: 44px; padding: 0 16px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #101418; font: inherit; font-weight: 600; cursor: pointer">Download CSV</button>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">The 90-10 gap, in NAEP points</h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #5B6370">The distance between the 90th and 10th percentiles.</p>
+        <div style="max-width: 640px; margin-top: 20px">
+<svg viewBox="0 0 560 70" width="100%" role="img" aria-label="90-10 gap in 2019, 2024, and with the program" style="display: block; overflow: visible"><line x1="12" x2="548" y1="40" y2="40" stroke="#D9DDE3" stroke-width="2"></line><text x="12.0" y="64" text-anchor="middle" fill="#5B6370" font-size="12">100</text><line x1="12.0" x2="12.0" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><text x="101.3" y="64" text-anchor="middle" fill="#5B6370" font-size="12">102</text><line x1="101.3" x2="101.3" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><text x="190.7" y="64" text-anchor="middle" fill="#5B6370" font-size="12">104</text><line x1="190.7" x2="190.7" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><text x="280.0" y="64" text-anchor="middle" fill="#5B6370" font-size="12">106</text><line x1="280.0" x2="280.0" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><text x="369.3" y="64" text-anchor="middle" fill="#5B6370" font-size="12">108</text><line x1="369.3" x2="369.3" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><text x="458.7" y="64" text-anchor="middle" fill="#5B6370" font-size="12">110</text><line x1="458.7" x2="458.7" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><text x="548.0" y="64" text-anchor="middle" fill="#5B6370" font-size="12">112</text><line x1="548.0" x2="548.0" y1="36" y2="44" stroke="#D9DDE3" stroke-width="1"></line><circle cx="123.6" cy="40" r="7" fill="#FFFFFF" stroke="#7B818B" stroke-width="2"></circle><text x="123.6" y="22" text-anchor="middle" fill="#3F4752" font-size="12" font-weight="600">2019: 102.5</text><circle cx="411.2" cy="40" r="7" fill="#7B818B" stroke="#7B818B" stroke-width="2"></circle><text x="411.2" y="22" text-anchor="end" fill="#3F4752" font-size="12" font-weight="600">2024: 108.9</text><circle cx="425.8" cy="40" r="7" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><text x="425.8" y="22" text-anchor="start" fill="#1B5FB8" font-size="12" font-weight="600">With the program: 109.3</text></svg>
+        </div>
+        <p style="margin: 16px 0 0; max-width: 72ch">It was 102.5 points in 2019 and 108.9 in 2024. With the program it would be 109.3, which is 0.3 points wider still.</p>
+      </section>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px">
+        <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 700">Economically disadvantaged students and everyone else</h2>
+          <p style="margin: 0; font-size: 14px; color: #3F4752">Each group against its own 2019 score, with and without the program.</p>
+          <button type="button" style="min-height: 44px; padding: 0 16px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #101418; font: inherit; font-weight: 600; cursor: pointer">Show the group comparison</button>
+        </section>
+        <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 700">How the tool works</h2>
+          <p style="margin: 0; font-size: 14px; color: #3F4752">What the tool assumes, the two ways of counting, and the sources behind every preset.</p>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-weight: 600">Read the methods</a>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

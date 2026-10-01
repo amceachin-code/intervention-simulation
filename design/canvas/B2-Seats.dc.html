@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Who should get the seats?</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0;background:#F3F4F6}
+a{color:#1B5FB8}a:hover{color:#123F7A}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #1B5FB8;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F6; color: #101418; font-family: 'Public Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #D9DDE3">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 12px 32px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+      <a href="#" style="font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: #101418; text-decoration: none">NAEP Recovery Explorer</a>
+      <nav aria-label="Subject and grade" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Reading</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <button type="button" aria-label="Reading, grade 4" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">4</button>
+            <button type="button" aria-label="Reading, grade 8" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">8</button>
+            <button type="button" aria-label="Reading, grade 12" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">12</button>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Math</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <button type="button" aria-label="Math, grade 4" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">4</button>
+            <button type="button" aria-label="Math, grade 8" aria-pressed="true" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #101418; background: #101418; color: #FFFFFF; font: inherit; font-weight: 700; cursor: pointer">8</button>
+            <button type="button" aria-label="Math, grade 12" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">12</button>
+          </div>
+        </div>
+      </nav>
+      <a href="#" style="margin-left: auto; font-weight: 600; text-decoration: none">Methods and sources</a>
+    </div>
+    <nav aria-label="Questions" style="max-width: 1320px; margin: 0 auto; padding: 8px 32px 0; display: flex; flex-wrap: wrap; gap: 8px 32px">
+      <a href="B1-Requirement.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 2px; border-bottom: 3px solid transparent; color: #3F4752; font-weight: 600; font-size: 16px; text-decoration: none"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #5B6370; color: #3F4752; font-size: 13px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center">1</span>What would it take?</a>
+      <a href="B2-Seats.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 2px; border-bottom: 3px solid #101418; color: #101418; font-weight: 700; font-size: 16px; text-decoration: none"><span style="width: 26px; height: 26px; border-radius: 13px; background: #101418; color: #FFFFFF; font-size: 13px; display: inline-flex; align-items: center; justify-content: center">2</span>Who should get the seats?</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 1320px; margin: 0 auto; padding: 32px 32px 56px; display: flex; flex-direction: column; gap: 24px">
+    <div>
+      <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5B6370">Math, grade 8 · 2019 to 2024</p>
+      <h1 style="margin: 0; max-width: 900px; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; font-weight: 600; line-height: 1.2">Same seats, same boost. Where the seats go decides whether the gap closes.</h1>
+      <p style="margin: 12px 0 0; max-width: 80ch; color: #3F4752">Each rule below gives a seat to 28% of students, and each student with a seat gains 0.155 SD. Results are counted across all students, the tool's main measure.</p>
+    </div>
+
+    <form aria-label="Seat budget" style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 32px; padding: 20px 24px; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px">
+      <div style="flex-basis: 320px; flex-grow: 1; min-width: 0">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+          <label for="b2-seats" style="font-weight: 700">Seats</label>
+          <span style="font-size: 18px; font-weight: 700">28% of students</span>
+        </div>
+        <input id="b2-seats" type="range" min="5" max="100" step="1" value="28" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+      </div>
+      <div style="flex-basis: 300px; flex-grow: 1; min-width: 0">
+        <label for="b2-boost" style="display: block; margin-bottom: 6px; font-weight: 700">Boost for each student with a seat</label>
+        <select id="b2-boost" style="width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #101418; font: inherit">
+          <option>0.155 SD · Tutoring, large programs</option>
+        </select>
+      </div>
+      <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+        <legend style="padding: 0; margin-bottom: 6px; font-weight: 700">How to count</legend>
+        <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+          <label style="min-height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; background: #101418; color: #FFFFFF; font-weight: 700; cursor: pointer"><input type="radio" name="b2-mode" checked="checked" style="margin: 0; accent-color: #FFFFFF">All students</label>
+          <label style="min-height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border-left: 1px solid #D9DDE3; color: #3F4752; font-weight: 600; cursor: pointer"><input type="radio" name="b2-mode" style="margin: 0; accent-color: #1B5FB8">Same students</label>
+        </div>
+      </fieldset>
+    </form>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px">
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <div>
+          <h2 style="margin: 0; font-size: 17px; font-weight: 700">Lowest scorers first</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #3F4752">Seats go to the lowest-scoring students until they run out. A limit, not a plan: no real screen picks students this precisely.</p>
+        </div>
+        <div>
+<svg viewBox="0 0 300 130" width="100%" role="img" aria-label="Share of students at each percentile who get a seat" style="display: block; overflow: visible"><line x1="40.0" x2="290.0" y1="102.0" y2="102.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="106.0" text-anchor="end" fill="#5B6370" font-size="11">0%</text><line x1="40.0" x2="290.0" y1="57.0" y2="57.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="61.0" text-anchor="end" fill="#5B6370" font-size="11">50%</text><line x1="40.0" x2="290.0" y1="12.0" y2="12.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="16.0" text-anchor="end" fill="#5B6370" font-size="11">100%</text><text x="40.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">10th</text><text x="165.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">50th</text><text x="290.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">90th</text><path d="M40.0,12.0L96.3,12.0L96.3,102.0L40.0,102.0Z" fill="rgba(42, 120, 214, 0.16)"></path><path d="M40.0,12.0L96.3,12.0L96.3,102.0L290.0,102.0" fill="none" stroke="#2A78D6" stroke-width="2.5"></path></svg>
+          <p style="margin: 4px 0 0; font-size: 12px; color: #5B6370">Every student up to the 28th percentile, none above</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #E8EBEF; font-size: 13px">
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">10th, points below 2019</span><span><b>5.3</b> <span style="color: #5B6370">(was 11.4)</span></span></div>
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">90th, points below 2019</span><span><b>5.0</b> <span style="color: #5B6370">(was 5.0)</span></span></div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 14px; border-radius: 10px; background: #F3F4F6">
+          <div style="font-size: 12px; font-weight: 600; color: #3F4752">90-10 gap, wider than 2019 by</div>
+          <div style="font-size: 26px; font-weight: 700; line-height: 1.2">0.3 points</div>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <div>
+          <h2 style="margin: 0; font-size: 17px; font-weight: 700">Economically disadvantaged only</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #3F4752">Seats go at random to students eligible for the National School Lunch Program, 47% of students.</p>
+        </div>
+        <div>
+<svg viewBox="0 0 300 130" width="100%" role="img" aria-label="Share of students at each percentile who get a seat" style="display: block; overflow: visible"><line x1="40.0" x2="290.0" y1="102.0" y2="102.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="106.0" text-anchor="end" fill="#5B6370" font-size="11">0%</text><line x1="40.0" x2="290.0" y1="57.0" y2="57.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="61.0" text-anchor="end" fill="#5B6370" font-size="11">50%</text><line x1="40.0" x2="290.0" y1="12.0" y2="12.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="16.0" text-anchor="end" fill="#5B6370" font-size="11">100%</text><text x="40.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">10th</text><text x="165.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">50th</text><text x="290.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">90th</text><path d="M40.0,63.8L46.3,64.3L52.5,64.7L58.8,65.3L65.0,65.8L71.3,66.5L77.5,67.2L83.8,67.9L90.0,68.6L96.3,69.3L102.5,70.0L108.8,70.6L115.0,71.3L121.3,72.0L127.5,72.6L133.8,73.2L140.0,73.9L146.3,74.5L152.5,75.2L158.8,75.8L165.0,76.4L171.3,77.1L177.5,77.7L183.8,78.4L190.0,79.0L196.3,79.7L202.5,80.3L208.8,81.0L215.0,81.7L221.3,82.4L227.5,83.1L233.8,83.8L240.0,84.5L246.3,85.2L252.5,85.9L258.8,86.7L265.0,87.4L271.3,88.2L277.5,88.9L283.8,89.7L290.0,90.5L290.0,102.0L40.0,102.0Z" fill="rgba(42, 120, 214, 0.16)"></path><path d="M40.0,63.8L46.3,64.3L52.5,64.7L58.8,65.3L65.0,65.8L71.3,66.5L77.5,67.2L83.8,67.9L90.0,68.6L96.3,69.3L102.5,70.0L108.8,70.6L115.0,71.3L121.3,72.0L127.5,72.6L133.8,73.2L140.0,73.9L146.3,74.5L152.5,75.2L158.8,75.8L165.0,76.4L171.3,77.1L177.5,77.7L183.8,78.4L190.0,79.0L196.3,79.7L202.5,80.3L208.8,81.0L215.0,81.7L221.3,82.4L227.5,83.1L233.8,83.8L240.0,84.5L246.3,85.2L252.5,85.9L258.8,86.7L265.0,87.4L271.3,88.2L277.5,88.9L283.8,89.7L290.0,90.5" fill="none" stroke="#2A78D6" stroke-width="2.5"></path></svg>
+          <p style="margin: 4px 0 0; font-size: 12px; color: #5B6370">42.4% at the 10th percentile, 12.8% at the 90th</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #E8EBEF; font-size: 13px">
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">10th, points below 2019</span><span><b>9.0</b> <span style="color: #5B6370">(was 11.4)</span></span></div>
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">90th, points below 2019</span><span><b>4.1</b> <span style="color: #5B6370">(was 5.0)</span></span></div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 14px; border-radius: 10px; background: #F3F4F6">
+          <div style="font-size: 12px; font-weight: 600; color: #3F4752">90-10 gap, wider than 2019 by</div>
+          <div style="font-size: 26px; font-weight: 700; line-height: 1.2">4.9 points</div>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <div>
+          <h2 style="margin: 0; font-size: 17px; font-weight: 700">Equal chance</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #3F4752">Every student has the same chance of a seat, whatever their score.</p>
+        </div>
+        <div>
+<svg viewBox="0 0 300 130" width="100%" role="img" aria-label="Share of students at each percentile who get a seat" style="display: block; overflow: visible"><line x1="40.0" x2="290.0" y1="102.0" y2="102.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="106.0" text-anchor="end" fill="#5B6370" font-size="11">0%</text><line x1="40.0" x2="290.0" y1="57.0" y2="57.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="61.0" text-anchor="end" fill="#5B6370" font-size="11">50%</text><line x1="40.0" x2="290.0" y1="12.0" y2="12.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="16.0" text-anchor="end" fill="#5B6370" font-size="11">100%</text><text x="40.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">10th</text><text x="165.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">50th</text><text x="290.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">90th</text><path d="M40.0,76.8L290.0,76.8L290.0,102.0L40.0,102.0Z" fill="rgba(42, 120, 214, 0.16)"></path><path d="M40.0,76.8L290.0,76.8" fill="none" stroke="#2A78D6" stroke-width="2.5"></path></svg>
+          <p style="margin: 4px 0 0; font-size: 12px; color: #5B6370">28% at every percentile</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #E8EBEF; font-size: 13px">
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">10th, points below 2019</span><span><b>9.9</b> <span style="color: #5B6370">(was 11.4)</span></span></div>
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">90th, points below 2019</span><span><b>3.1</b> <span style="color: #5B6370">(was 5.0)</span></span></div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 14px; border-radius: 10px; background: #F3F4F6">
+          <div style="font-size: 12px; font-weight: 600; color: #3F4752">90-10 gap, wider than 2019 by</div>
+          <div style="font-size: 26px; font-weight: 700; line-height: 1.2">6.8 points</div>
+        </div>
+      </section>
+
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <div>
+          <h2 style="margin: 0; font-size: 17px; font-weight: 700">Whoever signs up</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #3F4752">A stylized pattern for optional tutoring: take-up rises with scores, four times as high at the 90th percentile as at the 10th.</p>
+        </div>
+        <div>
+<svg viewBox="0 0 300 130" width="100%" role="img" aria-label="Share of students at each percentile who get a seat" style="display: block; overflow: visible"><line x1="40.0" x2="290.0" y1="102.0" y2="102.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="106.0" text-anchor="end" fill="#5B6370" font-size="11">0%</text><line x1="40.0" x2="290.0" y1="57.0" y2="57.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="61.0" text-anchor="end" fill="#5B6370" font-size="11">50%</text><line x1="40.0" x2="290.0" y1="12.0" y2="12.0" stroke="#E8EBEF" stroke-width="1"></line><text x="32.0" y="16.0" text-anchor="end" fill="#5B6370" font-size="11">100%</text><text x="40.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">10th</text><text x="165.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">50th</text><text x="290.0" y="120.0" text-anchor="middle" fill="#5B6370" font-size="11">90th</text><path d="M40.0,90.7L46.3,90.3L52.5,89.9L58.8,89.5L65.0,89.0L71.3,88.6L77.5,88.1L83.8,87.6L90.0,87.1L96.3,86.6L102.5,86.0L108.8,85.5L115.0,84.9L121.3,84.3L127.5,83.7L133.8,83.0L140.0,82.3L146.3,81.6L152.5,80.9L158.8,80.2L165.0,79.4L171.3,78.6L177.5,77.8L183.8,76.9L190.0,76.1L196.3,75.1L202.5,74.2L208.8,73.2L215.0,72.2L221.3,71.1L227.5,70.1L233.8,68.9L240.0,67.8L246.3,66.6L252.5,65.3L258.8,64.0L265.0,62.7L271.3,61.3L277.5,59.8L283.8,58.4L290.0,56.8L290.0,102.0L40.0,102.0Z" fill="rgba(42, 120, 214, 0.16)"></path><path d="M40.0,90.7L46.3,90.3L52.5,89.9L58.8,89.5L65.0,89.0L71.3,88.6L77.5,88.1L83.8,87.6L90.0,87.1L96.3,86.6L102.5,86.0L108.8,85.5L115.0,84.9L121.3,84.3L127.5,83.7L133.8,83.0L140.0,82.3L146.3,81.6L152.5,80.9L158.8,80.2L165.0,79.4L171.3,78.6L177.5,77.8L183.8,76.9L190.0,76.1L196.3,75.1L202.5,74.2L208.8,73.2L215.0,72.2L221.3,71.1L227.5,70.1L233.8,68.9L240.0,67.8L246.3,66.6L252.5,65.3L258.8,64.0L265.0,62.7L271.3,61.3L277.5,59.8L283.8,58.4L290.0,56.8" fill="none" stroke="#2A78D6" stroke-width="2.5"></path></svg>
+          <p style="margin: 4px 0 0; font-size: 12px; color: #5B6370">12.5% at the 10th percentile, 50.2% at the 90th</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #E8EBEF; font-size: 13px">
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">10th, points below 2019</span><span><b>10.7</b> <span style="color: #5B6370">(was 11.4)</span></span></div>
+          <div style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #3F4752">90th, points below 2019</span><span><b>1.7</b> <span style="color: #5B6370">(was 5.0)</span></span></div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 14px; border-radius: 10px; background: #F3F4F6">
+          <div style="font-size: 12px; font-weight: 600; color: #3F4752">90-10 gap, wider than 2019 by</div>
+          <div style="font-size: 26px; font-weight: 700; line-height: 1.2">9.0 points</div>
+        </div>
+      </section>
+    </div>
+
+    <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700">How much wider than 2019 the 90-10 gap stays</h2>
+      <p style="margin: 4px 0 0; font-size: 13px; color: #5B6370">In NAEP points. With no program, the gap is 6.4 points wider than in 2019.</p>
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 28px">
+        <div style="display: grid; grid-template-columns: 240px minmax(0, 1fr) 72px; align-items: center; gap: 16px">
+          <span style="font-weight: 600">Lowest scorers first</span>
+          <div style="position: relative; height: 22px; background: #F3F4F6; border-radius: 4px">
+            <div style="width: 2.8%; height: 22px; border-radius: 4px; background: #2A78D6"></div>
+            <div style="position: absolute; top: -20px; left: 64.4%; transform: translateX(-50%); font-size: 12px; font-weight: 600; color: #3F4752; white-space: nowrap">No program: 6.4</div>
+            <div style="position: absolute; top: -4px; bottom: -4px; left: 64.4%; width: 2px; background: #101418"></div>
+          </div>
+          <span style="text-align: right; font-weight: 700">0.3</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 240px minmax(0, 1fr) 72px; align-items: center; gap: 16px">
+          <span style="font-weight: 600">Economically disadvantaged only</span>
+          <div style="position: relative; height: 22px; background: #F3F4F6; border-radius: 4px">
+            <div style="width: 49.1%; height: 22px; border-radius: 4px; background: #2A78D6"></div>
+            <div style="position: absolute; top: -4px; bottom: -4px; left: 64.4%; width: 2px; background: #101418"></div>
+          </div>
+          <span style="text-align: right; font-weight: 700">4.9</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 240px minmax(0, 1fr) 72px; align-items: center; gap: 16px">
+          <span style="font-weight: 600">Equal chance</span>
+          <div style="position: relative; height: 22px; background: #F3F4F6; border-radius: 4px">
+            <div style="width: 67.6%; height: 22px; border-radius: 4px; background: #D9622B"></div>
+            <div style="position: absolute; top: -4px; bottom: -4px; left: 64.4%; width: 2px; background: #101418"></div>
+          </div>
+          <span style="text-align: right; font-weight: 700">6.8</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 240px minmax(0, 1fr) 72px; align-items: center; gap: 16px">
+          <span style="font-weight: 600">Whoever signs up</span>
+          <div style="position: relative; height: 22px; background: #F3F4F6; border-radius: 4px">
+            <div style="width: 90.4%; height: 22px; border-radius: 4px; background: #D9622B"></div>
+            <div style="position: absolute; top: -4px; bottom: -4px; left: 64.4%; width: 2px; background: #101418"></div>
+          </div>
+          <span style="text-align: right; font-weight: 700">9.0</span>
+        </div>
+      </div>
+      <p style="margin: 20px 0 0; max-width: 80ch; color: #3F4752">Two rules leave the gap wider than no program at all (orange). With an equal chance, students who take part move past classmates who do not, which spreads scores out. With sign-up, higher scorers take more of the seats.</p>
+      <p style="margin: 8px 0 0; font-size: 13px; color: #5B6370">Following the same students instead gives 0.3, 4.6, 6.4, and 8.8 points.</p>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1420}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone, editing the program</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0;background:#F3F4F6}
+a{color:#1B5FB8}a:hover{color:#123F7A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F3F4F6; color: #101418; font-family: 'Public Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums">
+
+  <header style="height: 56px; box-sizing: border-box; padding: 0 16px; background: #FFFFFF; display: flex; align-items: center">
+    <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 600">NAEP Recovery Explorer</span>
+  </header>
+  <div style="padding: 20px 16px">
+    <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 25px; font-weight: 600; line-height: 1.25">This program would undo 14% of the drop at the 10th percentile and 38% at the 90th.</p>
+  </div>
+  <div style="position: absolute; inset: 0; background: rgba(16, 20, 24, 0.45)"></div>
+
+  <div role="dialog" aria-label="Your program" style="position: absolute; left: 0; right: 0; bottom: 0; top: 64px; padding: 8px 16px 24px; background: #FFFFFF; border-radius: 16px 16px 0 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+    <div style="width: 40px; height: 4px; margin: 0 auto; border-radius: 2px; background: #C4C9D1"></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: -8px">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700">Your program</h2>
+      <a href="A-Phone-Results.dc.html" style="min-height: 44px; padding: 0 18px; display: inline-flex; align-items: center; border-radius: 10px; background: #1B5FB8; color: #FFFFFF; font-weight: 700; text-decoration: none">Done</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <label for="p-effect" style="font-weight: 700">How much it helps</label>
+        <span style="font-size: 18px; font-weight: 700">0.155 SD</span>
+      </div>
+      <input id="p-effect" type="range" min="0" max="0.5" step="0.005" value="0.155" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+      <div style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+        <button type="button" aria-pressed="true" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #1B5FB8; border-radius: 10px; background: #F2F7FD; color: #101418; font: inherit; font-size: 13px; font-weight: 700; white-space: nowrap">Large tutoring · 0.155</button>
+        <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #3F4752; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap">Mid-size tutoring · 0.214</button>
+        <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #3F4752; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap">Summer math · 0.100</button>
+        <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #3F4752; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap">Summer since COVID · 0.027</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <label for="p-share" style="font-weight: 700">How many take part</label>
+        <span style="font-size: 18px; font-weight: 700">28%</span>
+      </div>
+      <input id="p-share" type="range" min="0" max="100" step="0.1" value="28" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+      <div style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+        <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #3F4752; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap">Every student · 100%</button>
+        <button type="button" aria-pressed="true" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #1B5FB8; border-radius: 10px; background: #F2F7FD; color: #101418; font: inherit; font-size: 13px; font-weight: 700; white-space: nowrap">District tutoring · 28%</button>
+        <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #3F4752; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap">Sign-up rate · 18.7%</button>
+        <button type="button" aria-pressed="false" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #3F4752; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap">Summer attendance · 13%</button>
+      </div>
+    </div>
+
+    <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+      <legend style="padding: 0; margin-bottom: 4px; font-weight: 700">Who takes part</legend>
+      <p style="margin: 0 0 8px; font-size: 12px; color: #5B6370">Right column: the 90-10 gap each choice leaves. It was 108.9 points in 2024.</p>
+      <div style="display: flex; flex-direction: column; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; cursor: pointer">
+          <input type="radio" name="p-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+          <span style="flex-grow: 1; font-size: 14px">Mostly low scorers</span>
+          <span style="font-size: 14px; font-weight: 700">107.2</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-top: 1px solid #E8EBEF; cursor: pointer">
+          <input type="radio" name="p-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+          <span style="flex-grow: 1; font-size: 14px">More low scorers</span>
+          <span style="font-size: 14px; font-weight: 700">108.1</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-top: 1px solid #E8EBEF; background: #F2F7FD; cursor: pointer">
+          <input type="radio" name="p-who" checked="checked" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+          <span style="flex-grow: 1; font-size: 14px; font-weight: 700">Equal chance</span>
+          <span style="font-size: 14px; font-weight: 700">109.3</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-top: 1px solid #E8EBEF; cursor: pointer">
+          <input type="radio" name="p-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+          <span style="flex-grow: 1; font-size: 14px">More high scorers</span>
+          <span style="font-size: 14px; font-weight: 700">110.4</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-top: 1px solid #E8EBEF; cursor: pointer">
+          <input type="radio" name="p-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+          <span style="flex-grow: 1; font-size: 14px">Mostly high scorers</span>
+          <span style="font-size: 14px; font-weight: 700">111.3</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-top: 1px solid #E8EBEF; cursor: pointer">
+          <input type="radio" name="p-who" style="width: 16px; height: 16px; margin: 0; accent-color: #1B5FB8">
+          <span style="flex-grow: 1; font-size: 14px">Economically disadvantaged only</span>
+          <span style="font-size: 14px; font-weight: 700">107.4</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <button type="button" style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0; border: 0; border-top: 1px solid #E8EBEF; background: transparent; color: #101418; font: inherit; font-weight: 700; cursor: pointer">More settings<span style="font-size: 13px; font-weight: 400; color: #5B6370">Equal boost · all students</span></button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

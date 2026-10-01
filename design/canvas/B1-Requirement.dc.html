@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What would it take?</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0;background:#F3F4F6}
+a{color:#1B5FB8}a:hover{color:#123F7A}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #1B5FB8;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F6; color: #101418; font-family: 'Public Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #D9DDE3">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 12px 32px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+      <a href="#" style="font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: #101418; text-decoration: none">NAEP Recovery Explorer</a>
+      <nav aria-label="Subject and grade" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Reading</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <sc-for list="{{ readBtns }}" as="b" hint-placeholder-count="3">
+              <button type="button" aria-label="{{ b.aria }}" aria-pressed="{{ b.pressed }}" onClick="{{ b.pick }}" style="min-width: 48px; min-height: 44px; border: 0; border-left: {{ b.bl }}; background: {{ b.bg }}; color: {{ b.fg }}; font: inherit; font-weight: {{ b.weight }}; cursor: pointer">{{ b.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Math</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <sc-for list="{{ mathBtns }}" as="b" hint-placeholder-count="3">
+              <button type="button" aria-label="{{ b.aria }}" aria-pressed="{{ b.pressed }}" onClick="{{ b.pick }}" style="min-width: 48px; min-height: 44px; border: 0; border-left: {{ b.bl }}; background: {{ b.bg }}; color: {{ b.fg }}; font: inherit; font-weight: {{ b.weight }}; cursor: pointer">{{ b.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </nav>
+      <a href="#" style="margin-left: auto; font-weight: 600; text-decoration: none">Methods and sources</a>
+    </div>
+    <nav aria-label="Questions" style="max-width: 1320px; margin: 0 auto; padding: 8px 32px 0; display: flex; flex-wrap: wrap; gap: 8px 32px">
+      <a href="B1-Requirement.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 2px; border-bottom: 3px solid #101418; color: #101418; font-weight: 700; font-size: 16px; text-decoration: none"><span style="width: 26px; height: 26px; border-radius: 13px; background: #101418; color: #FFFFFF; font-size: 13px; display: inline-flex; align-items: center; justify-content: center">1</span>What would it take?</a>
+      <a href="B2-Seats.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 2px; border-bottom: 3px solid transparent; color: #3F4752; font-weight: 600; font-size: 16px; text-decoration: none"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #5B6370; color: #3F4752; font-size: 13px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center">2</span>Who should get the seats?</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 1320px; margin: 0 auto; padding: 32px 32px 56px; display: flex; flex-direction: column; gap: 24px">
+
+    <div>
+      <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5B6370">{{ cellName }} · 2019 to 2024</p>
+      <h1 style="margin: 0; max-width: 960px; font-family: 'Source Serif 4', Georgia, serif; font-size: 36px; font-weight: 600; line-height: 1.2">One round barely moves the average student. Getting back to 2019 takes many rounds.</h1>
+      <p style="margin: 12px 0 0; max-width: 78ch; color: #3F4752">Set how many students a program serves each round and how much each of them gains. In any one round most students do not take part, so the average at each percentile moves only a little. The gains have to pile up, round after round.</p>
+    </div>
+
+    <form aria-label="The program" style="display: flex; flex-wrap: wrap; gap: 24px 48px; padding: 20px 24px; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px">
+      <div style="flex-basis: 520px; flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+          <label for="b1-share" style="font-weight: 700">Share of students served each round</label>
+          <span style="font-size: 22px; font-weight: 700">{{ cLabel }}</span>
+        </div>
+        <input id="b1-share" type="range" min="0" max="100" step="0.1" value="{{ cSlider }}" onChange="{{ onShare }}" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5B6370"><span>0%</span><span>100%</span></div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 4px">
+          <sc-for list="{{ cPresets }}" as="p" hint-placeholder-count="4">
+            <button type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.pick }}" style="min-height: 52px; padding: 6px 10px; border: 1px solid {{ p.border }}; border-radius: 10px; background: {{ p.bg }}; color: #101418; font: inherit; text-align: left; cursor: pointer; display: flex; flex-direction: column">
+              <span style="font-size: 15px; font-weight: 700">{{ p.a }}</span>
+              <span style="font-size: 12px; color: #5B6370">{{ p.b }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex-basis: 520px; flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+          <label for="b1-effect" style="font-weight: 700">Gain for each student who takes part</label>
+          <span style="font-size: 22px; font-weight: 700">{{ gLabel }}</span>
+        </div>
+        <input id="b1-effect" type="range" min="0" max="0.5" step="0.001" value="{{ gSlider }}" onChange="{{ onEffect }}" style="width: 100%; height: 32px; margin: 0; accent-color: #1B5FB8">
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5B6370"><span>0.00 SD</span><span>{{ gPtsLabel }}</span><span>0.50 SD</span></div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 4px">
+          <sc-for list="{{ gPresets }}" as="p" hint-placeholder-count="4">
+            <button type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.pick }}" style="min-height: 52px; padding: 6px 10px; border: 1px solid {{ p.border }}; border-radius: 10px; background: {{ p.bg }}; color: #101418; font: inherit; text-align: left; cursor: pointer; display: flex; flex-direction: column">
+              <span style="font-size: 15px; font-weight: 700">{{ p.a }} SD</span>
+              <span style="font-size: 12px; color: #5B6370">{{ p.b }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </form>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: stretch; gap: 24px">
+      <section style="flex-basis: 0; flex-grow: 999; min-width: 60%; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">What one round does for 100 students at the 10th percentile</h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #5B6370">{{ oneSub }}</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; margin-top: 20px">
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <svg viewBox="0 0 260 260" width="260" height="260" role="img" aria-label="{{ waffleLabel }}" style="display: block; flex-shrink: 0"><path d="{{ wo }}" fill="#FFFFFF" stroke="#9AA1AB" stroke-width="1.5"></path><path d="{{ wf }}" fill="#2A78D6"></path></svg>
+            <div style="display: flex; gap: 16px; font-size: 13px; color: #3F4752">
+              <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 6px; background: #2A78D6; display: inline-block"></span>{{ nIn }} take part</span>
+              <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 6px; border: 1.5px solid #9AA1AB; display: inline-block"></span>{{ nOut }} do not</span>
+            </div>
+          </div>
+          <div style="flex-basis: 360px; flex-grow: 1; min-width: 0">
+            <svg viewBox="0 0 560 200" width="100%" role="img" aria-label="Points below the 2019 score at the 10th percentile after one round" style="display: block; overflow: visible">
+              <path d="M20,24V168M67.3,24V168M114.5,24V168M161.8,24V168M209.1,24V168M256.4,24V168M350.9,24V168M398.2,24V168M445.5,24V168M492.7,24V168M540,24V168" stroke="#E8EBEF" stroke-width="1" fill="none"></path>
+              <text x="20" y="188" text-anchor="middle" fill="#5B6370" font-size="12">−12</text>
+              <text x="67.3" y="188" text-anchor="middle" fill="#5B6370" font-size="12">−10</text>
+              <text x="114.5" y="188" text-anchor="middle" fill="#5B6370" font-size="12">−8</text>
+              <text x="161.8" y="188" text-anchor="middle" fill="#5B6370" font-size="12">−6</text>
+              <text x="209.1" y="188" text-anchor="middle" fill="#5B6370" font-size="12">−4</text>
+              <text x="256.4" y="188" text-anchor="middle" fill="#5B6370" font-size="12">−2</text>
+              <text x="303.6" y="188" text-anchor="middle" fill="#5B6370" font-size="12">0</text>
+              <text x="350.9" y="188" text-anchor="middle" fill="#5B6370" font-size="12">+2</text>
+              <text x="398.2" y="188" text-anchor="middle" fill="#5B6370" font-size="12">+4</text>
+              <text x="445.5" y="188" text-anchor="middle" fill="#5B6370" font-size="12">+6</text>
+              <text x="492.7" y="188" text-anchor="middle" fill="#5B6370" font-size="12">+8</text>
+              <text x="540" y="188" text-anchor="middle" fill="#5B6370" font-size="12">+10</text>
+              <line x1="303.6" x2="303.6" y1="16" y2="168" stroke="#101418" stroke-width="1.5"></line>
+              <text x="303.6" y="10" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">2019 score</text>
+              <text x="20" y="36" fill="#3F4752" font-size="12" font-weight="600">{{ nOut }} who did not take part</text>
+              <circle cx="{{ dbS }}" cy="48" r="6.5" fill="#7B818B" stroke="#FFFFFF" stroke-width="2"></circle>
+              <text x="58" y="52" fill="#3F4752" font-size="13" font-weight="700">+0</text>
+              <text x="20" y="84" fill="#3F4752" font-size="12" font-weight="600">{{ nIn }} who took part</text>
+              <line x1="{{ dbS }}" x2="{{ dbP }}" y1="96" y2="96" stroke="#2A78D6" stroke-width="3"></line>
+              <circle cx="{{ dbS }}" cy="96" r="5" fill="#FFFFFF" stroke="#7B818B" stroke-width="2"></circle>
+              <circle cx="{{ dbP }}" cy="96" r="6.5" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle>
+              <text x="{{ dbPl }}" y="100" fill="#1B5FB8" font-size="13" font-weight="700">{{ gPts }}</text>
+              <text x="20" y="132" fill="#3F4752" font-size="12" font-weight="600">Average of all 100</text>
+              <line x1="{{ dbS }}" x2="{{ dbA }}" y1="144" y2="144" stroke="#101418" stroke-width="3"></line>
+              <circle cx="{{ dbS }}" cy="144" r="5" fill="#FFFFFF" stroke="#7B818B" stroke-width="2"></circle>
+              <circle cx="{{ dbA }}" cy="144" r="6.5" fill="#101418" stroke="#FFFFFF" stroke-width="2"></circle>
+              <text x="{{ dbAl }}" y="148" fill="#101418" font-size="13" font-weight="700">{{ aPts }}</text>
+            </svg>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E8EBEF">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">Each student who takes part</div>
+            <div style="font-size: 28px; font-weight: 700; line-height: 1.15; color: #1B5FB8">{{ tilePart }}</div>
+            <div style="font-size: 13px; color: #5B6370">{{ tilePartSD }}</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">Average of all 100</div>
+            <div style="font-size: 28px; font-weight: 700; line-height: 1.15">{{ tileAvg }}</div>
+            <div style="font-size: 13px; color: #5B6370">{{ tileAvgSD }}</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #3F4752">Drop undone this round</div>
+            <div style="font-size: 28px; font-weight: 700; line-height: 1.15">{{ tileUnd }}</div>
+            <div style="font-size: 13px; color: #5B6370">{{ undSub }}</div>
+          </div>
+        </div>
+        <p style="margin: 16px 0 0; font-size: 14px; color: #3F4752">The gain is real for the students who take part. It is the average that barely moves.</p>
+      </section>
+
+      <aside style="flex-basis: 340px; flex-grow: 1; min-width: 0; padding: 24px; border-radius: 12px; background: #101418; color: #FFFFFF; display: flex; flex-direction: column; gap: 16px">
+        <p style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #C9CED6">This program, in short</p>
+        <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 21px; line-height: 1.35">{{ lead }}</p>
+        <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid #3A414B">
+          <div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #C9CED6">Rounds to reach every student once</span><span style="font-size: 20px; font-weight: 700">{{ cReach }}</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #C9CED6">Rounds to bring the 10th percentile back to 2019</span><span style="font-size: 20px; font-weight: 700">{{ cRest }}</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #C9CED6">90-10 gap after any number of rounds</span><span style="font-size: 20px; font-weight: 700">{{ g24 }}</span></div>
+        </div>
+        <p style="margin: 0; font-size: 14px; color: #C9CED6">{{ gapNote }}</p>
+      </aside>
+    </div>
+
+    <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700">Round after round</h2>
+      <p style="margin: 4px 0 4px; max-width: 90ch; font-size: 13px; color: #5B6370">{{ roundsSub }}</p>
+      <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #B4461A">{{ capNote }} {{ tenthFirst }}</p>
+      <svg viewBox="0 0 1200 430" width="100%" role="img" aria-label="Average score at the 10th and 90th percentiles, round by round" style="display: block; overflow: visible">
+        <path d="{{ grid }}" stroke="#E8EBEF" stroke-width="1" fill="none"></path>
+        <text x="50" y="{{ yy0 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl0 }}</text>
+        <text x="50" y="{{ yy1 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl1 }}</text>
+        <text x="50" y="{{ yy2 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl2 }}</text>
+        <text x="50" y="{{ yy3 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl3 }}</text>
+        <text x="50" y="{{ yy4 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl4 }}</text>
+        <text x="50" y="{{ yy5 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl5 }}</text>
+        <text x="50" y="{{ yy6 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl6 }}</text>
+        <text x="50" y="{{ yy7 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl7 }}</text>
+        <text x="50" y="{{ yy8 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl8 }}</text>
+        <text x="50" y="{{ yy9 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl9 }}</text>
+        <text x="50" y="{{ yy10 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl10 }}</text>
+        <text x="50" y="{{ yy11 }}" text-anchor="end" fill="#5B6370" font-size="12">{{ yl11 }}</text>
+        <text x="{{ xx0 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl0 }}</text>
+        <text x="{{ xx1 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl1 }}</text>
+        <text x="{{ xx2 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl2 }}</text>
+        <text x="{{ xx3 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl3 }}</text>
+        <text x="{{ xx4 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl4 }}</text>
+        <text x="{{ xx5 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl5 }}</text>
+        <text x="{{ xx6 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl6 }}</text>
+        <text x="{{ xx7 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl7 }}</text>
+        <text x="{{ xx8 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl8 }}</text>
+        <text x="{{ xx9 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl9 }}</text>
+        <text x="{{ xx10 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl10 }}</text>
+        <text x="{{ xx11 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl11 }}</text>
+        <text x="{{ xx12 }}" y="412" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl12 }}</text>
+        <text x="50" y="18" text-anchor="end" fill="#101418" font-size="12" font-weight="600">Points</text>
+        <line x1="60" x2="950" y1="{{ y0 }}" y2="{{ y0 }}" stroke="#101418" stroke-width="1.5"></line>
+        <line x1="{{ rx }}" x2="{{ rx }}" y1="30" y2="390" stroke="#5B6370" stroke-width="1.5" stroke-dasharray="4 4" visibility="{{ rVis }}"></line>
+        <text x="{{ rtx }}" y="42" text-anchor="{{ rAnchor }}" fill="#101418" font-size="13" font-weight="700">{{ rT1 }}</text>
+        <text x="{{ rtx }}" y="59" text-anchor="{{ rAnchor }}" fill="#3F4752" font-size="12">{{ rT2 }}</text>
+        <line x1="60" x2="950" y1="{{ yn10 }}" y2="{{ yn10 }}" stroke="#7B818B" stroke-width="2" stroke-dasharray="6 5"></line>
+        <line x1="60" x2="950" y1="{{ yn90 }}" y2="{{ yn90 }}" stroke="#7B818B" stroke-width="2" stroke-dasharray="6 5"></line>
+        <path d="{{ p10 }}" fill="none" stroke="#123F7A" stroke-width="3"></path>
+        <path d="{{ d10 }}" fill="#123F7A" stroke="#FFFFFF" stroke-width="2"></path>
+        <path d="{{ p90 }}" fill="none" stroke="#4F92E0" stroke-width="3"></path>
+        <path d="{{ d90 }}" fill="#4F92E0" stroke="#FFFFFF" stroke-width="2"></path>
+        <text x="962" y="{{ ly0 }}" fill="{{ lf0 }}" font-size="13" font-weight="{{ lw0 }}">{{ lt0 }}</text>
+        <text x="962" y="{{ ly1 }}" fill="{{ lf1 }}" font-size="13" font-weight="{{ lw1 }}">{{ lt1 }}</text>
+        <text x="962" y="{{ ly2 }}" fill="{{ lf2 }}" font-size="13" font-weight="{{ lw2 }}">{{ lt2 }}</text>
+        <text x="962" y="{{ ly3 }}" fill="{{ lf3 }}" font-size="13" font-weight="{{ lw3 }}">{{ lt3 }}</text>
+        <text x="962" y="{{ ly4 }}" fill="{{ lf4 }}" font-size="13" font-weight="{{ lw4 }}">{{ lt4 }}</text>
+        <circle cx="{{ c90x }}" cy="{{ y0 }}" r="7" fill="#FFFFFF" stroke="#4F92E0" stroke-width="2.5" visibility="{{ v90 }}"></circle>
+        <text x="{{ t90x }}" y="{{ t90y }}" text-anchor="{{ t90a }}" fill="#1B5FB8" font-size="13" font-weight="700">{{ t90 }}</text>
+        <circle cx="{{ c10x }}" cy="{{ y0 }}" r="7" fill="#FFFFFF" stroke="#123F7A" stroke-width="2.5" visibility="{{ v10 }}"></circle>
+        <text x="{{ t10x }}" y="{{ t10y1 }}" text-anchor="{{ t10a }}" fill="#123F7A" font-size="13" font-weight="700">{{ t10l1 }}</text>
+        <text x="{{ t10x }}" y="{{ t10y2 }}" text-anchor="{{ t10a }}" fill="#123F7A" font-size="13" font-weight="700">{{ t10l2 }}</text>
+        <text x="{{ t10x }}" y="{{ t10y3 }}" text-anchor="{{ t10a }}" fill="#3F4752" font-size="12">{{ t10l3 }}</text>
+        <path d="{{ br }}" fill="none" stroke="#101418" stroke-width="1.5"></path>
+        <text x="{{ brx }}" y="{{ bry1 }}" fill="#101418" font-size="13" font-weight="700">{{ brT }}</text>
+        <text x="{{ brx }}" y="{{ bry2 }}" fill="#101418" font-size="13" font-weight="700">in every round</text>
+        <text x="72" y="48" fill="#B4461A" font-size="13" font-weight="700">Best case</text>
+        <text x="72" y="66" fill="#3F4752" font-size="12">Gains add up and never fade,</text>
+        <text x="72" y="82" fill="#3F4752" font-size="12">and a second turn helps as much as the first.</text>
+      </svg>
+      <p style="margin: 6px 0 0; text-align: center; font-size: 13px; color: #5B6370">Rounds of the program. A round is one full run of the program, not a school year.</p>
+
+      <h3 style="margin: 24px 0 8px; font-size: 15px; font-weight: 700">Students reached</h3>
+      <svg viewBox="0 0 1200 150" width="100%" role="img" aria-label="Share of students reached, round by round" style="display: block; overflow: visible">
+        <line x1="60" x2="950" y1="118" y2="118" stroke="#D9DDE3" stroke-width="1"></line>
+        <line x1="60" x2="950" y1="22" y2="22" stroke="#E8EBEF" stroke-width="1"></line>
+        <text x="50" y="122" text-anchor="end" fill="#5B6370" font-size="12">0%</text>
+        <text x="50" y="26" text-anchor="end" fill="#5B6370" font-size="12">100%</text>
+        <path d="{{ once }}" fill="#C6DBF6"></path>
+        <path d="{{ twice }}" fill="#1B5FB8"></path>
+        <path d="{{ rnd }}" fill="none" stroke="#B4461A" stroke-width="2" stroke-dasharray="5 4"></path>
+        <path d="{{ rdots }}" fill="#B4461A"></path>
+        <text x="{{ px0 }}" y="{{ py0 }}" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">{{ pl0 }}</text>
+        <text x="{{ px1 }}" y="{{ py1 }}" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">{{ pl1 }}</text>
+        <text x="{{ px2 }}" y="{{ py2 }}" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">{{ pl2 }}</text>
+        <text x="{{ px3 }}" y="{{ py3 }}" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">{{ pl3 }}</text>
+        <text x="{{ px4 }}" y="{{ py4 }}" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">{{ pl4 }}</text>
+        <text x="{{ px5 }}" y="{{ py5 }}" text-anchor="middle" fill="#101418" font-size="12" font-weight="600">{{ pl5 }}</text>
+        <text x="{{ rlx }}" y="{{ rly }}" fill="#B4461A" font-size="12" font-weight="700">{{ rll }}</text>
+        <text x="{{ xx0 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl0 }}</text>
+        <text x="{{ xx1 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl1 }}</text>
+        <text x="{{ xx2 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl2 }}</text>
+        <text x="{{ xx3 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl3 }}</text>
+        <text x="{{ xx4 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl4 }}</text>
+        <text x="{{ xx5 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl5 }}</text>
+        <text x="{{ xx6 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl6 }}</text>
+        <text x="{{ xx7 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl7 }}</text>
+        <text x="{{ xx8 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl8 }}</text>
+        <text x="{{ xx9 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl9 }}</text>
+        <text x="{{ xx10 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl10 }}</text>
+        <text x="{{ xx11 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl11 }}</text>
+        <text x="{{ xx12 }}" y="138" text-anchor="middle" fill="#5B6370" font-size="12">{{ xl12 }}</text>
+        <rect x="962" y="22" width="12" height="12" fill="#C6DBF6"></rect><text x="980" y="32" fill="#3F4752" font-size="12">Reached once, new students each round</text>
+        <rect x="962" y="44" width="12" height="12" fill="#1B5FB8"></rect><text x="980" y="54" fill="#3F4752" font-size="12">Reached twice</text>
+        <line x1="962" x2="974" y1="72" y2="72" stroke="#B4461A" stroke-width="2" stroke-dasharray="4 3"></line><text x="980" y="76" fill="#3F4752" font-size="12">Reached at least once if each</text>
+        <text x="980" y="92" fill="#3F4752" font-size="12">round is a fresh random draw</text>
+      </svg>
+      <p style="margin: 8px 0 0; font-size: 13px; color: #5B6370">{{ reachNote }}</p>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+      <section style="flex-basis: 0; flex-grow: 999; min-width: 55%; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">Rounds to bring the 10th percentile back to 2019</h2>
+        <p style="margin: 4px 0 16px; font-size: 13px; color: #5B6370">The research presets, in whole rounds, rounded up. Same assumptions as above.</p>
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: separate; border-spacing: 6px; font-size: 14px">
+            <thead>
+              <tr>
+                <th scope="col" style="padding: 4px 8px; text-align: left; font-size: 12px; font-weight: 600; color: #5B6370">Take-up, then gain per student</th>
+                <th scope="col" style="padding: 4px 8px; text-align: center; font-size: 13px; font-weight: 700">0.214 SD<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Mid-size tutoring</span></th>
+                <th scope="col" style="padding: 4px 8px; text-align: center; font-size: 13px; font-weight: 700">0.155 SD<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Large tutoring</span></th>
+                <th scope="col" style="padding: 4px 8px; text-align: center; font-size: 13px; font-weight: 700">0.100 SD<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Summer math</span></th>
+                <th scope="col" style="padding: 4px 8px; text-align: center; font-size: 13px; font-weight: 700">0.027 SD<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Summer since COVID</span></th>
+                <th scope="col" style="padding: 4px 8px; text-align: center; font-size: 12px; font-weight: 600; color: #5B6370">Reach everyone once</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" style="padding: 4px 8px; text-align: left; font-weight: 700">100%<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Every student</span></th>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b00 }}; color: {{ f00 }}; font-size: 20px; font-weight: 700; outline: {{ o00 }}; outline-offset: -3px">{{ m00 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b01 }}; color: {{ f01 }}; font-size: 20px; font-weight: 700; outline: {{ o01 }}; outline-offset: -3px">{{ m01 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b02 }}; color: {{ f02 }}; font-size: 20px; font-weight: 700; outline: {{ o02 }}; outline-offset: -3px">{{ m02 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b03 }}; color: {{ f03 }}; font-size: 20px; font-weight: 700; outline: {{ o03 }}; outline-offset: -3px">{{ m03 }}</td>
+                <td style="height: 52px; text-align: center; color: #3F4752; font-size: 16px; font-weight: 600">1</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 4px 8px; text-align: left; font-weight: 700">28%<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">District tutoring</span></th>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b10 }}; color: {{ f10 }}; font-size: 20px; font-weight: 700; outline: {{ o10 }}; outline-offset: -3px">{{ m10 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b11 }}; color: {{ f11 }}; font-size: 20px; font-weight: 700; outline: {{ o11 }}; outline-offset: -3px">{{ m11 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b12 }}; color: {{ f12 }}; font-size: 20px; font-weight: 700; outline: {{ o12 }}; outline-offset: -3px">{{ m12 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b13 }}; color: {{ f13 }}; font-size: 20px; font-weight: 700; outline: {{ o13 }}; outline-offset: -3px">{{ m13 }}</td>
+                <td style="height: 52px; text-align: center; color: #3F4752; font-size: 16px; font-weight: 600">4</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 4px 8px; text-align: left; font-weight: 700">18.7%<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Sign-up rate</span></th>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b20 }}; color: {{ f20 }}; font-size: 20px; font-weight: 700; outline: {{ o20 }}; outline-offset: -3px">{{ m20 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b21 }}; color: {{ f21 }}; font-size: 20px; font-weight: 700; outline: {{ o21 }}; outline-offset: -3px">{{ m21 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b22 }}; color: {{ f22 }}; font-size: 20px; font-weight: 700; outline: {{ o22 }}; outline-offset: -3px">{{ m22 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b23 }}; color: {{ f23 }}; font-size: 20px; font-weight: 700; outline: {{ o23 }}; outline-offset: -3px">{{ m23 }}</td>
+                <td style="height: 52px; text-align: center; color: #3F4752; font-size: 16px; font-weight: 600">6</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 4px 8px; text-align: left; font-weight: 700">13%<br><span style="font-size: 11px; font-weight: 400; color: #5B6370">Summer attendance</span></th>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b30 }}; color: {{ f30 }}; font-size: 20px; font-weight: 700; outline: {{ o30 }}; outline-offset: -3px">{{ m30 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b31 }}; color: {{ f31 }}; font-size: 20px; font-weight: 700; outline: {{ o31 }}; outline-offset: -3px">{{ m31 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b32 }}; color: {{ f32 }}; font-size: 20px; font-weight: 700; outline: {{ o32 }}; outline-offset: -3px">{{ m32 }}</td>
+                <td style="height: 52px; text-align: center; border-radius: 8px; background: {{ b33 }}; color: {{ f33 }}; font-size: 20px; font-weight: 700; outline: {{ o33 }}; outline-offset: -3px">{{ m33 }}</td>
+                <td style="height: 52px; text-align: center; color: #3F4752; font-size: 16px; font-weight: 600">8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin: 16px 0 0; font-size: 15px; font-weight: 700">{{ matYour }}</p>
+        <p style="margin: 8px 0 0; max-width: 80ch; font-size: 14px; color: #3F4752">{{ matNote }}</p>
+      </section>
+
+      <section style="flex-basis: 380px; flex-grow: 1; min-width: 0; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0 0 12px; font-size: 18px; font-weight: 700">Read with care</h2>
+        <ul style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: #3F4752">
+          <li><b style="color: #101418">This is the best case on fading.</b> {{ rcFade }}</li>
+          <li><b style="color: #101418">A second turn is assumed to help as much as the first.</b> {{ rcTwice }}</li>
+          <li><b style="color: #101418">Each round serves students who have not had a turn.</b> {{ rcRand }}</li>
+          <li><b style="color: #101418">If the same students signed up every round,</b> {{ rcRep }}</li>
+          <li><b style="color: #101418">The rounds are a thought experiment on one group of students.</b> Real students move on to the next grade, so this shows the size of the task, not a schedule.</li>
+          <li><b style="color: #101418">Averages follow the same students.</b> Counted across all students, the count can run about a round longer, and the gap widens slightly while a round is under way.</li>
+          <li><b style="color: #101418">The presets are hopeful.</b> The 0.155 SD average for large tutoring programs is not statistically different from zero. The 18.7% sign-up rate was measured among students offered tutoring and is applied here as if every student were offered.</li>
+        </ul>
+      </section>
+    </div>
+
+    <a href="B2-Seats.dc.html" style="align-self: flex-start; min-height: 48px; padding: 0 20px; display: inline-flex; align-items: center; gap: 10px; border-radius: 10px; background: #101418; color: #FFFFFF; font-weight: 700; text-decoration: none">Equal chances lift every percentile together. Next: who should get the seats?
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8H13M9 4L13 8L9 12"></path></svg>
+    </a>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const c = st.c != null ? st.c : 0.187;
+    const g = st.g != null ? st.g : 0.155;
+    // From docs/cells.js: 2019 SD, the 2024 minus 2019 drop (points) at p10 and p90, and the 2019 90-10 gap.
+    const CELLS = {
+      rg4:  { name: 'Reading, grade 4',  S: 38.5219618291653, D10: -9.96600112915098,  D90: -1.30550231933597,   G19: 97.771996307373 },
+      rg8:  { name: 'Reading, grade 8',  S: 37.750423473978,  D10: -8.913500976563,    D90: -1.87149810791004,   G19: 95.82450027465802 },
+      rg12: { name: 'Reading, grade 12', S: 42.2992046739789, D10: -4.21099853515599,  D90: -2.68099975585898,   G19: 109.149002075195 },
+      mg4:  { name: 'Math, grade 4',     S: 31.7652629863339, D10: -7.96350326538098,  D90: -0.0819976806649834, G19: 80.86549530029302 },
+      mg8:  { name: 'Math, grade 8',     S: 39.7479093125792, D10: -11.438000488281,   D90: -4.998500061036,     G19: 102.498500061036 },
+      mg12: { name: 'Math, grade 12',    S: 35.5924022468928, D10: -4.81800117492699,  D90: -0.329000854491994,  G19: 91.934001159668 },
+    };
+    const cellId = st.cell && CELLS[st.cell] ? st.cell : 'mg8';
+    const CELL = CELLS[cellId];
+    const S = CELL.S, D10 = CELL.D10, D90 = CELL.D90;
+    const WIDEN = D90 - D10, G24 = CELL.G19 + WIDEN;
+    const G10 = -D10 / S, G90 = -D90 / S;
+    const MINUS = '−', EPS = 1e-9;
+    const n1 = (v) => (Math.round(v * 10) / 10).toFixed(1);
+    const signed = (v) => (Math.abs(v) < EPS ? '0' : (v < 0 ? MINUS : '+') + Math.abs(v).toFixed(0));
+    const pctTxt = (x) => { const v = Math.round(x * 1000) / 10; return (Number.isInteger(v) ? v.toFixed(0) : v.toFixed(1)) + '%'; };
+    const ceilR = (x) => Math.ceil(x - EPS);
+    const circ = (x, y, r) => `M${n1(x - r)},${n1(y)}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0`;
+
+    const per = c * g, step = per * S;                     // per round: SD, points
+    const r10 = per > 0 ? G10 / per : Infinity, r90 = per > 0 ? G90 / per : Infinity;
+    const reachR = c > 0 ? 1 / c : Infinity;
+    const N10 = isFinite(r10) ? ceilR(r10) : null, N90 = isFinite(r90) ? ceilR(r90) : null;
+    const NR = isFinite(reachR) ? ceilR(reachR) : null;
+    let K = Math.max(N10 || 0, NR || 0) + 1;
+    if (N10 === null) K = Math.max(K, 12);
+    K = Math.min(60, Math.max(3, K));
+    const V = {};
+
+    // ---------------------------------------------------------- rounds chart
+    const W = 1200, H = 430, L = 60, R = 250, T = 30, B = 40, PW = W - L - R, PH = H - T - B;
+    const top = Math.max(2, D90 + K * step);
+    let ys = 2;
+    for (const s of [2, 4, 5, 10, 20, 25, 50, 100, 200, 500]) { ys = s; if (Math.ceil(top / s) + Math.ceil((-D10 + 0.5) / s) <= 11) break; }
+    const yLo = -Math.ceil((-D10 + 0.5) / ys) * ys, yHi = Math.ceil(top / ys) * ys;
+    const fy = (v) => T + (yHi - v) / (yHi - yLo) * PH, fx = (k) => L + k / K * PW;
+    let grid = '';
+    for (let i = 0; i < 12; i++) {
+      const v = yLo + i * ys, on = v <= yHi + EPS;
+      V['yy' + i] = on ? n1(fy(v) + 4) : '-100';
+      V['yl' + i] = on ? signed(v) : '';
+      if (on) grid += `M${L},${n1(fy(v))}H${W - R}`;
+    }
+    V.grid = grid;
+    let xs = 1;
+    for (const s of [1, 2, 5, 10]) { xs = s; if (K / s <= 12) break; }
+    for (let i = 0; i < 13; i++) {
+      const k = i * xs, on = k <= K;
+      V['xx' + i] = on ? n1(fx(k)) : '-100';
+      V['xl' + i] = on ? String(k) : '';
+    }
+    const linePath = (d0) => { let s = ''; for (let k = 0; k <= K; k++) s += (k ? 'L' : 'M') + n1(fx(k)) + ',' + n1(fy(d0 + k * step)); return s; };
+    const dots = (d0) => { if (K > 20) return ''; let s = ''; for (let k = 0; k <= K; k++) s += circ(fx(k), fy(d0 + k * step), 4.5); return s; };
+    V.p10 = linePath(D10); V.p90 = linePath(D90); V.d10 = dots(D10); V.d90 = dots(D90);
+    V.y0 = n1(fy(0)); V.yn10 = n1(fy(D10)); V.yn90 = n1(fy(D90));
+
+    const showR = NR !== null && NR <= K;
+    const rx = showR ? fx(NR) : -100, rEnd = rx > W - R - 290;
+    V.rVis = showR ? 'visible' : 'hidden';
+    V.rx = n1(rx); V.rAnchor = rEnd ? 'end' : 'start'; V.rtx = n1(rEnd ? rx - 8 : rx + 8);
+    const at = D10 + (NR || 0) * step;
+    V.rT1 = showR ? `Round ${NR}: every student reached once` : '';
+    V.rT2 = showR ? (at < -0.05 ? `10th still ${n1(-at)} points below 2019` : '10th already back to 2019') : '';
+
+    const s90 = r90 <= K, s10 = r10 <= K;
+    const c90 = s90 ? fx(r90) : -100, c10 = s10 ? fx(r10) : -100;
+    V.v90 = s90 ? 'visible' : 'hidden'; V.v10 = s10 ? 'visible' : 'hidden';
+    V.c90x = n1(c90); V.c10x = n1(c10);
+    const left90 = c90 > L + 270;
+    V.t90a = left90 ? 'end' : 'start'; V.t90x = n1(left90 ? c90 - 12 : c90 + 12); V.t90y = n1(fy(0) - 12);
+    V.t90 = s90 ? `90th back to 2019 in round ${N90}` : '';
+    V.t10a = c10 > W - R - 90 ? 'end' : c10 < L + 90 ? 'start' : 'middle'; V.t10x = n1(c10);
+    V.t10y1 = n1(fy(0) + 34); V.t10y2 = n1(fy(0) + 50); V.t10y3 = n1(fy(0) + 66);
+    V.t10l1 = s10 ? '10th back to 2019' : '';
+    V.t10l2 = s10 ? `in round ${N10}` : '';
+    V.t10l3 = s10 ? `The 90th is then ${n1(D90 + N10 * step)} above` : '';
+
+    const kb = Math.max(1, Math.floor(K / 2) - 1);
+    const bx = fx(kb) + 22, ya = fy(D90 + kb * step), yb = fy(D10 + kb * step);
+    V.br = `M${n1(bx - 6)},${n1(ya)}L${n1(bx)},${n1(ya)}L${n1(bx)},${n1(yb)}L${n1(bx - 6)},${n1(yb)}`;
+    V.brT = `${n1(WIDEN)} points apart`; V.brx = n1(bx + 8); V.bry1 = n1((ya + yb) / 2 - 4); V.bry2 = n1((ya + yb) / 2 + 13);
+
+    const labs = [
+      { v: 0, t: '2019 score', f: '#101418', w: '700' },
+      { v: D90 + K * step, t: '90th percentile', f: '#1B5FB8', w: '700' },
+      { v: D10 + K * step, t: '10th percentile', f: '#123F7A', w: '700' },
+      { v: D90, t: '90th, no program', f: '#3F4752', w: '400' },
+      { v: D10, t: '10th, no program', f: '#3F4752', w: '400' },
+    ].map((o) => Object.assign({}, o, { y: fy(o.v) + 4 }));
+    labs.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labs.length; i++) if (labs[i].y - labs[i - 1].y < 16) labs[i].y = labs[i - 1].y + 16;
+    labs.forEach((o, i) => { V['ly' + i] = n1(o.y); V['lt' + i] = o.t; V['lf' + i] = o.f; V['lw' + i] = o.w; });
+
+    // ---------------------------------------------------------- reach strip
+    const base = 118, rh = 96, bw = Math.min(32, 0.6 * PW / K);
+    let once = '', twice = '', rnd = '', rdots = '';
+    for (let k = 1; k <= K; k++) {
+      const kc = k * c, re = Math.min(1, kc), tw = Math.max(0, Math.min(1, kc - 1)), x0 = fx(k) - bw / 2;
+      if (re > 0) once += `M${n1(x0)},${base}v${n1(-re * rh)}h${n1(bw)}v${n1(re * rh)}Z`;
+      if (tw > 0) twice += `M${n1(x0)},${base}v${n1(-tw * rh)}h${n1(bw)}v${n1(tw * rh)}Z`;
+      const rv = 1 - Math.pow(1 - c, k);
+      rnd += (k > 1 ? 'L' : 'M') + n1(fx(k)) + ',' + n1(base - rv * rh);
+      rdots += circ(fx(k), base - rv * rh, 3.5);
+    }
+    V.once = once; V.twice = twice; V.rnd = rnd; V.rdots = K <= 20 ? rdots : '';
+    for (let i = 0; i < 6; i++) {
+      const k = i + 1, re = Math.min(1, k * c);
+      const on = K <= 15 && c > 0 && k <= K && (k - 1) * c < 1 - EPS;
+      V['px' + i] = on ? n1(fx(k)) : '-100'; V['py' + i] = on ? n1(base - re * rh - 6) : '0';
+      V['pl' + i] = on ? Math.round(re * 100) + '%' : '';
+    }
+    const showRl = NR !== null && NR <= K && c < 1;
+    const rAt = showRl ? 1 - Math.pow(1 - c, NR) : 0;
+    V.rlx = showRl ? n1(fx(NR) + bw / 2 + 6) : '-100'; V.rly = n1(base - rAt * rh + 16);
+    V.rll = showRl ? Math.round(rAt * 100) + '%' : '';
+
+    // ---------------------------------------------------------- one round
+    const nT = Math.round(c * 100);
+    let wf = '', wo = '';
+    for (let i = 0; i < 100; i++) {
+      const x = 13 + (i % 10) * 26, y = 13 + Math.floor(i / 10) * 26;
+      if (i < nT) wf += circ(x, y, 10); else wo += circ(x, y, 9.25);
+    }
+    V.wf = wf; V.wo = wo; V.nIn = String(nT); V.nOut = String(100 - nT);
+    V.waffleLabel = `${nT} of 100 students take part in one round`;
+    const dx = (v) => 20 + (Math.min(10, v) + 12) * 520 / 22, tPts = g * S;
+    V.dbS = n1(dx(D10)); V.dbP = n1(dx(D10 + tPts)); V.dbA = n1(dx(D10 + step));
+    V.dbPl = n1(dx(D10 + tPts) + 12); V.dbAl = n1(dx(D10 + step) + 12);
+    V.gPts = `+${n1(tPts)} each`; V.aPts = `+${n1(step)}`;
+    const und = G10 > 0 ? per / G10 * 100 : 0;
+    V.tilePart = `+${n1(tPts)} points`; V.tilePartSD = `${g.toFixed(3)} SD`;
+    V.tileAvg = `+${n1(step)} points`; V.tileAvgSD = `${per.toFixed(3)} SD, the same at every percentile`;
+    V.tileUnd = und >= 100 - EPS ? 'All of it' : und > 0 && und < 0.05 ? 'Under 0.1%' : (und < 1 && und > 0 ? n1(und) : Math.round(und)) + '%';
+
+    // ---------------------------------------------------------- words
+    const cTxt = pctTxt(c), gTxt = g.toFixed(3);
+    let lead;
+    if (per <= 0) lead = `At ${cTxt} take-up and ${gTxt} SD, the program does not move the 10th percentile at all.`;
+    else if (per >= G10 - EPS) lead = `At ${cTxt} take-up and ${gTxt} SD, one round brings the 10th percentile back to 2019.`;
+    else {
+      const pw = step < 0.05 ? 'less than 0.1 points' : step < 0.95 ? `${n1(step)} points` : Math.round(step) === 1 ? 'about 1 point' : `about ${Math.round(step)} points`;
+      lead = `At ${cTxt} take-up and ${gTxt} SD, one round moves the 10th percentile ${pw} of its ${Math.round(-D10)}-point drop.`;
+    }
+    V.lead = lead;
+    V.cellName = CELL.name; V.dropTxt = n1(-D10);
+    V.g19 = n1(CELL.G19); V.g24 = n1(G24); V.widenTxt = n1(WIDEN);
+    V.gapNote = `The gap was ${n1(CELL.G19)} points in 2019. With an equal chance of a seat, every percentile gains the same amount, so the gap stays ${n1(WIDEN)} points wider however many rounds run.`;
+    V.oneSub = `NAEP points against the 2019 score at the 10th percentile. In 2024 the 10th percentile sat ${n1(-D10)} points below it.`;
+    V.undSub = `of ${n1(-D10)} points`;
+    V.tenthFirst = NR !== null && N10 !== null && N10 < NR
+      ? `In ${CELL.name}, the 10th percentile is back to 2019 before every student has had a turn.` : '';
+    const btn = (id, label, aria, first) => {
+      const on = id === cellId;
+      return { label, aria, pressed: on ? 'true' : 'false', bg: on ? '#101418' : '#FFFFFF', fg: on ? '#FFFFFF' : '#3F4752',
+        weight: on ? '700' : '600', bl: first ? '0 solid transparent' : `1px solid ${on ? '#101418' : '#D9DDE3'}`,
+        pick: () => this.setState({ cell: id }) };
+    };
+    V.readBtns = [btn('rg4', '4', 'Reading, grade 4', true), btn('rg8', '8', 'Reading, grade 8'), btn('rg12', '12', 'Reading, grade 12')];
+    V.mathBtns = [btn('mg4', '4', 'Math, grade 4', true), btn('mg8', '8', 'Math, grade 8'), btn('mg12', '12', 'Math, grade 12')];
+    V.cReach = NR === null ? 'Never' : String(NR);
+    V.cRest = N10 === null ? 'Never' : String(N10);
+    V.roundsSub = `Average score at the 10th and 90th percentiles against their own 2019 scores, in NAEP points. Each round serves ${cTxt} of students and adds ${n1(step)} points at every percentile.`;
+    V.capNote = N10 !== null && N10 >= K ? `The chart shows the first ${K} rounds. The 10th percentile needs ${N10}.` : '';
+    V.reachNote = g > 0
+      ? `Getting the 10th percentile back takes about ${(G10 / g).toFixed(1)} turns per student, ${G10.toFixed(3)} SD needed against ${gTxt} SD per turn.`
+      : 'With no gain per turn, the 10th percentile never gets back to 2019.';
+    V.rcFade = per <= 0 ? 'With no gain, nothing builds up from round to round.'
+      : und >= 100 - EPS ? 'One round is enough here, so fading between rounds does not matter for the 10th percentile.'
+      : `If more than about ${und < 10 ? n1(und) : Math.round(und)}% of each round's gain faded before the next round, the 10th percentile would never get back to 2019.`;
+    V.rcTwice = g > 0 ? `Getting the 10th percentile back means each student takes part about ${(G10 / g).toFixed(1)} times on average.`
+      : 'With no gain per turn, no number of turns is enough.';
+    V.rcRand = c <= 0 ? 'With no seats, no one is reached.' : c >= 1 - EPS ? 'Here every student is served in every round.'
+      : `If each round were a fresh random draw, ${Math.round(Math.pow(1 - c, NR) * 100)} in 100 students would still be unserved after ${NR} rounds.`;
+    V.rcRep = N10 !== null && c > 0 && c < 1 - EPS
+      ? `the averages would look the same after ${N10} rounds, but those ${nT} in 100 would each have gained about ${(G10 / c).toFixed(1)} SD and the other ${100 - nT} nothing.`
+      : 'the averages would look the same, but most students would never be served.';
+
+    // ---------------------------------------------------------- matrix
+    const cs = [1, 0.28, 0.187, 0.13], gs = [0.214, 0.155, 0.1, 0.027];
+    let oneRound = false;
+    cs.forEach((cv, i) => gs.forEach((gv, j) => {
+      const n = ceilR(G10 / (cv * gv));
+      if (n <= 1) oneRound = true;
+      const fill = n <= 3 ? ['#E3EEFB', '#101418'] : n <= 7 ? ['#C6DBF6', '#101418'] : n <= 11 ? ['#9CC0EE', '#101418'] : n <= 23 ? ['#1B5FB8', '#FFFFFF'] : ['#10305E', '#FFFFFF'];
+      V['m' + i + j] = String(n); V['b' + i + j] = fill[0]; V['f' + i + j] = fill[1];
+      V['o' + i + j] = Math.abs(cv - c) < 1e-6 && Math.abs(gv - g) < 1e-6 ? '3px solid #101418' : '0 solid transparent';
+    }));
+    V.matNote = 'Take-up and gain count equally, because only their product matters. ' + (oneRound
+      ? 'Here a few presets get the 10th percentile back in a single round, all of them with every student taking part.'
+      : 'Even with every student taking part, no preset gets there in one round.');
+    V.matYour = N10 === null ? 'With your settings the 10th percentile never gets back to 2019.'
+      : `With your settings (${cTxt}, ${gTxt} SD) it takes ${N10} ${N10 === 1 ? 'round' : 'rounds'}.`;
+
+    // ---------------------------------------------------------- controls
+    V.cSlider = String(Math.round(c * 1000) / 10); V.gSlider = String(g);
+    V.cLabel = cTxt; V.gLabel = `${gTxt} SD`; V.gPtsLabel = `About ${n1(g * S)} NAEP points`;
+    V.onShare = (e) => this.setState({ c: Math.max(0, Math.min(1, Number(e.target.value) / 100)) });
+    V.onEffect = (e) => this.setState({ g: Math.max(0, Math.min(0.5, Number(e.target.value))) });
+    const chip = (on) => ({ pressed: on ? 'true' : 'false', border: on ? '#1B5FB8' : '#D9DDE3', bg: on ? '#F2F7FD' : '#FFFFFF' });
+    V.cPresets = [
+      { v: 1, a: '100%', b: 'Every student' }, { v: 0.28, a: '28%', b: 'District tutoring' },
+      { v: 0.187, a: '18.7%', b: 'Sign-up rate' }, { v: 0.13, a: '13%', b: 'Summer attendance' },
+    ].map((p) => Object.assign({}, p, chip(Math.abs(p.v - c) < 1e-6), { pick: () => this.setState({ c: p.v }) }));
+    V.gPresets = [
+      { v: 0.214, a: '0.214', b: 'Mid-size tutoring' }, { v: 0.155, a: '0.155', b: 'Large tutoring' },
+      { v: 0.1, a: '0.100', b: 'Summer math' }, { v: 0.027, a: '0.027', b: 'Summer since COVID' },
+    ].map((p) => Object.assign({}, p, chip(Math.abs(p.v - g) < 1e-6), { pick: () => this.setState({ g: p.v }) }));
+    return V;
+  }
+}
+</script>
+</body>
+</html>

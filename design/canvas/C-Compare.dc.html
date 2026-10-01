@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compare programs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<style>
+body{margin:0;background:#F3F4F6}
+a{color:#1B5FB8}a:hover{color:#123F7A}
+button:focus-visible,a:focus-visible{outline:2px solid #1B5FB8;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F6; color: #101418; font-family: 'Public Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #D9DDE3">
+    <div style="max-width: 1320px; margin: 0 auto; padding: 12px 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+      <a href="#" style="font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; color: #101418; text-decoration: none">NAEP Recovery Explorer</a>
+      <nav aria-label="Subject and grade" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Reading</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <button type="button" aria-label="Reading, grade 4" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">4</button>
+            <button type="button" aria-label="Reading, grade 8" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">8</button>
+            <button type="button" aria-label="Reading, grade 12" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">12</button>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="font-size: 13px; font-weight: 600; color: #3F4752">Math</span>
+          <div style="display: flex; border: 1px solid #D9DDE3; border-radius: 10px; overflow: hidden">
+            <button type="button" aria-label="Math, grade 4" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">4</button>
+            <button type="button" aria-label="Math, grade 8" aria-pressed="true" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #101418; background: #101418; color: #FFFFFF; font: inherit; font-weight: 700; cursor: pointer">8</button>
+            <button type="button" aria-label="Math, grade 12" aria-pressed="false" style="min-width: 48px; min-height: 44px; border: 0; border-left: 1px solid #D9DDE3; background: #FFFFFF; color: #3F4752; font: inherit; font-weight: 600; cursor: pointer">12</button>
+          </div>
+        </div>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 16px">
+        <a href="#" style="font-weight: 600; text-decoration: none">Methods and sources</a>
+        <button type="button" style="min-height: 44px; padding: 0 16px; border: 1px solid #1B5FB8; border-radius: 10px; background: #FFFFFF; color: #1B5FB8; font: inherit; font-weight: 600; cursor: pointer">Copy link to this comparison</button>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1320px; margin: 0 auto; padding: 32px 32px 56px; display: flex; flex-direction: column; gap: 24px">
+    <div>
+      <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5B6370">Math, grade 8 · 2019 to 2024</p>
+      <h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; font-weight: 600; line-height: 1.2">Compare programs side by side</h1>
+      <p style="margin: 10px 0 0; max-width: 80ch; color: #3F4752">Save up to four programs and see them against the same drop. Each is counted across all students.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 28px; height: 28px; border-radius: 14px; background: #1B5FB8; color: #FFFFFF; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0">1</span>
+          <h2 style="margin: 0; flex-grow: 1; font-size: 16px; font-weight: 700">Large tutoring</h2>
+          <svg width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line x1="0" x2="28" y1="4" y2="4" stroke="#2A78D6" stroke-width="3"></line></svg>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #3F4752">0.155 SD boost · 28% take part · Equal chance</p>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <button type="button" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #1B5FB8; font: inherit; font-weight: 600; cursor: pointer">Edit</button>
+          <button type="button" aria-label="Remove Large tutoring" style="width: 44px; height: 44px; border: 0; background: transparent; color: #5B6370; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5H13M6.5 4.5V3H9.5V4.5M4.5 4.5L5.2 13H10.8L11.5 4.5"></path></svg></button>
+        </div>
+      </section>
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 28px; height: 28px; border-radius: 14px; background: #3D2F99; color: #FFFFFF; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0">2</span>
+          <h2 style="margin: 0; flex-grow: 1; font-size: 16px; font-weight: 700">Aimed at low scorers</h2>
+          <svg width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line x1="0" x2="28" y1="4" y2="4" stroke="#3D2F99" stroke-width="3"></line></svg>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #3F4752">0.155 SD boost · 28% take part · Mostly low scorers</p>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <button type="button" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #1B5FB8; font: inherit; font-weight: 600; cursor: pointer">Edit</button>
+          <button type="button" aria-label="Remove Aimed at low scorers" style="width: 44px; height: 44px; border: 0; background: transparent; color: #5B6370; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5H13M6.5 4.5V3H9.5V4.5M4.5 4.5L5.2 13H10.8L11.5 4.5"></path></svg></button>
+        </div>
+      </section>
+      <section style="background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 28px; height: 28px; border-radius: 14px; background: #B4461A; color: #FFFFFF; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0">3</span>
+          <h2 style="margin: 0; flex-grow: 1; font-size: 16px; font-weight: 700">Every student</h2>
+          <svg width="28" height="8" viewBox="0 0 28 8" aria-hidden="true"><line x1="0" x2="28" y1="4" y2="4" stroke="#D9622B" stroke-width="3"></line></svg>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #3F4752">0.214 SD boost · 100% take part · Everyone</p>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <button type="button" style="min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #1B5FB8; font: inherit; font-weight: 600; cursor: pointer">Edit</button>
+          <button type="button" aria-label="Remove Every student" style="width: 44px; height: 44px; border: 0; background: transparent; color: #5B6370; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5H13M6.5 4.5V3H9.5V4.5M4.5 4.5L5.2 13H10.8L11.5 4.5"></path></svg></button>
+        </div>
+      </section>
+      <button type="button" style="min-height: 120px; border: 2px dashed #C4C9D1; border-radius: 12px; background: transparent; color: #3F4752; font: inherit; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 3V15M3 9H15"></path></svg>
+        Add a program
+      </button>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+      <section style="flex-basis: 0; flex-grow: 999; min-width: 55%; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">How far each percentile sits below its 2019 score</h2>
+        <p style="margin: 4px 0 16px; font-size: 13px; color: #5B6370">Zero is the 2019 score. In standard deviations.</p>
+<svg viewBox="0 0 900 400" width="100%" role="img" aria-label="Three programs compared" style="display: block; overflow: visible"><line x1="56.0" x2="710.0" y1="350.6" y2="350.6" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="354.6" text-anchor="end" fill="#5B6370" font-size="12">−0.30</text><line x1="56.0" x2="710.0" y1="312.2" y2="312.2" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="316.2" text-anchor="end" fill="#5B6370" font-size="12">−0.25</text><line x1="56.0" x2="710.0" y1="273.8" y2="273.8" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="277.8" text-anchor="end" fill="#5B6370" font-size="12">−0.20</text><line x1="56.0" x2="710.0" y1="235.4" y2="235.4" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="239.4" text-anchor="end" fill="#5B6370" font-size="12">−0.15</text><line x1="56.0" x2="710.0" y1="197.0" y2="197.0" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="201.0" text-anchor="end" fill="#5B6370" font-size="12">−0.10</text><line x1="56.0" x2="710.0" y1="158.6" y2="158.6" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="162.6" text-anchor="end" fill="#5B6370" font-size="12">−0.05</text><line x1="56.0" x2="710.0" y1="120.2" y2="120.2" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="124.2" text-anchor="end" fill="#5B6370" font-size="12">0.00</text><line x1="56.0" x2="710.0" y1="81.8" y2="81.8" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="85.8" text-anchor="end" fill="#5B6370" font-size="12">0.05</text><line x1="56.0" x2="710.0" y1="43.4" y2="43.4" stroke="#E8EBEF" stroke-width="1"></line><text x="48.0" y="47.4" text-anchor="end" fill="#5B6370" font-size="12">0.10</text><text x="56.0" y="384.0" text-anchor="middle" fill="#5B6370" font-size="12">10th</text><text x="178.6" y="384.0" text-anchor="middle" fill="#5B6370" font-size="12">25th</text><text x="383.0" y="384.0" text-anchor="middle" fill="#5B6370" font-size="12">50th</text><text x="587.4" y="384.0" text-anchor="middle" fill="#5B6370" font-size="12">75th</text><text x="710.0" y="384.0" text-anchor="middle" fill="#5B6370" font-size="12">90th</text><line x1="56.0" x2="710.0" y1="120.2" y2="120.2" stroke="#5B6370" stroke-width="1"></line><path d="M56.0,341.2L72.3,338.2L88.7,334.3L105.0,329.9L121.4,326.2L137.8,323.1L154.1,320.3L170.4,317.5L186.8,314.7L203.2,311.6L219.5,308.8L235.9,306.2L252.2,303.8L268.6,301.3L284.9,298.9L301.3,296.6L317.6,294.2L333.9,291.8L350.3,289.1L366.6,286.2L383.0,283.4L399.4,280.8L415.7,278.0L432.0,275.0L448.4,272.0L464.8,269.0L481.1,265.7L497.5,262.1L513.8,258.5L530.1,255.5L546.5,253.0L562.9,250.7L579.2,247.7L595.5,243.5L611.9,240.7L628.3,236.0L644.6,231.7L661.0,229.4L677.3,226.6L693.6,221.0L710.0,216.8" fill="none" stroke="#7B818B" stroke-width="2" stroke-dasharray="6 5"></path><path d="M56.0,311.1L72.3,306.0L88.7,302.4L105.0,298.6L121.4,294.6L137.8,290.8L154.1,288.4L170.4,285.5L186.8,282.2L203.2,279.4L219.5,276.6L235.9,273.7L252.2,271.0L268.6,268.4L284.9,266.0L301.3,263.9L317.6,261.3L333.9,258.5L350.3,255.6L366.6,252.9L383.0,250.2L399.4,247.5L415.7,244.4L432.0,241.2L448.4,238.5L464.8,235.4L481.1,231.8L497.5,228.1L513.8,224.5L530.1,221.6L546.5,219.1L562.9,216.6L579.2,212.9L595.5,209.4L611.9,206.1L628.3,201.2L644.6,197.3L661.0,194.4L677.3,191.2L693.6,185.8L710.0,180.3" fill="none" stroke="#2A78D6" stroke-width="2.5"></path><path d="M56.0,291.8L72.3,286.9L88.7,284.9L105.0,282.0L121.4,278.7L137.8,275.7L154.1,274.7L170.4,272.4L186.8,269.9L203.2,268.4L219.5,266.4L235.9,264.4L252.2,262.7L268.6,261.0L284.9,259.6L301.3,258.4L317.6,256.8L333.9,255.0L350.3,253.0L366.6,251.3L383.0,249.6L399.4,247.9L415.7,245.8L432.0,243.6L448.4,241.8L464.8,239.7L481.1,237.1L497.5,234.5L513.8,231.9L530.1,229.9L546.5,228.4L562.9,227.1L579.2,224.5L595.5,221.9L611.9,219.8L628.3,215.9L644.6,213.0L661.0,211.4L677.3,209.3L693.6,205.1L710.0,201.9" fill="none" stroke="#3D2F99" stroke-width="2.5"></path><path d="M56.0,176.8L72.3,173.8L88.7,169.9L105.0,165.5L121.4,161.8L137.8,158.7L154.1,155.9L170.4,153.1L186.8,150.3L203.2,147.2L219.5,144.4L235.9,141.8L252.2,139.4L268.6,137.0L284.9,134.5L301.3,132.2L317.6,129.9L333.9,127.4L350.3,124.7L366.6,121.9L383.0,119.0L399.4,116.4L415.7,113.6L432.0,110.6L448.4,107.6L464.8,104.6L481.1,101.3L497.5,97.7L513.8,94.1L530.1,91.1L546.5,88.6L562.9,86.3L579.2,83.3L595.5,79.2L611.9,76.3L628.3,71.6L644.6,67.3L661.0,65.0L677.3,62.2L693.6,56.6L710.0,52.4" fill="none" stroke="#D9622B" stroke-width="2.5"></path><text x="720.0" y="56.4" fill="#B4461A" font-size="13" font-weight="600">3 Every student</text><text x="720.0" y="184.3" fill="#1B5FB8" font-size="13" font-weight="600">1 Large tutoring</text><text x="720.0" y="205.9" fill="#3D2F99" font-size="13" font-weight="600">2 Aimed at low scorers</text><text x="720.0" y="222.9" fill="#3F4752" font-size="13" font-weight="600">2024, no program</text><circle cx="56.0" cy="311.1" r="4" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="178.6" cy="283.7" r="4" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="383.0" cy="250.2" r="4" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="587.4" cy="210.6" r="4" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="710.0" cy="180.3" r="4" fill="#2A78D6" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="56.0" cy="291.8" r="4" fill="#3D2F99" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="178.6" cy="271.0" r="4" fill="#3D2F99" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="383.0" cy="249.6" r="4" fill="#3D2F99" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="587.4" cy="222.6" r="4" fill="#3D2F99" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="710.0" cy="201.9" r="4" fill="#3D2F99" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="56.0" cy="176.8" r="4" fill="#D9622B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="178.6" cy="151.8" r="4" fill="#D9622B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="383.0" cy="119.0" r="4" fill="#D9622B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="587.4" cy="80.8" r="4" fill="#D9622B" stroke="#FFFFFF" stroke-width="2"></circle><circle cx="710.0" cy="52.4" r="4" fill="#D9622B" stroke="#FFFFFF" stroke-width="2"></circle><text x="48.0" y="18.0" text-anchor="end" fill="#101418" font-size="12" font-weight="600">SD</text><text x="62.0" y="114.2" fill="#3F4752" font-size="12">Back to 2019</text></svg>
+        <p style="margin: 4px 0 0; text-align: center; font-size: 13px; color: #5B6370">Percentile, from lowest-scoring students (left) to highest (right)</p>
+      </section>
+
+      <section style="flex-basis: 420px; flex-grow: 1; min-width: 0; background: #FFFFFF; border: 1px solid #D9DDE3; border-radius: 12px; padding: 24px">
+        <h2 style="margin: 0 0 12px; font-size: 18px; font-weight: 700">Side by side</h2>
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px">
+            <thead>
+              <tr>
+                <th scope="col" style="padding: 8px 8px 8px 0; text-align: left; font-size: 12px; font-weight: 600; color: #5B6370; border-bottom: 1px solid #D9DDE3"></th>
+                <th scope="col" style="padding: 8px; text-align: right; font-size: 13px; font-weight: 700; color: #1B5FB8; border-bottom: 1px solid #D9DDE3">1</th>
+                <th scope="col" style="padding: 8px; text-align: right; font-size: 13px; font-weight: 700; color: #3D2F99; border-bottom: 1px solid #D9DDE3">2</th>
+                <th scope="col" style="padding: 8px 0 8px 8px; text-align: right; font-size: 13px; font-weight: 700; color: #B4461A; border-bottom: 1px solid #D9DDE3">3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752; border-bottom: 1px solid #E8EBEF">Boost per student who takes part</th><td style="padding: 8px; text-align: right; border-bottom: 1px solid #E8EBEF">0.155</td><td style="padding: 8px; text-align: right; border-bottom: 1px solid #E8EBEF">0.155</td><td style="padding: 8px 0 8px 8px; text-align: right; border-bottom: 1px solid #E8EBEF">0.214</td></tr>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752; border-bottom: 1px solid #E8EBEF">Share taking part</th><td style="padding: 8px; text-align: right; border-bottom: 1px solid #E8EBEF">28%</td><td style="padding: 8px; text-align: right; border-bottom: 1px solid #E8EBEF">28%</td><td style="padding: 8px 0 8px 8px; text-align: right; border-bottom: 1px solid #E8EBEF">100%</td></tr>
+              <tr><td colspan="4" style="padding: 16px 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #5B6370">Share of the drop undone</td></tr>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752; border-bottom: 1px solid #E8EBEF">10th percentile</th><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">14%</td><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">22%</td><td style="padding: 8px 0 8px 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">74%</td></tr>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752; border-bottom: 1px solid #E8EBEF">50th (middle)</th><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">20%</td><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">21%</td><td style="padding: 8px 0 8px 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">101%</td></tr>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752; border-bottom: 1px solid #E8EBEF">90th percentile</th><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">38%</td><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">15%</td><td style="padding: 8px 0 8px 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">170%</td></tr>
+              <tr><td colspan="4" style="padding: 16px 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #5B6370">90-10 gap, NAEP points</td></tr>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752; border-bottom: 1px solid #E8EBEF">With the program</th><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">109.3</td><td style="padding: 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">107.2</td><td style="padding: 8px 0 8px 8px; text-align: right; font-weight: 600; border-bottom: 1px solid #E8EBEF">108.9</td></tr>
+              <tr><th scope="row" style="padding: 8px 8px 8px 0; text-align: left; font-weight: 400; color: #3F4752">Change from 2024 (108.9)</th><td style="padding: 8px; text-align: right; font-weight: 600">+0.3</td><td style="padding: 8px; text-align: right; font-weight: 600">−1.8</td><td style="padding: 8px 0 8px 8px; text-align: right; font-weight: 600">0.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin: 16px 0 0; font-size: 13px; color: #5B6370">Above 100% means the percentile ends up above its 2019 score. The gap was 102.5 points in 2019.</p>
+        <button type="button" style="margin-top: 16px; min-height: 44px; padding: 0 16px; border: 1px solid #D9DDE3; border-radius: 10px; background: #FFFFFF; color: #101418; font: inherit; font-weight: 600; cursor: pointer">Download the comparison (CSV)</button>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1360}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
