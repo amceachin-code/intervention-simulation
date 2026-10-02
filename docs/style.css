@@ -96,16 +96,17 @@ h2 { font-size: 1rem; margin: 0 0 8px; }
 @media (min-width: 861px) {
   .layout > #controls { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
 }
-/* Phone and narrow tablet: the headline numbers and the main chart come
-   first, then the controls, then the rest of the results. The results
-   wrapper steps out of the layout (display: contents) so its cards can be
-   ordered around the controls; the grid gap replaces the stack margins. */
+/* Phone and narrow tablet: the controls come first, because the results
+   only make sense once the program is set. Then the main chart, then the
+   headline numbers that summarize it, then the rest of the results. The
+   results wrapper steps out of the layout (display: contents) so its cards
+   can be reordered; the grid gap replaces the stack margins. */
 @media (max-width: 860px) {
   .layout > .results { display: contents; }
   .layout > .results > * { order: 4; margin-top: 0; }
-  .layout > .results > .tiles { order: 1; }
+  .layout > #controls { order: 1; }
   .layout > .results > .main-card { order: 2; }
-  .layout > #controls { order: 3; }
+  .layout > .results > .tiles { order: 3; }
 }
 .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
 .stack > * + * { margin-top: 16px; }
