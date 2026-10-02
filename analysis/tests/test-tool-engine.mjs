@@ -432,6 +432,12 @@ for (const cell of DATA.cells) {
     }
   }
   check(tags.size === 1, `pages use different asset version tags: ${[...tags].join(", ")}`);
+  // Every page opens with the draft banner, ahead of its content.
+  for (const page of PAGES) {
+    const html = fs.readFileSync(page, "utf8");
+    check(/<body>\s*<div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS<\/div>/.test(html),
+          `${page} does not open with the draft banner`);
+  }
 }
 
 console.log(`${checks} checks, ${failures} failed`);

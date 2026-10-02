@@ -23,6 +23,9 @@
   --series-ned: #1baf7a;      /* not economically disadvantaged (slot 3); under 3:1 on light, so the table carries the numbers */
   --closed-fill: rgba(42, 120, 214, 0.16);
   --over-fill: rgba(235, 104, 52, 0.18);
+  /* Draft banner across the top of every page. */
+  --draft-bg: #fde8c8;
+  --draft-fg: #6b3a00;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -44,6 +47,8 @@
     --series-ned: #199e70;
     --closed-fill: rgba(57, 135, 229, 0.22);
     --over-fill: rgba(217, 89, 38, 0.25);
+    --draft-bg: #4a2e0a;
+    --draft-fg: #ffd9a3;
   }
 }
 :root[data-theme="dark"] {
@@ -65,6 +70,8 @@
   --series-ned: #199e70;
   --closed-fill: rgba(57, 135, 229, 0.22);
   --over-fill: rgba(217, 89, 38, 0.25);
+  --draft-bg: #4a2e0a;
+  --draft-fg: #ffd9a3;
 }
 
 * { box-sizing: border-box; }
@@ -72,6 +79,9 @@ body {
   margin: 0; background: var(--surface-0); color: var(--text-primary);
   font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+/* Draft banner: a full-width strip above each page's content. */
+.draft-banner { background: var(--draft-bg); color: var(--draft-fg); text-align: center; padding: 8px 16px;
+                font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; border-bottom: 1px solid var(--border); }
 main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
 h1 { font-size: 1.5rem; margin: 0 0 4px; }
 h2 { font-size: 1rem; margin: 0 0 8px; }
