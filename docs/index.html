@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- draft v4, 2026-10-01 (link to the rounds page); draft v3, 2026-09-29 (eligibility screen and ED / not-ED outcomes); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R, analysis/alloc-rules.R -->
+<!-- draft v5, 2026-10-02 (design pass: narrow charts, phone order, chart labels); draft v4, 2026-10-01 (link to the rounds page); draft v3, 2026-09-29 (eligibility screen and ED / not-ED outcomes); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R, analysis/alloc-rules.R -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NAEP Recovery Explorer</title>
 <meta name="description" content="How much of the 2019-to-2024 drop in NAEP scores a tutoring or summer program could undo, for low, middle, and high scorers.">
-<link rel="stylesheet" href="style.css?v=2026-10-02.2">
+<link rel="stylesheet" href="style.css?v=2026-10-02.3">
 </head>
 <body>
 <div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS</div>
@@ -23,7 +23,7 @@
   <a class="btn" id="rounds-link" href="rounds.html">What would it take?</a>
   </div>
 
-  <details class="card intro" open>
+  <details class="card intro">
     <summary>What you are looking at</summary>
     <div class="intro-grid">
       <div>
@@ -113,14 +113,14 @@
     </form>
 
     <!-- Results -->
-    <div class="stack">
+    <div class="stack results">
       <div class="tiles">
         <div class="card tile"><div class="k">Drop undone at the 10th percentile</div><div class="v" id="t-p10"></div><div class="s" id="t-p10-s"></div></div>
         <div class="card tile"><div class="k">Drop undone at the middle (50th)</div><div class="v" id="t-p50"></div><div class="s" id="t-p50-s"></div></div>
         <div class="card tile"><div class="k">Gap between the 90th and 10th percentiles</div><div class="v" id="t-gap"></div><div class="s" id="t-gap-s"></div></div>
       </div>
 
-      <section class="card">
+      <section class="card main-card">
         <h2 id="main-title"></h2>
         <p class="sub">In standard deviations. Below zero means below the 2019 score.</p>
         <div class="legend">
@@ -209,13 +209,13 @@
   </div>
 </main>
 
-<script src="cells.js?v=2026-10-02.2"></script>
-<script src="engine.js?v=2026-10-02.2"></script>
-<script src="charts.js?v=2026-10-02.2"></script>
+<script src="cells.js?v=2026-10-02.3"></script>
+<script src="engine.js?v=2026-10-02.3"></script>
+<script src="charts.js?v=2026-10-02.3"></script>
 <script>
 "use strict";
 const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
-const { ord, el, path, hover, frame, CURVE_P } = globalThis.NAEPCharts;
+const { ord, el, path, hover, frame, CURVE_P, onResize } = globalThis.NAEPCharts;
 const { f0, f1, f2, f3, fmtPct, cellName, configValue, chipName, TILT_LABELS, provenanceText } = globalThis.NAEPShared;
 const PS = D.percentiles;
 
@@ -421,6 +421,9 @@ function drawMain(curve) {
   const pad = (hi - lo) * 0.08;
   const F = frame("main-chart", 720, 320, [lo - pad, hi > 0 ? hi + pad : 0], f2, 6);
   const { svg, x, y } = F;
+  const ends = [curve[0], curve[curve.length - 1]];
+  svg.setAttribute("aria-label", `How far each percentile sits below its 2019 score, in SD, without and with the ` +
+    `program. ` + ends.map((r) => `${ord(r.p)} percentile: ${f3(before(r))} without, ${f3(after(r))} with.`).join(" "));
   // Area between the decline and the post-program position, split at zero
   // so the part above zero (a percentile lifted past its 2019 level) reads
   // as overshoot rather than as more of the decline undone.
@@ -448,6 +451,8 @@ function drawMain(curve) {
 
 function drawProfile(id, curve, acc, yDom, yFmt, color, name) {
   const F = frame(id, 340, 180, yDom, yFmt, 4);
+  F.svg.setAttribute("aria-label", `${name} at each percentile: ${yFmt(acc(curve[0]))} at the ${ord(curve[0].p)}, ` +
+    `${yFmt(acc(curve[curve.length - 1]))} at the ${ord(curve[curve.length - 1].p)}.`);
   el("path", { d: path(curve.map((r) => [F.x(r.p), F.y(acc(r))])), fill: "none", stroke: color, "stroke-width": 2 }, F.svg);
   hover(F, curve, (r) => F.y(acc(r)), (r) => `<div>${ord(r.p)} percentile</div><div>${name}: <b>${yFmt(acc(r))}</b></div>`);
 }
@@ -477,6 +482,8 @@ function drawGroups(groups, cell) {
   const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals), pad = (hi - lo) * 0.08;
   // Extra room below for the lower group's direct label.
   const F = frame("ed-chart", 720, 280, [lo - 2 * pad, hi > 0 ? hi + pad : 0], f2, 5);
+  F.svg.setAttribute("aria-label", "Economically disadvantaged students and everyone else, each against their own " +
+    "2019 score, in SD, without and with the program. The table below gives the gap between the groups.");
   for (const g of groups) {
     const c = GROUP_STYLE[g.id].color;
     el("path", { d: path(g.rows.map((r) => [F.x(r.p), F.y(before(r))])), fill: "none", stroke: c, "stroke-width": 2, "stroke-dasharray": "5 4" }, F.svg);
@@ -513,6 +520,9 @@ function drawGroups(groups, cell) {
     `for another ${fmtPct(other)} the information was not available, and they are left out of both groups here.`;
 }
 
+// Charts are drawn at their container's width (frame()), so redraw when the
+// window width changes.
+onResize(render);
 sync();
 </script>
 </body>

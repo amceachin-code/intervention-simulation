@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explorer Methods</title>
 <meta name="description" content="How the NAEP Recovery Explorer was built: the data, the drop, the program presets, the gradients, the two ways to count, rounds of a program, the checks, and the limits.">
-<link rel="stylesheet" href="style.css?v=2026-10-02.2">
+<link rel="stylesheet" href="style.css?v=2026-10-02.3">
 </head>
 <body>
 <div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS</div>
@@ -395,9 +395,9 @@
   <p class="back"><a href="index.html">&larr; Back to the explorer</a></p>
 </main>
 
-<script src="cells.js?v=2026-10-02.2"></script>
-<script src="engine.js?v=2026-10-02.2"></script>
-<script src="charts.js?v=2026-10-02.2"></script>
+<script src="cells.js?v=2026-10-02.3"></script>
+<script src="engine.js?v=2026-10-02.3"></script>
+<script src="charts.js?v=2026-10-02.3"></script>
 <script>
 "use strict";
 // Every table, chart, and config value on this page is read from cells.js
@@ -406,7 +406,7 @@
 // from the cited sources (study counts, unrounded rates), each next to its
 // citation.
 const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
-const { ord, el, path, hover, frame, CURVE_P } = globalThis.NAEPCharts;
+const { ord, el, path, hover, frame, CURVE_P, onResize } = globalThis.NAEPCharts;
 const { f1, f2, f3, fmtPct, cellName, configValue, chipName, tiltName, provenanceText } = globalThis.NAEPShared;
 const PS = D.percentiles;
 const $ = (id) => document.getElementById(id);
@@ -447,6 +447,9 @@ function drawDrop(cell) {
   const vals = res.curve.map(v);
   const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals), pad = (hi - lo) * 0.08;
   const F = frame("drop-chart", 720, 260, [lo - pad, hi > 0 ? hi + pad : 0], f2, 5);
+  const ends = [res.knots[0], res.knots[res.knots.length - 1]];
+  F.svg.setAttribute("aria-label", `The drop from 2019 to 2024 at each percentile, in SD, ${cellName(cell.label)}: ` +
+    ends.map((r) => `${f3(v(r))} at the ${ord(r.p)}`).join(", ") + ".");
   el("path", { d: path(res.curve.map((r) => [F.x(r.p), F.y(v(r))])), fill: "none",
                stroke: "var(--series-before)", "stroke-width": 2, "stroke-dasharray": "5 4" }, F.svg);
   res.knots.forEach((r) => el("circle", { cx: F.x(r.p), cy: F.y(v(r)), r: 4, fill: "var(--series-before)",
@@ -497,7 +500,7 @@ const TILT_STYLE = {
   neutral: { stroke: "var(--series-before)" },
   "mild-pos": { stroke: "var(--series-effect)", dash: "5 4" }, "strong-pos": { stroke: "var(--series-effect)" },
 };
-(function tiltChart() {
+function tiltChart() {
   const B = C_DEFAULT.c;
   $("tilt-title").textContent = `Share taking part at each percentile when ${fmtPct(B)} of students take part`;
   $("tilt-legend").innerHTML = E.TILT_LEVELS.map((l) => {
@@ -507,6 +510,8 @@ const TILT_STYLE = {
   const lines = E.TILT_LEVELS.map((l) => ({ l, v: E.participation(B, l.k)(CURVE_P) }));
   const top = Math.max(...lines.flatMap((x) => x.v));
   const F = frame("tilt-chart", 720, 260, [0, Math.min(1, top * 1.1)], (v) => fmtPct(v), 5);
+  F.svg.setAttribute("aria-label", `Share taking part at each percentile under the five tilts, with ${fmtPct(B)} of ` +
+    `students taking part. The table in section 6 gives each line's 10th and 90th percentile values.`);
   lines.forEach(({ l, v }) => {
     const s = TILT_STYLE[l.id];
     el("path", { d: path(CURVE_P.map((p, i) => [F.x(p), F.y(v[i])])), fill: "none", stroke: s.stroke,
@@ -517,7 +522,8 @@ const TILT_STYLE = {
   const iNeutral = E.TILT_LEVELS.findIndex((l) => l.id === "neutral");
   hover(F, rows, (r) => F.y(r.v[iNeutral]), (r) => `<div>${ord(r.p)} percentile</div>` +
     E.TILT_LEVELS.map((l, j) => `<div>${PART_NAMES[l.id]}: <b>${fmtPct(r.v[j])}</b></div>`).join(""));
-})();
+}
+tiltChart();
 (function tiltTable() {
   const B = C_DEFAULT.c, g = G_DEFAULT.g;
   const rows = E.TILT_LEVELS.map((l) => {
@@ -596,6 +602,9 @@ function fillScreen(cell) {
 
 function render() { const c = currentCell(); drawDrop(c); drawCounting(c); fillScreen(c); }
 cellSel.addEventListener("change", render);
+// Charts are drawn at their container's width (frame()), so redraw both the
+// cell's charts and the tilt chart when the window width changes.
+onResize(() => { render(); tiltChart(); });
 render();
 </script>
 </body>

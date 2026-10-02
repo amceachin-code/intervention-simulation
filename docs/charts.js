@@ -17,6 +17,8 @@
   const NS = "http://www.w3.org/2000/svg";
   // The percentile range every chart spans (see the header).
   const P_LO = 10, P_HI = 90;
+  // The narrowest drawing width frame() uses, in SVG units (see frame()).
+  const MIN_W = 300;
 
   // "10th", "21st", "52nd", "73rd".
   const ord = (p) => p + (p % 10 === 1 && p !== 11 ? "st" : p % 10 === 2 && p !== 12 ? "nd" : p % 10 === 3 && p !== 13 ? "rd" : "th");
@@ -46,9 +48,21 @@
   // and labels, an x gridline and label at each percentile in xTicks (by
   // default the five NAEP reports, from cells.js), and a zero line when the y
   // domain crosses zero. Returns the scales and the SVG to draw into.
+  //
+  // W and H are the design size. When the container is narrower than W (a
+  // phone), the chart is drawn at the container's own width instead, so its
+  // 11px axis text stays 11px rather than shrinking with the whole drawing.
+  // The height shrinks less than the width (to no less than 75 percent), so
+  // a narrow chart stays tall enough to read. Wider containers keep the
+  // design size, scaled up as before. Pages redraw on resize.
   function frame(containerId, W, H, yDom, yFmt, nTicks, xTicks = globalThis.TOOL_DATA.percentiles) {
     const box = document.getElementById(containerId);
     box.querySelector("svg")?.remove();
+    const shown = box.clientWidth;
+    if (shown > 0 && shown < W) {
+      const s = Math.max(MIN_W, shown) / W;
+      W = Math.round(W * s); H = Math.round(H * Math.max(0.75, s));
+    }
     const m = { l: 44, r: 12, t: 8, b: 26 };
     const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
     box.prepend(svg);
@@ -99,7 +113,20 @@
   // frame() maps).
   const CURVE_P = Array.from({ length: P_HI - P_LO + 1 }, (_, i) => P_LO + i);
 
-  globalThis.NAEPCharts = { ord, el, niceTicks, path, frame, hover, CURVE_P };
+  // Call fn after the window stops resizing for 150 ms, so charts drawn at
+  // the container's width (frame()) are redrawn once, not on every resize
+  // event. Only a width change triggers it; a phone's address bar showing or
+  // hiding changes only the height.
+  function onResize(fn) {
+    let t = null, lastW = window.innerWidth;
+    window.addEventListener("resize", () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      clearTimeout(t); t = setTimeout(fn, 150);
+    });
+  }
+
+  globalThis.NAEPCharts = { ord, el, niceTicks, path, frame, hover, CURVE_P, onResize };
 
   // ---------------------------------------------------------------------
   // Page helpers shared by the pages: number formats, display names, and

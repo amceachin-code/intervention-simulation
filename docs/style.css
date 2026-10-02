@@ -91,6 +91,22 @@ h2 { font-size: 1rem; margin: 0 0 8px; }
    box instead of stretching the whole page past a phone's width. */
 .layout > * { min-width: 0; }
 @media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+/* Desktop: the controls stay in view while the results scroll past, and
+   scroll on their own if they are taller than the window. */
+@media (min-width: 861px) {
+  .layout > #controls { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
+}
+/* Phone and narrow tablet: the headline numbers and the main chart come
+   first, then the controls, then the rest of the results. The results
+   wrapper steps out of the layout (display: contents) so its cards can be
+   ordered around the controls; the grid gap replaces the stack margins. */
+@media (max-width: 860px) {
+  .layout > .results { display: contents; }
+  .layout > .results > * { order: 4; margin-top: 0; }
+  .layout > .results > .tiles { order: 1; }
+  .layout > .results > .main-card { order: 2; }
+  .layout > #controls { order: 3; }
+}
 .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
 .stack > * + * { margin-top: 16px; }
 
@@ -123,7 +139,10 @@ select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } }
 .tile .k { color: var(--text-secondary); font-size: 0.8rem; }
-.tile .v { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.2; }
+/* Proportional digits on standalone figures; equal-width digits stay on
+   tables, axes, and the slider readouts, where numbers line up or change
+   in place. */
+.tile .v { font-size: 1.6rem; font-weight: 650; line-height: 1.2; }
 .tile .s { color: var(--text-muted); font-size: 0.78rem; }
 
 /* Charts */
@@ -238,7 +257,7 @@ th.txt, td.txt { text-align: left; white-space: normal; min-width: 16ch; }
 .summary-dl { margin: 0 0 10px; padding-top: 10px; border-top: 1px solid var(--border); }
 .summary-dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 4px 0; }
 .summary-dl dt { color: var(--text-secondary); font-size: 0.88rem; }
-.summary-dl dd { margin: 0; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.summary-dl dd { margin: 0; font-size: 1.25rem; font-weight: 700; white-space: nowrap; }
 .care { margin: 0; padding-left: 18px; font-size: 0.88rem; color: var(--text-secondary); }
 .care li + li { margin-top: 8px; }
 .care strong { color: var(--text-primary); }
