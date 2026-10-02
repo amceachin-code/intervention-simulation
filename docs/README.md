@@ -37,6 +37,10 @@ node analysis/tests/test-tool-engine.mjs    # checks cells.js and engine.js agai
 
 The test compares the engine with the committed R outputs for proportional allocation and the eligibility screen (both estimands, every budget, four cells), and the ED / not-ED results with `tables/sim-group-outcomes-*.csv`; the two agree to under 1e-12 NAEP points. It also checks the methods-page data: the Kraft (2023) rows against `tables/kraft-2023-benchmarks-by-target.csv`, and the Table 2(a) targets against the differential change computed from the cells. For the rounds page it checks `rounds()`: the round counts against g\* read straight from `tables/sim-quantiles.csv` for all six cells and every take-up × gain preset pair, one round against `scenario()`'s group answer and k rounds against its pure shift, the 90-10 gap staying put, reach-everyone counts, fresh-draw reach, rounding at whole numbers, "never" at zero take-up or gain, and monotonicity.
 
+## Asset version tag
+
+Each page loads `style.css`, `cells.js`, `engine.js`, and `charts.js` with a version tag (`engine.js?v=2026-10-02`). GitHub Pages lets browsers cache files for 10 minutes, so without the tag a new page can run against a cached old engine or stylesheet and stop partway through drawing. Whenever you change any of those four files, including a `cells.js` rewrite by `10-export-tool-data.R`, change the tag in all three pages to the new date. The engine test (section 7) fails if a page lacks the tag or the pages disagree.
+
 ## Viewing and hosting
 
 Open `index.html` (or `rounds.html`, `methods.html`) directly, or serve the folder (`python3 -m http.server -d docs`). For GitHub Pages, set the repository's Pages source to the `main` branch, `/docs` folder.

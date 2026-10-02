@@ -409,5 +409,30 @@ for (const cell of DATA.cells) {
   check(threw, "rounds should refuse percentiles without p10 and p90");
 }
 
+// ---- 7. pages load matching asset versions ---------------------------------
+// GitHub Pages lets browsers cache files for 10 minutes. Without a version
+// tag, a new page can run against a cached old engine.js or style.css (seen
+// on 2026-10-02: the new rounds page called rounds(), which the cached
+// engine lacked, and stopped after drawing the controls). Every page must
+// load each shared file with ?v=<tag>, and every page must use the same tag,
+// so bumping it in one place and not another is caught here.
+{
+  const PAGES = ["docs/index.html", "docs/rounds.html", "docs/methods.html"];
+  const ASSETS = ["style.css", "cells.js", "engine.js", "charts.js"];
+  const tags = new Set();
+  for (const page of PAGES) {
+    const html = fs.readFileSync(page, "utf8");
+    for (const a of ASSETS) {
+      const refs = [...html.matchAll(new RegExp(`(?:href|src)="${a.replace(".", "\\.")}(\\?v=([\\w.-]+))?"`, "g"))];
+      check(refs.length === 1, `${page} references ${a} ${refs.length} times, expected 1`);
+      for (const r of refs) {
+        check(r[2], `${page} loads ${a} without a ?v= version tag`);
+        if (r[2]) tags.add(r[2]);
+      }
+    }
+  }
+  check(tags.size === 1, `pages use different asset version tags: ${[...tags].join(", ")}`);
+}
+
 console.log(`${checks} checks, ${failures} failed`);
 process.exit(failures ? 1 : 0);
