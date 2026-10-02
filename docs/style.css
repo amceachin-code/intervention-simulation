@@ -1,5 +1,6 @@
-/* Shared styles for the explorer (index.html) and its methods page
-   (methods.html). One copy, so the two pages cannot drift apart. */
+/* Shared styles for the explorer (index.html), its methods page
+   (methods.html), and the rounds page (rounds.html). One copy, so the pages
+   cannot drift apart. */
 /* Colors are role tokens. Light is the default; dark is its own set of
    steps (not an automatic inversion), applied for an OS dark preference
    unless the page is stamped light, or when stamped dark. */
@@ -197,3 +198,37 @@ th.txt, td.txt { text-align: left; white-space: normal; min-width: 16ch; }
 /* On a narrow screen, the methods tables' label and text columns wrap and
    share the width, rather than one column squeezing the others to a letter. */
 .doc td:first-child { white-space: normal; min-width: 12ch; }
+
+/* Rounds page (rounds.html). Reuses the cards, tiles, chips, and legends
+   above; these rules only lay it out and style its own pieces. */
+.eyebrow { margin: 0 0 4px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+           color: var(--text-muted); }
+.rounds-controls { display: grid; grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px 28px;
+                   margin-bottom: 16px; }
+@media (max-width: 860px) { .rounds-controls { grid-template-columns: minmax(0, 1fr); } }
+/* Set by rounds.html on the preset chip that matches the slider. */
+.chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--text-primary); }
+.rounds-top { display: grid; gap: 16px; margin-bottom: 16px; align-items: start;
+              grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+@media (max-width: 860px) { .rounds-top { grid-template-columns: minmax(0, 1fr); } }
+.care-card { margin-bottom: 16px; }
+.one-round { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr); gap: 16px 24px; align-items: center; }
+@media (max-width: 560px) { .one-round { grid-template-columns: minmax(0, 1fr); } .waffle { max-width: 180px; } }
+.one-tiles { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--grid); }
+.tile .v.accent { color: var(--accent); }
+.sw.dot { width: 11px; height: 11px; border: 0; border-radius: 50%; }
+.sw.dot.ring { background: transparent; border: 1.5px solid var(--text-muted); }
+.chart .direct-label.strong { fill: var(--text-primary); font-weight: 700; }
+/* A halo in the card color, so a label stays readable where it crosses a line. */
+#dumbbell .direct-label { paint-order: stroke; stroke: var(--surface-1); stroke-width: 4px; stroke-linejoin: round; }
+.summary { border-color: var(--accent); }
+.summary-k { margin: 0 0 6px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+             color: var(--text-muted); }
+.summary-lead { margin: 0 0 12px; font-size: 1.1rem; line-height: 1.4; }
+.summary-dl { margin: 0 0 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.summary-dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 4px 0; }
+.summary-dl dt { color: var(--text-secondary); font-size: 0.88rem; }
+.summary-dl dd { margin: 0; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.care { margin: 0; padding-left: 18px; font-size: 0.88rem; color: var(--text-secondary); }
+.care li + li { margin-top: 8px; }
+.care strong { color: var(--text-primary); }

@@ -5,7 +5,159 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: ED BREAKDOWN, TWO TODO FIXES, STATA-MCP (2026-09-29, closed)
+# CURRENT TASK: "WHAT WOULD IT TAKE?" EXPLORER VIEW (2026-10-01, complete, awaiting Andrew's review)
+
+**Status:** Complete. All plan steps are done and tested. Work is on branch
+`explorer-rounds-view`, cut from `main` because the design snapshot (commit
+e80ce1c) exists only on `claude/trusting-davinci-vyejhb`. Nothing is
+committed yet and nothing is merged to `main`; Andrew reviews first.
+
+## Objective
+
+Port the B1 "Requirement" design (`design/canvas/B1-Requirement.dc.html`,
+described in `design/README.md`) into the explorer in `docs/` as a new
+"What would it take?" view, in the explorer's existing plain-HTML style.
+
+- Cell values come from `docs/cells.js`, never hard-coded in the view.
+- Add tests for the "rounds" arithmetic to
+  `analysis/tests/test-tool-engine.mjs`.
+- Update `docs/methods.html` and `docs/README.md` to describe the new view.
+
+## Plan
+
+- [x] 1. Read the design notes (`design/README.md`) and the B1 canvas.
+- [x] 2. Study the existing `docs/` explorer structure, `docs/engine.js`,
+      and `docs/cells.js`.
+- [x] 3. Implement the rounds arithmetic as an engine function.
+- [x] 4. Add the new view's markup and JavaScript.
+- [x] 5. Add tests for the rounds arithmetic to
+      `analysis/tests/test-tool-engine.mjs`.
+- [x] 6. Update `docs/methods.html` and `docs/README.md`.
+- [x] 7. Run the tests and check the view in the browser.
+- [x] 8. Code review pass, then final README and PROGRESS update.
+
+## Step details
+
+- **Step 1 (design).** Read `design/README.md` and
+  `design/canvas/B1-Requirement.dc.html`.
+- **Step 2 (explorer).** Studied `docs/engine.js`, `docs/cells.js`,
+  `docs/charts.js`, `docs/style.css`, `docs/index.html`, and
+  `docs/methods.html`.
+- **Step 3 (engine).** Added `rounds(cell, knotsPct, c, g)` to
+  `docs/engine.js`. `ceilRounds` uses a 1e-9 slack: 0.9/(0.3*0.1) computes
+  as 30.000000000000004, which a plain ceil would round up to 31.
+  - The fade-out threshold is defined on accumulated gains. With a fraction
+    f fading between rounds, the level just after a round tends to c*g/f, so
+    p10 recovers only if f <= c*g/g*(p10). B1's wording ("of each round's
+    gain") was corrected to match.
+- **Step 4 (view).** New `docs/rounds.html` in the explorer's plain-HTML
+  style. It contains controls with presets from `cells.js`, the one-round
+  waffle, dumbbell, and tiles, a summary card, the round-after-round chart,
+  the students-reached strip, a preset matrix, and "Read with care".
+  - The page shares the hash keys `cell`, `share`, and `effect` with
+    `index.html`.
+  - The charts are drawn at their container width (420 to 1100), with
+    trimmed in-plot labels on phones.
+  - New tokens and rules went into `docs/style.css`, in light and dark.
+- **Step 5 (tests).** Added section 6 to
+  `analysis/tests/test-tool-engine.mjs` (the suite had 12,574 checks before;
+  run it for the current count). The section checks:
+  - round counts against g* from `tables/sim-quantiles.csv`, for 6 cells x
+    16 preset pairs;
+  - one round against `scenario()` in group mode, and k rounds against its
+    pure shift;
+  - that the gap is invariant;
+  - reach counts 1/4/6/8, fresh-draw reach, the rounding edge cases, null at
+    zero, and monotonicity.
+  Mutation checks confirmed the new tests fail when `perRound`,
+  `roundsReach`, or the rounding slack is broken.
+- **Step 6 (docs).** `docs/methods.html` has a new section 8 "Rounds of a
+  program", passed through `/writing-style`, with a per-cell rounds table.
+  Sections 9 to 11 were renumbered. The fade-out limit and the checks
+  bullets were revised. `docs/README.md` was updated.
+- **Step 7 (verification).**
+  - `bash analysis/tests/run-all.sh`: 6 passed, 0 failed.
+  - Headless Chrome renders in light, dark, and a true 390px iframe, with
+    zero console errors on all three pages and on edge-case hashes. The
+    Chrome extension was not connected (account mismatch).
+  - A stub-DOM harness rendered 490 slider settings with no NaN, null,
+    Infinity, or contradictory wording.
+  - Math G8 at 18.7% and 0.155 SD reproduces B1's numbers: 10 rounds, 6 to
+    reach everyone, a 108.9-point gap, and matrix row 8/10/16/57.
+- **Step 8 (review and wrap-up).** Code review pass with all 23 suggestions
+  applied. The harness then found two more wording fixes: small programs
+  printing "0.0 rather than 0.0", and near-100% take-up printing "0 in 100
+  unserved". README and PROGRESS updated.
+
+## Key decisions
+
+- The view reads every cell value from `docs/cells.js`; no numbers are typed
+  into the markup or view script.
+- The rounds arithmetic lives in the engine (step 3) so the Node test suite
+  can check it without a browser.
+- B1's unbacked "about a round longer" line was replaced by a live one-round
+  "All students" comparison from `scenario()`.
+- The headline, the lede, and the one-round note are now conditional on the
+  settings.
+- The rounds page keeps the effect slider step at 0.001 so the presets land
+  exactly; the explorer's 0.005 step was left alone.
+- No merge to `main` before Andrew's review.
+
+## Open items for Andrew
+
+- No R reference exists for more than one round.
+- `tables/SIM-SUMMARY.md` section 7.2 and the memo still use the
+  per-participant g*/c framing.
+- B1 is ported. B2 and C are not.
+
+## Files
+
+- Created: `docs/rounds.html`.
+- Modified: `docs/engine.js`, `docs/index.html`, `docs/methods.html`,
+  `docs/style.css`, `docs/charts.js`, `docs/README.md`,
+  `analysis/tests/test-tool-engine.mjs`, `README.md`, `PROJECTPLAN.md`,
+  `PROGRESS.md`.
+- Deleted: none.
+
+## Follow-up (2026-10-01): three sections removed at Andrew's request
+
+- **Request.** Andrew asked to remove three sections from
+  `docs/rounds.html`: the "Round after round" chart, the "Students reached"
+  strip, and the "Rounds to bring the 10th percentile back to 2019" preset
+  matrix.
+- **Removed from `docs/rounds.html`.** Their markup; `drawRounds`,
+  `drawReach`, `drawMatrix`, `roundsFrame`, `chartWidth`, `bucket`, the
+  chart-length K logic, the cap and reach notes, and the resize listener.
+- **Removed from `docs/style.css`.** Their CSS (matrix, cap-note,
+  rounds-h3, rounds-bottom, chart label halos, direct-label light and warn)
+  and their colour tokens (`--series-p10`, `--series-p90`, `--warn`, `--m1`
+  to `--m5`) from all three theme blocks.
+- **Layout.** "Read with care" is now a full-width card (`.care-card`).
+- **Kept.** The controls, the one-round card, the summary card, "Read with
+  care", and engine `rounds()` with its tests. `rounds90`, `toRestore`, and
+  `freshDrawReached` are still exercised by the tests, and
+  `freshDrawReached` also feeds a caveat.
+- **Methods table, then removed.** The per-cell rounds table in
+  `docs/methods.html` section 8 was kept at first and flagged to Andrew. He
+  asked for unnecessary methods content to go, so the table and its
+  `roundsTable` script were removed. The section 8 prose stays: every
+  paragraph explains something still on the page (round counts and reach in
+  the summary card, the fade threshold and the "All students" comparison in
+  "Read with care"). Methods page renders with zero console errors.
+- **Docs.** `README.md` and `docs/README.md` descriptions updated;
+  `PROJECTPLAN.md` got a one-line amendment.
+- **Verified.**
+  - `node analysis/tests/test-tool-engine.mjs`: 13,788 checks, 0 failed.
+  - A stub-DOM sweep of 490 settings found no bad wording.
+  - Headless Chrome shows zero console errors, and the desktop and 390px
+    layouts are clean.
+- **Files.** All touched files (`docs/rounds.html`, `docs/style.css`,
+  `README.md`, `docs/README.md`, `PROJECTPLAN.md`) were already in the list
+  above.
+
+---
+
+# PREVIOUS TASK: ED BREAKDOWN, TWO TODO FIXES, STATA-MCP (2026-09-29, closed)
 
 **Status:** Complete. All plan steps (3, G, A to F, wrap-up, verification,
 code review) are done and tested. Nothing is in progress. Next: commit and

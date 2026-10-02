@@ -1,5 +1,7 @@
 // Shared SVG chart helpers for the explorer (index.html) and its methods
 // page (methods.html). No libraries: every chart is a handful of SVG paths.
+// The rounds page (rounds.html) uses el, path, and the page helpers below,
+// but draws its round-by-round axis itself, since frame() is percentile-only.
 //
 // Every chart here runs along the percentile axis from the 10th to the 90th,
 // the range of NAEP's published percentiles. The quantile functions behind
@@ -100,7 +102,7 @@
   globalThis.NAEPCharts = { ord, el, niceTicks, path, frame, hover, CURVE_P };
 
   // ---------------------------------------------------------------------
-  // Page helpers shared by both pages: number formats, display names, and
+  // Page helpers shared by the pages: number formats, display names, and
   // config lookups. One copy, so the explorer and the methods page cannot
   // drift apart in wording or rounding.
 

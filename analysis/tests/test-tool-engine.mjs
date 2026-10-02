@@ -29,6 +29,12 @@
 //   4. The quantile-function points in cells.js: they reproduce the published
 //      percentiles and the score distribution's bin points, and the curve
 //      through them has no corners.
+//   5. The methods-page data (Kraft 2023 rows, Table 2(a) targets).
+//   6. The rounds arithmetic behind rounds.html (E.rounds): rounds to restore
+//      p10 and p90 match g* from the CSV for every preset pair; one round
+//      matches scenario()'s group answer and k rounds its pure shift; the
+//      90-10 gap never moves; reach-everyone counts, fresh-draw reach, the
+//      rounding at whole numbers, "never" at zero, and monotonicity.
 // Runs every check, prints each FAIL line, and exits non-zero if any failed.
 
 import fs from "node:fs";
@@ -308,6 +314,99 @@ check(Object.keys(DATA.table2a).length === DATA.cells.length, "table2a does not 
 for (const c of DATA.cells) {
   const dc = c.d[PS.indexOf(90)] - c.d[PS.indexOf(10)];
   check(dc.toFixed(1) === DATA.table2a[c.label].toFixed(1), `${c.label} differential change ${dc.toFixed(1)} vs Table 2(a) ${DATA.table2a[c.label]}`);
+}
+
+// ---- 6. rounds of a program (rounds.html) --------------------------------
+// E.rounds has no R counterpart (no committed output covers more than one
+// round), so it is checked three ways: its rounding against g* read straight
+// from tables/sim-quantiles.csv, not from cells.js; its one-round step and
+// its k-round totals against scenario(), which section 2 ties to R; and a
+// set of edge cases and invariants.
+const csvGStar = (label, p) => Number(qd.find((r) => r.cell === label && Number(r.percentile) === p).g_star);
+const PRESET_C = DATA.participation.map((x) => x.c), PRESET_G = DATA.benchmarks.map((x) => x.g);
+for (const cell of DATA.cells) {
+  const S = cell.sd2019, g10 = csvGStar(cell.label, 10), g90 = csvGStar(cell.label, 90);
+  for (const c of PRESET_C) for (const g of PRESET_G) {
+    const R = E.rounds(cell, PS, c, g), tag = `${cell.label} c=${c} g=${g}`;
+    // Rounds to restore p10 and p90: g* / (c g), rounded up.
+    check(R.rounds10 === Math.ceil(g10 / (c * g) - 1e-9), `${tag} rounds10 ${R.rounds10} vs CSV ${g10 / (c * g)}`);
+    check(R.rounds90 === Math.ceil(g90 / (c * g) - 1e-9), `${tag} rounds90 ${R.rounds90} vs CSV ${g90 / (c * g)}`);
+    check(close(R.perRoundPts, c * g * S, 1e-12), `${tag} perRoundPts`);
+    // One round equals the group answer with c seated at every percentile
+    // and gain g: the scenario's gain at p10 and p90 is c * g.
+    const one = E.scenario(cell, PS, { effect: g, share: c, kPart: 0, kEffect: 0, mode: "group" }, [10, 90]);
+    for (const p of [10, 90])
+      check(close(one.knots.find((k) => k.p === p).gain, R.perRound, 1e-12), `${tag} one round at p${p} differs from scenario()`);
+    // k rounds are a pure shift of k c g, which scenario() expresses as
+    // everyone seated at effect k c g. p10 is still short of 2019 one round
+    // before rounds10 and back by rounds10.
+    // Each k is run once and reused (rounds10 shows up in both checks).
+    const memo = new Map();
+    const after = (k) => {
+      if (!memo.has(k)) memo.set(k, E.scenario(cell, PS, { effect: k * c * g, share: 1, kPart: 0, kEffect: 0, mode: "group" }, [10, 90]));
+      return memo.get(k);
+    };
+    const n = R.rounds10, left10 = (k) => after(k).knots.find((x) => x.p === 10).remaining;
+    check(left10(n) <= 1e-9, `${tag} p10 not back to 2019 after ${n} rounds`);
+    check(n === 0 || left10(n - 1) > 1e-9, `${tag} p10 already back after ${n - 1} rounds`);
+    // The 90-10 gap is the 2024 gap after any number of rounds.
+    for (const k of [0, 1, n]) {
+      const gp = after(k).gap9010;
+      check(close(gp.post, gp.y2024, 1e-9) && close(gp.post, R.gap2024, 1e-9), `${tag} 90-10 gap moved after ${k} rounds`);
+    }
+  }
+  const R = E.rounds(cell, PS, 0.5, 0.1);
+  check(close(R.gStar10, g10, 1e-12) && close(R.gStar90, g90, 1e-12), `${cell.label} rounds g* differs from CSV`);
+  check(R.widen.toFixed(1) === DATA.table2a[cell.label].toFixed(1), `${cell.label} rounds widen ${R.widen} vs Table 2(a)`);
+  check(close(R.gap2024, R.gap2019 + R.widen, 1e-12), `${cell.label} gap2024 != gap2019 + widen`);
+  check(close(R.turnsPerStudent, g10 / 0.1, 1e-9), `${cell.label} turnsPerStudent`);
+  check(close(R.shareUndonePerRound, 0.05 / g10, 1e-12), `${cell.label} shareUndonePerRound`);
+  // Never, with no seats or no gain.
+  for (const [c, g] of [[0, 0.1], [0.5, 0], [0, 0]]) {
+    const Z = E.rounds(cell, PS, c, g);
+    check(Z.rounds10 === null && Z.rounds90 === null, `${cell.label} c=${c} g=${g} should never restore`);
+    check(Z.perRound === 0 && Z.toRestore10 === Infinity, `${cell.label} c=${c} g=${g} perRound`);
+  }
+  check(E.rounds(cell, PS, 0, 0.1).roundsReach === null, `${cell.label} c=0 should never reach everyone`);
+  // A gain at least as big as the drop, seated for everyone, takes one round.
+  check(E.rounds(cell, PS, 1, g10).rounds10 === 1 && E.rounds(cell, PS, 1, 2 * g10).rounds10 === 1,
+        `${cell.label} a full-size program should take one round`);
+  // Monotone: more take-up or more gain never needs more rounds.
+  const cs = [...PRESET_C].sort((a, b) => a - b), gs = [...PRESET_G].sort((a, b) => a - b);
+  for (const g of gs) for (let i = 1; i < cs.length; i++)
+    check(E.rounds(cell, PS, cs[i], g).rounds10 <= E.rounds(cell, PS, cs[i - 1], g).rounds10, `${cell.label} not monotone in c`);
+  for (const c of cs) for (let i = 1; i < gs.length; i++)
+    check(E.rounds(cell, PS, c, gs[i]).rounds10 <= E.rounds(cell, PS, c, gs[i - 1]).rounds10, `${cell.label} not monotone in g`);
+}
+// Rounding: a ratio that is a whole number up to floating-point error is not
+// bumped up a round. 0.9 / (0.3 * 0.1) computes as 30.000000000000004 and
+// 0.33 / (0.3 * 0.1) as 11.000000000000002, so a plain ceil would say 31 and
+// 12. A ratio genuinely past a whole number is still rounded up.
+{
+  const fake = (gs10) => ({ sd2019: 1, g_star: PS.map((p) => (p === 10 ? gs10 : 0.1)), d: PS.map(() => 0), q2019: PS });
+  check(E.rounds(fake(0.9), PS, 0.3, 0.1).rounds10 === 30, "0.9 / (0.3 * 0.1) should be 30 rounds");
+  check(E.rounds(fake(0.33), PS, 0.3, 0.1).rounds10 === 11, "0.33 / (0.3 * 0.1) should be 11 rounds");
+  check(E.rounds(fake(0.3), PS, 1, 0.1).rounds10 === 3, "0.3 / 0.1 should be 3 rounds");
+  check(E.rounds(fake(0.3 + 1e-6), PS, 1, 0.1).rounds10 === 4, "a ratio just over 3 should be 4 rounds");
+  check(E.rounds(fake(0), PS, 1, 0.1).rounds10 === 0, "no drop should need 0 rounds");
+}
+// Reaching everyone once: 1 / c rounded up; the four presets give 1, 4, 6, 8.
+{
+  const cell = DATA.cells[0];
+  const want = { universal: 1, hdt_dist: 4, optin: 6, summer: 8 };
+  for (const p of DATA.participation)
+    check(E.rounds(cell, PS, p.c, 0.1).roundsReach === want[p.id], `${p.id} reach ${E.rounds(cell, PS, p.c, 0.1).roundsReach} != ${want[p.id]}`);
+  check(E.rounds(cell, PS, 0.25, 0.1).roundsReach === 4, "c = 0.25 should reach everyone in 4 rounds");
+  // A fresh random draw each round reaches 1 - (1 - c)^k.
+  for (const c of [0.13, 0.187, 0.28, 1]) {
+    const R = E.rounds(cell, PS, c, 0.1);
+    check(R.freshDrawReached(0) === 0, `fresh draw at k = 0 should be 0 for c=${c}`);
+    for (const k of [1, 2, 6, 20]) check(close(R.freshDrawReached(k), 1 - Math.pow(1 - c, k), 1e-15), `fresh draw c=${c} k=${k}`);
+  }
+  check(E.rounds(cell, PS, 1, 0.1).freshDrawReached(1) === 1, "c = 1 reaches everyone in one fresh draw");
+  let threw = false;
+  try { E.rounds(cell, [25, 50, 75], 0.5, 0.1); } catch (e) { threw = true; }
+  check(threw, "rounds should refuse percentiles without p10 and p90");
 }
 
 console.log(`${checks} checks, ${failures} failed`);

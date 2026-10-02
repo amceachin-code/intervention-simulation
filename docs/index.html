@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- draft v3, 2026-09-29 (eligibility screen and ED / not-ED outcomes); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R, analysis/alloc-rules.R -->
+<!-- draft v4, 2026-10-01 (link to the rounds page); draft v3, 2026-09-29 (eligibility screen and ED / not-ED outcomes); sources: tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, analysis/config/sim-params.yaml (via docs/cells.js), analysis/mixture.R, analysis/alloc-rules.R -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -19,6 +19,7 @@
     students at different score levels.
   </p>
   <a class="btn" href="methods.html">Show me the details</a>
+  <a class="btn" id="rounds-link" href="rounds.html">What would it take?</a>
   </div>
 
   <details class="card intro" open>
@@ -351,6 +352,9 @@ function fmtShare(s) { return Number.isFinite(s) ? Math.round(s * 100) + "%" : "
 // ---------------------------------------------------------------- render
 function render() {
   writeHash();
+  // The rounds page reads the same cell, share, and effect keys.
+  $("rounds-link").href = "rounds.html#" + new URLSearchParams({ cell: state.cell, share: state.share.toFixed(3),
+                                                                 effect: state.effect.toFixed(3) });
   const cell = D.cells.find((c) => c.label === state.cell);
   const k = (id) => E.TILT_LEVELS.find((l) => l.id === id).k;
   const inputs = {

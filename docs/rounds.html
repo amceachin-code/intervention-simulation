@@ -1,0 +1,385 @@
+<!doctype html>
+<!-- draft v1, 2026-10-01 (port of design/canvas/B1-Requirement.dc.html, commit e80ce1c); sources: tables/sim-quantiles.csv, analysis/config/sim-params.yaml (via docs/cells.js), docs/engine.js rounds() and scenario() -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Would It Take?</title>
+<meta name="description" content="How many rounds of a tutoring or summer program it would take to bring NAEP scores at the 10th percentile back to 2019.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <p class="back"><a id="back-link" href="index.html">&larr; Back to the explorer</a></p>
+  <p class="eyebrow" id="eyebrow"></p>
+  <h1 id="headline"></h1>
+  <div class="lede-row">
+    <p class="lede">Set how many students a program serves each round and how much each of them gains. When a
+    program serves only some students, the average at each percentile moves only a little in any one round, and
+    the gains have to pile up, round after round.</p>
+    <a class="btn" href="methods.html#rounds">How this works</a>
+  </div>
+
+  <!-- Controls -->
+  <form class="card rounds-controls" id="controls" onsubmit="return false">
+    <div>
+      <label class="ctl-label" for="cell">Subject and grade <a class="why" href="methods.html#data">Data</a></label>
+      <select id="cell"></select>
+    </div>
+    <div>
+      <label class="ctl-label" for="share">Share of students served each round <a class="why" href="methods.html#participation">Sources</a></label>
+      <div class="ctl-row">
+        <input type="range" id="share" min="0" max="100" step="0.1">
+        <span class="ctl-value" id="share-v"></span>
+      </div>
+      <p class="chips-label">Examples from research:</p>
+      <div class="chips" id="share-chips"></div>
+    </div>
+    <div>
+      <label class="ctl-label" for="effect">Gain for each student who takes part <a class="why" href="methods.html#effects">Sources</a></label>
+      <div class="ctl-row">
+        <input type="range" id="effect" min="0" max="0.5" step="0.001">
+        <span class="ctl-value" id="effect-v"></span>
+      </div>
+      <p class="ctl-help" id="effect-help"></p>
+      <p class="chips-label">Estimates from research:</p>
+      <div class="chips" id="effect-chips"></div>
+    </div>
+  </form>
+
+  <div class="rounds-top">
+    <!-- One round, at the 10th percentile -->
+    <section class="card">
+      <h2>What one round does for 100 students at the 10th percentile</h2>
+      <p class="sub" id="one-sub"></p>
+      <div class="one-round">
+        <div>
+          <div class="chart waffle" id="waffle"></div>
+          <div class="legend">
+            <span><i class="sw dot" style="background:var(--series-after)"></i><span id="n-in"></span> take part</span>
+            <span><i class="sw dot ring"></i><span id="n-out"></span> do not</span>
+          </div>
+        </div>
+        <div class="chart" id="dumbbell"></div>
+      </div>
+      <div class="tiles one-tiles">
+        <div class="tile"><div class="k">Each student who takes part</div><div class="v accent" id="t-part"></div><div class="s" id="t-part-s"></div></div>
+        <div class="tile"><div class="k">Average of all 100</div><div class="v" id="t-avg"></div><div class="s" id="t-avg-s"></div></div>
+        <div class="tile"><div class="k">Drop undone this round</div><div class="v" id="t-und"></div><div class="s" id="t-und-s"></div></div>
+      </div>
+      <p class="ctl-help" id="one-note"></p>
+    </section>
+
+    <!-- Summary -->
+    <aside class="card summary" aria-label="This program, in short">
+      <p class="summary-k">This program, in short</p>
+      <p class="summary-lead" id="lead"></p>
+      <dl class="summary-dl">
+        <div><dt>Rounds to reach every student once</dt><dd id="s-reach"></dd></div>
+        <div><dt>Rounds to bring the 10th percentile back to 2019</dt><dd id="s-rest"></dd></div>
+        <div><dt>90-10 gap after any number of rounds</dt><dd id="s-gap"></dd></div>
+      </dl>
+      <p class="ctl-help" id="gap-note"></p>
+    </aside>
+  </div>
+
+  <!-- Caveats -->
+  <section class="card care-card">
+    <h2>Read with care</h2>
+    <ul class="care" id="care"></ul>
+  </section>
+
+  <p><a class="btn" id="next-link" href="index.html">Equal chances lift every percentile together. Next: try who takes part, in the explorer &rarr;</a></p>
+  <p class="note" id="provenance"></p>
+</main>
+
+<script src="cells.js"></script>
+<script src="engine.js"></script>
+<script src="charts.js"></script>
+<script>
+"use strict";
+// The "What would it take?" view: question 1 of the project, read as rounds
+// of a program. Every number comes from cells.js through NAEPEngine.rounds
+// (the arithmetic, tested in analysis/tests/test-tool-engine.mjs) and, for
+// the one "All students" comparison, NAEPEngine.scenario. Nothing about a
+// cell is typed here.
+const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const { el } = globalThis.NAEPCharts;
+const { f1, f3, fmtPct, cellName, configValue, chipName, provenanceText } = globalThis.NAEPShared;
+const PS = D.percentiles;
+const $ = (id) => document.getElementById(id);
+const MINUS = "−", EPS = 1e-9;
+
+// ---------------------------------------------------------------- state
+// Defaults are the design's: Math, grade 8 (the cell the other design
+// studies use), the opt-in tutoring take-up, and the pipeline's treated
+// effect. The hash keys match the explorer's (cell, share, effect), so a
+// link between the two pages keeps the settings.
+const defaults = {
+  cell: (D.cells.find((c) => c.label === "Math G8") || D.cells[0]).label,
+  share: configValue(D.participation, "optin").c,
+  effect: configValue(D.benchmarks, D.treated_effect).g,
+};
+const state = Object.assign({}, defaults, readHash());
+
+function readHash() {
+  const out = {};
+  try {
+    new URLSearchParams(location.hash.slice(1)).forEach((v, k) => {
+      if (!(k in defaults)) return;            // the explorer's other keys are ignored here
+      if (k === "share" || k === "effect") {
+        // Clamp to the slider's range (share is stored 0-1, its slider 0-100).
+        const n = Number(v), inp = $(k), scale = k === "share" ? 100 : 1;
+        if (Number.isFinite(n)) out[k] = Math.min(Number(inp.max), Math.max(Number(inp.min), n * scale)) / scale;
+      } else out[k] = v;
+    });
+  } catch (e) { /* malformed hash: ignore and use defaults */ }
+  if (out.cell && !D.cells.some((c) => c.label === out.cell)) delete out.cell;
+  return out;
+}
+const hashOf = (extra) => new URLSearchParams({ cell: state.cell, share: state.share.toFixed(3),
+                                                effect: state.effect.toFixed(3), ...extra }).toString();
+function writeHash() { history.replaceState(null, "", "#" + hashOf()); }
+
+// ---------------------------------------------------------------- controls
+const cellSel = $("cell");
+D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
+function chip(parent, text, title, onClick) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.textContent = text; b.title = title;
+  b.addEventListener("click", onClick); parent.appendChild(b);
+  return b;
+}
+// Presets in the order the explorer shows them; the chip for the current
+// value is marked pressed.
+const shareChips = D.participation.map((p) => ({ v: p.c, b: chip($("share-chips"), `${fmtPct(p.c)}: ${chipName(p)}`,
+  "Source: " + p.source, () => { state.share = p.c; sync(); }) }));
+const effectChips = D.benchmarks.map((b) => ({ v: b.g, b: chip($("effect-chips"), `${f3(b.g)} SD: ${chipName(b)}`,
+  "Source: " + b.source, () => { state.effect = b.g; sync(); }) }));
+
+cellSel.addEventListener("change", () => { state.cell = cellSel.value; sync(); });
+$("share").addEventListener("input", (e) => { state.share = Number(e.target.value) / 100; sync(); });
+$("effect").addEventListener("input", (e) => { state.effect = Number(e.target.value); sync(); });
+
+let pending = false;
+function sync() {
+  cellSel.value = state.cell;
+  $("share").value = (state.share * 100).toFixed(1); $("share-v").textContent = fmtPct(state.share);
+  $("effect").value = state.effect; $("effect-v").textContent = f3(state.effect) + " SD";
+  for (const { v, b } of shareChips) b.setAttribute("aria-pressed", String(Math.abs(v - state.share) < 1e-6));
+  for (const { v, b } of effectChips) b.setAttribute("aria-pressed", String(Math.abs(v - state.effect) < 1e-6));
+  schedule();
+}
+// One render per frame, so dragging a slider does not queue a render for
+// every input event.
+function schedule() {
+  if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; render(); }); }
+}
+
+// ---------------------------------------------------------------- format
+// Signed whole points for axis labels, with a true minus sign.
+const signed = (v) => (Math.abs(v) < EPS ? "0" : (v < 0 ? MINUS : "+") + Math.abs(v).toFixed(0));
+// Whole-point ticks (step 1, 2, 5, 10, 20, ...) spanning lo to hi in at most
+// n intervals, so every label is exact. niceTicks can pick 2.5.
+function pointTicks(lo, hi, n) {
+  let step = 1;
+  for (let mag = 1; ; mag *= 10) {
+    const s = [1, 2, 5].map((f) => f * mag).find((v) => Math.ceil(hi / v) - Math.floor(lo / v) <= n);
+    if (s) { step = s; break; }
+  }
+  const out = [];
+  for (let t = Math.floor(lo / step) * step; t <= Math.ceil(hi / step) * step + EPS; t += step) out.push(t);
+  return out;
+}
+const roundsWord = (n) => `${n} ${n === 1 ? "round" : "rounds"}`;
+// "About 1 point", "0.4 points": small steps keep their decimal.
+function pointsPhrase(v) {
+  if (v < 0.05) return "less than 0.1 points";
+  if (v < 0.95) return `${f1(v)} points`;
+  return Math.round(v) === 1 ? "about 1 point" : `about ${Math.round(v)} points`;
+}
+// Share of the drop undone, as a percent that keeps a decimal when small.
+// The tile form starts a line ("All of it", "Under 0.1%"); the inline form
+// sits mid-sentence ("all of it", "under 0.1%").
+function pctPhrase(x, inline = false) {
+  const v = x * 100;
+  const t = v >= 100 - EPS ? "All of it" : v > 0 && v < 0.05 ? "Under 0.1%"
+    : (v > 0 && v < 10 ? f1(v) : Math.round(v)) + "%";
+  return inline ? t.charAt(0).toLowerCase() + t.slice(1) : t;
+}
+// "29 in 100 students", or "fewer than 1 in 100 students" rather than "0 in 100".
+function unserved(x) { const n = Math.round(x * 100); return n >= 1 ? `${n} in 100 students` : "fewer than 1 in 100 students"; }
+// "those 19 in 100" and "the other 81", or wording that does not round a
+// small take-up to zero students.
+function whoTookPart(c) {
+  const n = Math.round(c * 100);
+  return n >= 1 ? [`those ${n} in 100`, `the other ${100 - n}`] : ["those few students", "everyone else"];
+}
+
+// ---------------------------------------------------------------- render
+function render() {
+  writeHash();
+  const cell = D.cells.find((c) => c.label === state.cell);
+  const c = state.share, g = state.effect, name = cellName(cell.label);
+  const R = E.rounds(cell, PS, c, g);
+
+  $("eyebrow").textContent = `${name} · 2019 to 2024`;
+  $("headline").textContent = headline(R);
+  $("effect-help").textContent = `${f3(g)} SD is about ${f1(R.gainPts)} NAEP points in ${name}.`;
+  drawOneRound(R, c);
+  drawSummary(R, c, g, name);
+  drawCare(cell, R, c, g);
+
+  // Links that carry the settings to the explorer. "Same students" is the
+  // way this page counts, so the explorer opens on it.
+  $("back-link").href = "index.html#" + hashOf();
+  $("next-link").href = "index.html#" + hashOf({ mode: "group" });
+  $("provenance").textContent = provenanceText(D, ["tables/sim-quantiles.csv", "analysis/config/sim-params.yaml"]);
+}
+
+// The headline follows the settings, so it never contradicts the numbers.
+function headline(R) {
+  if (R.rounds10 === 0) return "The 10th percentile is already at or above its 2019 score.";
+  if (R.rounds10 === null) return "With no seats or no gain, the 10th percentile never gets back to 2019.";
+  if (R.rounds10 <= 1) return "At these settings, one round brings the 10th percentile back to 2019.";
+  if (R.shareUndonePerRound < 0.2)
+    return "One round barely moves the average student. Getting back to 2019 takes many rounds.";
+  return `Getting the 10th percentile back to 2019 takes ${roundsWord(R.rounds10)}.`;
+}
+
+// ------------------------------------------------ one round (waffle, dumbbell, tiles)
+function drawOneRound(R, c) {
+  const nT = Math.round(c * 100);
+  $("n-in").textContent = nT; $("n-out").textContent = 100 - nT;
+  $("one-sub").textContent = `NAEP points against the 2019 score at the 10th percentile. In 2024 the 10th ` +
+    `percentile sat ${f1(R.drop10)} points below it.`;
+
+  // Waffle: 100 students, the first nT filled.
+  const wbox = $("waffle");
+  wbox.querySelector("svg")?.remove();
+  const ws = el("svg", { viewBox: "0 0 260 260", role: "img", "aria-label": `${nT} of 100 students take part in one round` });
+  wbox.prepend(ws);
+  for (let i = 0; i < 100; i++) {
+    const x = 13 + (i % 10) * 26, y = 13 + Math.floor(i / 10) * 26;
+    el("circle", i < nT ? { cx: x, cy: y, r: 10, fill: "var(--series-after)" }
+                        : { cx: x, cy: y, r: 9.25, fill: "var(--surface-1)", stroke: "var(--text-muted)", "stroke-width": 1.5 }, ws);
+  }
+
+  // Dumbbell: three rows against the 2019 score (zero).
+  const W = 560, H = 196, L = 16, Rm = 64, start = -R.drop10, part = start + R.gainPts, avg = start + R.perRoundPts;
+  const lo = Math.min(start, -1), hi = Math.max(part, 1), pad = (hi - lo) * 0.06;
+  const ticks = pointTicks(lo - pad, hi + pad, 8);
+  const x0 = Math.min(ticks[0], lo - pad), x1 = Math.max(ticks[ticks.length - 1], hi + pad);
+  const x = (v) => L + (v - x0) / (x1 - x0) * (W - L - Rm);
+  const box = $("dumbbell");
+  box.querySelector("svg")?.remove();
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": `At the 10th percentile, one round lifts students who take part ${f1(R.gainPts)} points and the average of all 100 ${f1(R.perRoundPts)} points` });
+  box.prepend(svg);
+  const ax = el("g", { class: "axis" }, svg);
+  ticks.forEach((t) => {
+    el("line", { class: "gridline", x1: x(t), x2: x(t), y1: 24, y2: 168 }, ax);
+    el("text", { x: x(t), y: 188, "text-anchor": "middle" }, ax).textContent = signed(t);
+  });
+  el("line", { x1: x(0), x2: x(0), y1: 16, y2: 168, stroke: "var(--text-primary)", "stroke-width": 1.5 }, svg);
+  el("text", { x: x(0), y: 10, "text-anchor": "middle", class: "direct-label strong" }, svg).textContent = "2019 score";
+  const row = (y, label, to, color, value) => {
+    el("text", { x: L, y: y - 12, class: "direct-label" }, svg).textContent = label;
+    if (to !== null) {
+      el("line", { x1: x(start), x2: x(to), y1: y, y2: y, stroke: color, "stroke-width": 3 }, svg);
+      el("circle", { cx: x(start), cy: y, r: 5, fill: "var(--surface-1)", stroke: "var(--series-before)", "stroke-width": 2 }, svg);
+    }
+    const end = to === null ? start : to;
+    el("circle", { cx: x(end), cy: y, r: 6.5, fill: color, stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+    el("text", { x: x(end) + 12, y: y + 4, class: "direct-label strong", style: `fill:${color}` }, svg).textContent = value;
+  };
+  row(48, `${100 - nT} who did not take part`, null, "var(--series-before)", "+0");
+  row(96, `${nT} who took part`, part, "var(--series-after)", `+${f1(R.gainPts)} each`);
+  row(144, "Average of all 100", avg, "var(--text-primary)", `+${f1(R.perRoundPts)}`);
+
+  $("t-part").textContent = `+${f1(R.gainPts)} points`;
+  $("t-part-s").textContent = `${f3(state.effect)} SD`;
+  $("t-avg").textContent = `+${f1(R.perRoundPts)} points`;
+  $("t-avg-s").textContent = `${f3(R.perRound)} SD, the same at every percentile`;
+  const noDrop = R.drop10 <= 0;
+  $("t-und").textContent = noDrop ? "No drop" : R.perRound > 0 ? pctPhrase(R.shareUndonePerRound) : "0%";
+  $("t-und-s").textContent = noDrop ? "the 10th percentile did not fall" : `of ${f1(R.drop10)} points`;
+  $("one-note").textContent = R.perRound <= 0 ? "With no seats or no gain, no one moves."
+    : c >= 1 - EPS ? "Every student takes part here, so the average moves as much as each student does."
+    : R.shareUndonePerRound < 0.25 ? "The gain is real for the students who take part. It is the average that barely moves."
+    : "The gain is real for the students who take part. The average moves by the take-up share of it.";
+}
+
+// ------------------------------------------------ summary card
+function drawSummary(R, c, g, name) {
+  const cTxt = fmtPct(c), gTxt = f3(g);
+  let lead;
+  if (R.rounds10 === 0) lead = `The 10th percentile in ${name} did not fall, so no round is needed.`;
+  else if (R.perRound <= 0) lead = `At ${cTxt} take-up and ${gTxt} SD, the program does not move the 10th percentile at all.`;
+  else if (R.rounds10 <= 1) lead = `At ${cTxt} take-up and ${gTxt} SD, one round brings the 10th percentile back to 2019.`;
+  else lead = `At ${cTxt} take-up and ${gTxt} SD, one round moves the 10th percentile ${pointsPhrase(R.perRoundPts)} ` +
+    `of its ${Math.round(R.drop10)}-point drop.`;
+  $("lead").textContent = lead;
+  $("s-reach").textContent = R.roundsReach === null ? "Never" : R.roundsReach;
+  $("s-rest").textContent = R.rounds10 === null ? "Never" : R.rounds10;
+  $("s-gap").textContent = `${f1(R.gap2024)} points`;
+  $("gap-note").textContent = `The gap was ${f1(R.gap2019)} points in 2019. With an equal chance of a seat, every ` +
+    `percentile gains the same amount, so the gap stays ${f1(R.widen)} points wider however many rounds run.`;
+}
+
+// ------------------------------------------------ caveats
+function drawCare(cell, R, c, g) {
+  const [those, others] = whoTookPart(c), full = c >= 1 - EPS;
+  const fade = R.rounds10 === 0 ? "No round is needed here, so fading does not matter for the 10th percentile."
+    : R.perRound <= 0 ? "With no gain, nothing builds up from round to round."
+    : R.rounds10 <= 1 ? "One round is enough here, so fading between rounds does not matter for the 10th percentile."
+    : `If more than about ${pctPhrase(R.shareUndonePerRound, true)} of the gains built up so far faded between one ` +
+      `round and the next, the 10th percentile would level off short of 2019.`;
+  const twice = g <= 0 ? "With no gain per turn, no number of turns is enough."
+    : R.turnsPerStudent <= 1 ? "Here one turn per student is enough, so no student needs a second turn."
+    : `Getting the 10th percentile back means each student takes part about ` +
+      `${R.turnsPerStudent.toFixed(1)} times on average.`;
+  const fresh = c <= 0 ? "With no seats, no one is reached." : full ? "Here every student is served in every round."
+    : `If each round were a fresh random draw, ${unserved(1 - R.freshDrawReached(R.roundsReach))} ` +
+      `would still be unserved after ${roundsWord(R.roundsReach)}.`;
+  const same = full ? "nothing would change, because every student already takes part in every round."
+    : R.perRound <= 0 ? "nothing would change, because no one gains."
+    : R.rounds10 === 0 ? "nothing would change for the 10th percentile, which needs no rounds."
+    : `the averages would look the same after ${roundsWord(R.rounds10)}, but ${those} would each have ` +
+      `gained about ${(R.gStar10 / c).toFixed(1)} SD and ${others} nothing.`;
+  // The other way to count, for one round: the explorer's "All students"
+  // answer at the same take-up and gain (scenario, distributional).
+  // With everyone (or no one) taking part the two ways of counting agree.
+  let counted = "";
+  if (full) counted = " With every student taking part, the two ways of counting agree.";
+  else if (R.perRound > 0) {
+    const dist = E.scenario(cell, PS, { effect: g, share: c, kPart: 0, kEffect: 0, mode: "distributional" }, [10, 90]);
+    const p10 = dist.knots.find((k) => k.p === 10).gain * cell.sd2019, wider = dist.gap9010.post - R.gap2024;
+    // Below a twentieth of a point both differences print as 0.0, so say so
+    // in words rather than print "0.0 rather than 0.0".
+    counted = Math.abs(p10 - R.perRoundPts) < 0.05 && wider < 0.05
+      ? " Counted across all students, one round of a program this small gives almost the same answer."
+      : ` Counted across all students, one round lifts the 10th percentile ${f1(p10)} points rather than ` +
+        `${f1(R.perRoundPts)}` + (wider >= 0.05 ? `, and the 90-10 gap is ${f1(wider)} points wider while the round ` +
+        `is under way` : "") + `, so the count can run longer.`;
+  }
+  const tut = configValue(D.benchmarks, "tut_scale"), optin = configValue(D.participation, "optin");
+  const items = [
+    ["This is the best case on fading.", fade],
+    ["A second turn is assumed to help as much as the first.", twice],
+    ["Each round serves students who have not had a turn.", fresh],
+    ["If the same students signed up every round,", same],
+    ["The rounds are a thought experiment on one group of students.",
+     "Real students move on to the next grade, so this shows the size of the task, not a schedule."],
+    ["Averages follow the same students.", "This page counts the way the explorer's “Same students” setting does." + counted],
+    ["The presets are hopeful.", `The ${f3(tut.g)} SD average for large tutoring programs is not statistically ` +
+      `different from zero. The ${fmtPct(optin.c)} sign-up rate was measured among students offered tutoring and ` +
+      `is applied here as if every student were offered.`],
+  ];
+  $("care").innerHTML = items.map(([b, t]) => `<li><strong>${b}</strong> ${t}</li>`).join("");
+}
+
+sync();
+</script>
+</body>
+</html>

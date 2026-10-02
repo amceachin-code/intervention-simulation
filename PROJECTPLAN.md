@@ -1,6 +1,191 @@
-<!-- plan v2, 2026-09-29; source: approved plan replicated-napping-canyon.md -->
+<!-- draft v1, 2026-10-01; sources: approved plan, design/canvas/B1-Requirement.dc.html (commit e80ce1c) -->
 
 # Project Plan
+
+**Title:** Port B1 "What would it take?" into the explorer as a rounds view
+
+**Status:** Approved 2026-10-01 (plan `enumerated-wobbling-key.md`). Work is on branch `explorer-rounds-view`, cut from `main`. Not merged until Andrew reviews.
+
+## Objective
+
+`design/canvas/B1-Requirement.dc.html` (on the design-snapshot branch, commit e80ce1c) reframes question 1 as **rounds of a program**:
+
+- One round adds c x g SD at every percentile (group estimand, equal chance of a seat).
+- The 10th percentile therefore needs g\*(p10) / (c x g) rounds to return to 2019.
+- Reaching everyone once takes 1 / c rounds.
+- The 90-10 gap never changes.
+
+The canvas only renders inside the canvas editor and hard-codes six cells' numbers. The goal is a working page in `docs/`, in the explorer's plain-HTML style, with:
+
+- every number taken from `docs/cells.js`;
+- the arithmetic in `docs/engine.js`, under test;
+- the methods page and the docs README updated to match.
+
+## Scope
+
+**In scope**
+
+- A pure `rounds()` function in `docs/engine.js`, exported on `NAEPEngine`.
+- A new page, `docs/rounds.html`, with controls, a one-round card, a summary card, a round-after-round chart, a students-reached strip, a preset matrix, a "Read with care" list, and a footer. (Amended 2026-10-01: at Andrew's request the round-after-round chart, the students-reached strip, and the preset matrix were removed after the first build.)
+- Links from `docs/index.html` and `docs/methods.html` to the new page.
+- Additive styles in `docs/style.css` (no changes to existing rules).
+- A new section 6 in `analysis/tests/test-tool-engine.mjs`.
+- A new methods section, "8. Rounds of a program", with renumbering and a revised limit.
+- `docs/README.md` updates.
+- Housekeeping: this `PROJECTPLAN.md`, correcting the branch name in the new `PROGRESS.md` entry, final README and PROGRESS agents, and an offer of the code-review pass.
+
+**Out of scope**
+
+- `docs/cells.js` (generated; not edited by hand or regenerated here).
+- `design/` (stays on the snapshot branch).
+- `tables/SIM-SUMMARY.md` and `manuscript/simulation-memo.md`, which still use the per-participant g\*/c framing.
+- Any R reference for multi-round results.
+- Merging to `main`.
+
+## Architecture & Design Decisions
+
+1. **One shared engine function.** `rounds()` is pure and lives in `docs/engine.js` on `NAEPEngine`, so Node can test it and both pages share it. Signature and returns:
+
+   ```
+   rounds(cell, c, g) -> {
+     S, gStar10, gStar90,          // from cell.g_star at p10 / p90 (already -D/S, tested)
+     drop10, drop90, gap2019, gap2024, widen,   // points, from cell.q2019 and cell.d
+     perRound, perRoundPts,        // c*g SD, c*g*S points, same at every percentile
+     toRestore10, toRestore90,     // exact ratios gStar/perRound (Infinity if perRound = 0)
+     rounds10, rounds90, roundsReach,   // whole rounds, ceil with 1e-9 slack, null if never
+     turnsPerStudent,              // gStar10 / g
+     shareUndonePerRound,          // perRound / gStar10 (also the fade-out threshold)
+     freshDrawReached(k)           // 1 - (1-c)^k
+   }
+   ```
+
+2. **Assumptions stated in the code.** The header comment states the assumptions: gains add, no fade, a second turn equals the first, and each round serves new students. It also says this is the group estimand with neutral tilts.
+3. **Rounding.** `ceilRounds` keeps the design's EPS slack, so an exact integer ratio is not bumped up a round. "Never" (c = 0 or g = 0) is `null`.
+4. **Same page skeleton as `index.html`.** `style.css`, then `cells.js`, `engine.js`, `charts.js`, then one inline script. Reuse `NAEPCharts.el / niceTicks / path` and `NAEPShared.f1 / f3 / fmtPct / cellName / configValue / chipName / provenanceText`.
+5. **No literals for presets or defaults.** Take-up chips come from `D.participation` and gain chips from `D.benchmarks` (sorted). Defaults are Math G8, the `optin` take-up, and the `D.treated_effect` gain (the B1 defaults), looked up by id.
+6. **State in the URL hash.** `cell`, `c`, `g`, clamped the same way as `readHash` in `index.html`.
+7. **A local chart frame.** A small `roundsFrame()` in the page, because `NAEPCharts.frame` is fixed to the p10 to p90 axis.
+8. **Conditional headline.** B1's open item: fixed text reads oddly at extremes, so the headline and "Read with care" items are computed where B1 computes them.
+9. **Additive styling only.** New tokens and classes (matrix shades, waffle/dumbbell/rounds-chart series colors, a summary-card variant) are defined in the light, `prefers-color-scheme: dark`, and `[data-theme]` blocks, as the existing tokens are.
+10. **Methods anchors stay stable.** Sections after the new one are renumbered, but their ids do not change, so existing links keep working.
+
+## Implementation Steps
+
+1. **Engine: `rounds()` in `docs/engine.js`**
+   - Add `rounds(cell, c, g)` with the returns in Design Decision 1 and the assumptions header comment.
+   - Add `ceilRounds` with the design's EPS (1e-9).
+   - Export on `NAEPEngine`.
+
+2. **New page: `docs/rounds.html`**
+   - **Controls card:** a cell `<select>`, a take-up slider (0 to 100%) and a gain slider (0 to 0.50 SD), each with `.chips` presets from `D.participation` and `D.benchmarks`. State in the URL hash, clamped like `index.html`'s `readHash`.
+   - **One round card:** a 10x10 waffle; a three-row dumbbell at p10 (no program, took part, average of all); three `.tile`s (each participant, average of all, share of drop undone).
+   - **Summary card:** rounds to reach everyone once, rounds to restore p10, the 90-10 gap after any number of rounds, a computed lede sentence, and a gap note.
+   - **Round after round chart:** SVG with x = rounds 0..K and y = points vs 2019; p10 and p90 lines, no-program reference lines, the reach-everyone marker, the restore markers, and the "points apart in every round" bracket. Built with a local `roundsFrame()`.
+   - **Students reached strip:** reached once, reached twice, and the fresh-random-draw curve.
+   - **Preset matrix:** an HTML `<table>` of rounds to restore p10 for every take-up x gain preset, shaded by bucket, with the current setting outlined.
+   - **Read with care list:** computed where B1 computes it. The headline becomes conditional.
+   - **Footer:** the provenance line and a link back into the explorer carrying the cell (`index.html#cell=...`).
+
+3. **Links**
+   - `docs/index.html`: a second button in the lede row, "What would it take?", linking to `rounds.html` and keeping the cell.
+   - `docs/methods.html`: a link in the intro and in the new section.
+
+4. **Styles: `docs/style.css`**
+   - Additions only: matrix shade classes, series-color tokens for the waffle, dumbbell, and rounds chart (light, dark media query, and `[data-theme]` blocks), and a summary-card variant.
+
+5. **Tests: new section 6 in `analysis/tests/test-tool-engine.mjs`**
+   - See Testing Strategy for the full list.
+
+6. **Methods: `docs/methods.html`**
+   - New section "8. Rounds of a program" after "Two ways to count". Renumber checks, limits, and references (ids unchanged). Update the contents list.
+   - A small table of rounds to restore p10 per cell at the default program, built from `rounds()`.
+   - Revise the "One program, one year, no fade-out" limit: the rounds page assumes no fade, and that is the best case. Say why.
+   - Add a bullet to "The checks" for the new tests.
+   - Run drafted prose through `/writing-style`. Bump the provenance header comment.
+
+7. **Docs README: `docs/README.md`**
+   - Describe `rounds.html`, `rounds()` in the engine, the new test section, and the files table.
+
+8. **Housekeeping (per CLAUDE.md)**
+   - Create this `PROJECTPLAN.md` after approval.
+   - Correct the branch name in the new `PROGRESS.md` entry (it says `claude/trusting-davinci-vyejhb`; the branch is `explorer-rounds-view`).
+   - Launch the final README and PROGRESS agents at the end.
+   - Offer the code-review pass.
+
+## Dependencies & Prerequisites
+
+- **No new libraries.** The page uses the explorer's existing `style.css`, `cells.js`, `engine.js`, and `charts.js`.
+- **Node**, for `analysis/tests/test-tool-engine.mjs`.
+- **R**, for `bash analysis/tests/run-all.sh` (the R tests plus the engine test).
+- **python3** (`http.server`) and Chrome, for the manual page check.
+- **Branch `explorer-rounds-view`**, cut from `main`. The design snapshot (commit e80ce1c) is not on `main` and is read only as a reference.
+
+## Testing Strategy
+
+**Automated: section 6 of `analysis/tests/test-tool-engine.mjs`**
+
+1. `rounds10` equals ceil(g_star_p10 / (c g)), with g_star read **from `tables/sim-quantiles.csv`** (independent of `cells.js`), for all six cells x the 16 preset pairs.
+2. Cross-check through the tested engine path, in group mode:
+   - `E.scenario` at share 1 and effect k x c x g (a pure shift, equal to k rounds) leaves p10 short of 2019 at k = rounds10 - 1, and at or above it at k = rounds10.
+   - One round's p10 gain equals the p10 gain from `scenario(share c, effect g, group)`.
+3. The 90-10 gap after any k rounds equals `scenario(...).gap9010.y2024`. `widen` equals the Table 2(a) target to one decimal.
+4. `roundsReach` is 1, 4, 6, and 8 for the four take-up presets. `freshDrawReached` matches 1 - (1 - c)^k.
+5. Edges: c = 0 or g = 0 gives `null` ("never"); an exact integer ratio is not rounded up; c = 1 reaches everyone in one round; results are monotone (more c or g never needs more rounds).
+
+**Verification runs**
+
+1. `node analysis/tests/test-tool-engine.mjs`: the new section passes and the old sections are unchanged.
+2. `bash analysis/tests/run-all.sh`: R tests plus the engine test.
+3. Serve with `python3 -m http.server -d docs` and check `rounds.html` in Chrome:
+   - all six cells;
+   - the preset chips;
+   - slider extremes (0%, 100%, 0 SD, 0.5 SD);
+   - the hash round trip;
+   - light and dark themes;
+   - phone width;
+   - Math G8 at 18.7% / 0.155 SD reproduces B1's numbers;
+   - a clean console;
+   - `index.html` and `methods.html` still render.
+4. `git diff main --stat` to confirm scope. No merge to `main`.
+
+## Risks & Open Questions
+
+These are flagged to Andrew and not fixed here.
+
+- **No multi-round R reference.** No R reference covers more than one round. The JS tests check the arithmetic against the CSV and against the engine's one-round path only.
+- **An unsupported B1 line.** B1's "counted across all students, about a round longer" line has no committed output behind it. The page keeps it as a qualitative caveat with no number, unless Andrew wants it cut.
+- **Framing mismatch.** `tables/SIM-SUMMARY.md` section 7.2 and the memo still use the per-participant g\*/c framing, so they will not match the new page's rounds framing until they are revised.
+- **Best-case assumptions.** The rounds arithmetic assumes no fade, additive gains, and an equal effect on a second turn. The page and the methods limit say so. Fade, or a smaller effect on a second turn, would mean more rounds.
+
+## Estimated File Changes
+
+**Created**
+
+- `docs/rounds.html`
+- `PROJECTPLAN.md` (this file)
+
+**Modified**
+
+- `docs/engine.js`
+- `docs/index.html`
+- `docs/methods.html`
+- `docs/style.css`
+- `docs/README.md`
+- `analysis/tests/test-tool-engine.mjs`
+- `PROGRESS.md` (branch-name correction, plus the agent updates)
+- `README.md` (through the final README agent)
+
+**Not touched**
+
+- `docs/cells.js` (generated)
+- `design/` (stays on the snapshot branch)
+- `tables/SIM-SUMMARY.md`, `manuscript/simulation-memo.md`
+
+## Previous plans
+
+<!-- plan v2, 2026-09-29; source: approved plan replicated-napping-canyon.md -->
+
+# Project Plan: ED breakdown in the explorer, memo refresh, argument cleanup
 
 **Title:** ED breakdown in the explorer, memo refresh, argument cleanup
 
@@ -172,7 +357,7 @@ Andrew wants the explorer (`docs/`) working first, so he can decide later whethe
 
 - Possibly `group_cdf` and its unit tests, if nothing else calls it.
 
-## Previous plans
+
 
 <!-- plan v1, 2026-09-28; source: approved plan curious-twirling-barto.md -->
 

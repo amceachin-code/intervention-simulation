@@ -1,11 +1,11 @@
 <!doctype html>
-<!-- draft v3, 2026-09-29 (eligibility screen and ED / not-ED results); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
+<!-- draft v4, 2026-10-01 (section 8, rounds of a program); draft v3, 2026-09-29 (eligibility screen and ED / not-ED results); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explorer Methods</title>
-<meta name="description" content="How the NAEP Recovery Explorer was built: the data, the drop, the program presets, the gradients, the two ways to count, the checks, and the limits.">
+<meta name="description" content="How the NAEP Recovery Explorer was built: the data, the drop, the program presets, the gradients, the two ways to count, rounds of a program, the checks, and the limits.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,7 +14,8 @@
   <h1>How the explorer works</h1>
   <p class="lede">This page explains where each number in the explorer comes from, what each control does, and
   what the tool leaves out. The tables and charts here read the same data file as the explorer, so they
-  always match it.</p>
+  always match it. <a href="#rounds">Section 8</a> covers the <a href="rounds.html">"What would it take?"</a>
+  page.</p>
 
   <nav class="card" aria-label="Contents">
     <h2>Contents</h2>
@@ -26,6 +27,7 @@
       <li><a href="#who-takes-part">Who takes part</a></li>
       <li><a href="#who-gains">Who gains the most</a></li>
       <li><a href="#counting">Two ways to count</a></li>
+      <li><a href="#rounds">Rounds of a program</a></li>
       <li><a href="#checks">The checks</a></li>
       <li><a href="#limits">The limits</a></li>
       <li><a href="#references">References</a></li>
@@ -66,7 +68,7 @@
     (monotone cubic interpolation; <a href="#ref-fc">Fritsch &amp; Carlson, 1980</a>). Because the bands
     cover the whole scale, no part of the curve rests on an assumed shape, including the parts below the 10th
     percentile and above the 90th. The charts still run only from the 10th to the 90th percentile, for the
-    reason given in <a href="#limits">section 9</a>; the dots mark the five published percentiles.</p>
+    reason given in <a href="#limits">section 10</a>; the dots mark the five published percentiles.</p>
     <div class="card">
       <h3>The drop, in SD <select id="cell" class="inline-select" aria-label="Subject and grade"></select></h3>
       <div class="chart" id="drop-chart"><div class="tip"></div></div>
@@ -245,8 +247,35 @@
   </section>
 
   <!-- ============================================================ 8 -->
+  <section id="rounds">
+    <h2>8. Rounds of a program</h2>
+    <p>The <a href="rounds.html">"What would it take?"</a> page counts how many times a program would have to
+    run to bring the 10th percentile back to its 2019 score. We call each run a round. A round seats a share c
+    of students, with the same chance at every score level, and each seated student gains g SD.</p>
+    <p>The page counts the way "Same students" does (<a href="#counting">section 7</a>). In one round, the
+    students who started at any percentile gain <span class="eq">c &times; g</span> SD on average, so every
+    percentile rises by the same amount. Each further round adds that amount again. The 10th percentile
+    therefore needs <span class="eq">g*(10th) / (c &times; g)</span> rounds, rounded up, where g*(10th) is its
+    drop in SD. If each round serves students who have not had a turn, every student has taken part once after
+    <span class="eq">1 / c</span> rounds, rounded up. Because every percentile rises together, the 90-10 gap
+    keeps its 2024 size however many rounds run. Only the product c &times; g enters, so take-up and gain count
+    equally.</p>
+    <p>Three hopeful assumptions sit under these counts. Gains add up from round to round, none fade, and a
+    second turn helps a student as much as the first. Fading can undo the whole plan. If a share f of the gains
+    built up so far fades between rounds, the gain just after each round levels off at
+    <span class="eq">c &times; g / f</span> SD, so the 10th percentile gets back to 2019 only if f is at most
+    <span class="eq">c &times; g / g*(10th)</span>. The page reports that threshold for the program you set.
+    The rounds also follow one group of students through repeated runs. Real students move on to the next
+    grade, so the count shows the size of the task, not a schedule.</p>
+    <p>Counted across all students, one round lifts the 10th percentile slightly less and widens the 90-10 gap
+    slightly, for the reason section 7 gives. The page shows that comparison for one round. It does not count
+    rounds this way, because the "All students" answer after several rounds depends on which students each
+    round seats, and the tool does not model that.</p>
+  </section>
+
+  <!-- ============================================================ 9 -->
   <section id="checks">
-    <h2>8. The checks</h2>
+    <h2>9. The checks</h2>
     <ul>
       <li><strong>The public data match the restricted-use analysis.</strong> The companion analysis of NAEP
       student records reports how much more the 10th percentile fell than the 90th in each subject and grade.
@@ -267,6 +296,11 @@
       once every disadvantaged student has a seat, every percentile of that group rises by exactly the boost.</li>
       <li><strong>A second, independent version agrees.</strong> A Stata version of the core calculation,
       written separately, gives the same drops and requirements as the R version to about 14 decimal places.</li>
+      <li><strong>The rounds add up.</strong> The same test checks the rounds page's arithmetic: the round
+      counts against the requirement in the published tables for every preset pair, one round against the
+      explorer's "Same students" answer, several rounds against a program that shifts every student by the same
+      total, and a 90-10 gap that never moves. No research-code result covers more than one round, so these
+      checks tie the page to the one-round answer, not to a separate simulation.</li>
       <li><strong>Sanity checks.</strong> With no one taking part, the tool returns the 2024 scores exactly. With
       everyone taking part and the same boost for all, every percentile moves up by exactly that boost, and the
       two ways to count agree. Every tilt keeps the share taking part and the average boost where the controls
@@ -274,9 +308,9 @@
     </ul>
   </section>
 
-  <!-- ============================================================ 9 -->
+  <!-- ============================================================ 10 -->
   <section id="limits">
-    <h2>9. The limits</h2>
+    <h2>10. The limits</h2>
     <ul id="limits-list">
       <li><strong>Different students.</strong> The drop compares two cohorts. Undoing it on the chart means the
       2024 students would score like the 2019 students did, not that any student recovers a loss.</li>
@@ -297,8 +331,10 @@
       <li><strong>Same gain for similar students.</strong> The tool assumes that, among students with the same
       score, those who take part would gain as much as those who do not. If students who sign up would have
       gained more (or less), the results are too pessimistic (or too optimistic).</li>
-      <li><strong>One program, one year, no fade-out.</strong> The boost is added once, in full. The tool does
-      not model effects that fade over later years, or that build over several years of a program.</li>
+      <li><strong>No fade-out.</strong> The explorer adds the boost once, in full. The rounds page repeats it
+      and assumes none of it fades between rounds, the best case (<a href="#rounds">section 8</a> gives the
+      fade rate that would stop the 10th percentile short of 2019). Neither page models effects that fade over
+      later years, or that build over several years of a program.</li>
       <li><strong>Generous effects.</strong> Research effects are applied to the national SD without shrinking,
       as <a href="#effects">section 3</a> explains. The large-program tutoring estimate is also not
       statistically different from zero.</li>
@@ -307,9 +343,9 @@
     </ul>
   </section>
 
-  <!-- ============================================================ 10 -->
+  <!-- ============================================================ 11 -->
   <section id="references">
-    <h2>10. References</h2>
+    <h2>11. References</h2>
     <ul class="refs" id="refs-list">
       <li id="ref-callen">Callen, I., Carbonari, M. V., DeArmond, M., Dewey, D., Dizon-Ross, E., Goldhaber, D.,
       Isaacs, J., Kane, T. J., Kuhfeld, M., McDonald, A., McEachin, A., Morton, E., Muroga, A., &amp; Staiger,

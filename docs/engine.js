@@ -9,6 +9,8 @@
 //   edParticipation    analysis/alloc-rules.R  make_ed_screen
 //   quantileRank       analysis/mixture.R  quantile_rank
 //   groupScenario      analysis/06-seat-allocation.R  the ED / not-ED outcome table
+//   rounds             no R counterpart: repeated rounds of the group answer
+//                      (see its comment), for rounds.html
 // The comments in those files explain the modelling choices; the comments here
 // say what is ported and where the port differs. analysis/tests/test-tool-engine.mjs
 // checks this file against the committed R outputs in tables/.
@@ -349,13 +351,78 @@
     });
   }
 
+  // ---------------------------------------------------------------------
+  // Rounds of a program, for the "What would it take?" page (rounds.html).
+  //
+  // A round is one full run of a program that seats a share c of students,
+  // each chosen with the same chance at every percentile, and lifts each one
+  // it seats by g SD. Counted on the "Same students" (group) estimand, the
+  // students who started at percentile p gain c * g on average in one round,
+  // the same at every p (groupQuantiles with a neutral tilt; the test checks
+  // that the two agree). Repeating the round k times then adds k * c * g at
+  // every percentile, so:
+  //   rounds to bring percentile p back to 2019 = g*(p) / (c * g), rounded up;
+  //   rounds to reach every student once        = 1 / c, rounded up, if each
+  //                                               round serves students who
+  //                                               have not had a turn;
+  //   the 90-10 gap after any number of rounds  = its 2024 value, because
+  //                                               every percentile moves by
+  //                                               the same amount.
+  // These are best-case assumptions, stated on the page: gains add up, none
+  // fade between rounds, and a second turn helps as much as the first. No R
+  // output covers more than one round; the one-round step is checked against
+  // scenario() and the rounding against tables/sim-quantiles.csv.
+  //
+  // cell is a cells.js cell and knotsPct the percentiles its arrays are
+  // indexed by (TOOL_DATA.percentiles, as for scenario); c is the share
+  // seated each round (0-1); g is the gain per participant in 2019 SD units.
+  // Returns plain numbers, scores in NAEP points where named *Pts or
+  // drop/gap, everything else in SD. Whole rounds are null when the program
+  // never gets there (c or g is zero), and 0 when there is no drop.
+  const ROUND_EPS = 1e-9;
+  // Round up, but let a ratio that is a whole number up to floating-point
+  // error stay put: 0.9 / (0.3 * 0.1) computes as 30.000000000000004, and 30
+  // rounds of 0.03 do restore a 0.9 drop.
+  function ceilRounds(x) { return Number.isFinite(x) ? Math.max(0, Math.ceil(x - ROUND_EPS)) : null; }
+  function rounds(cell, knotsPct, c, g) {
+    const S = cell.sd2019;
+    const i10 = knotsPct.indexOf(10), i90 = knotsPct.indexOf(90);
+    if (i10 < 0 || i90 < 0) throw new Error("rounds: knotsPct must include 10 and 90");
+    const gStar10 = cell.g_star[i10], gStar90 = cell.g_star[i90];
+    const perRound = c * g;
+    const ratio = (need) => (perRound > 0 ? need / perRound : Infinity);
+    const gap2019 = cell.q2019[i90] - cell.q2019[i10];
+    const widen = cell.d[i90] - cell.d[i10];
+    return {
+      gStar10, gStar90,
+      drop10: -cell.d[i10], drop90: -cell.d[i90],
+      gap2019, gap2024: gap2019 + widen, widen,
+      perRound, perRoundPts: perRound * S, gainPts: g * S,
+      toRestore10: ratio(gStar10), toRestore90: ratio(gStar90),
+      rounds10: ceilRounds(ratio(gStar10)), rounds90: ceilRounds(ratio(gStar90)),
+      roundsReach: ceilRounds(c > 0 ? 1 / c : Infinity),
+      // Turns each student needs on average for p10 to get back: the drop in
+      // SD over the gain per turn. Infinity when g is zero.
+      turnsPerStudent: g > 0 ? gStar10 / g : Infinity,
+      // Share of the p10 drop one round undoes (capped at 1). It is also the
+      // fade-out threshold. If a share f of the gains built up so far fades
+      // between one round and the next, the level just after a round tends
+      // to perRound / f (the geometric series perRound * (1 + (1-f) +
+      // (1-f)^2 + ...)), so p10 gets back to 2019 only if f is at most
+      // perRound / gStar10.
+      shareUndonePerRound: gStar10 > 0 ? Math.min(1, perRound / gStar10) : 1,
+      // Share reached at least once after k rounds if each round were instead
+      // a fresh random draw of the same size.
+      freshDrawReached: (k) => 1 - Math.pow(1 - c, k),
+    };
+  }
   function mean(a) { let s = 0; for (const v of a) s += v; return s / a.length; }
 
-  // Exported: what the pages use (scenario, groupScenario, tilt, TILT_LEVELS,
-  // edShareAt, edUnknownShare; the methods page also calls participation) and
-  // what the test checks directly (the rest).
+  // Exported: what the pages use (scenario, groupScenario, rounds, tilt,
+  // TILT_LEVELS, edShareAt, edUnknownShare; the methods page also calls
+  // participation) and what the test checks directly (the rest).
   root.NAEPEngine = {
-    scenario, groupScenario, tilt, TILT_LEVELS, edShareAt, edUnknownShare,
+    scenario, groupScenario, rounds, tilt, TILT_LEVELS, edShareAt, edUnknownShare,
     makeQuantileFn, participation, edParticipation, effectPoints, FILL_GRID, mean,
   };
 })(globalThis);
