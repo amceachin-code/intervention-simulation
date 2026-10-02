@@ -5,7 +5,47 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: "WHAT WOULD IT TAKE?" EXPLORER VIEW (2026-10-01, complete, awaiting Andrew's review)
+# CURRENT TASK: EXPLORER LIVE FIXES AND DESIGN PASS (2026-10-02, complete, live)
+
+**Status:** Complete and live on GitHub Pages (main at 772a2eb). Built on
+branches `explorer-rounds-view` and `explorer-design-pass`, both pushed.
+
+- **Rounds page published** (bd13986). The live view lost its content for
+  returning visitors because browsers kept cached `engine.js` and `style.css`
+  (Pages sends `max-age=600`).
+- **Asset version tags** (ed43cf8). Every page loads `style.css`, `cells.js`,
+  `engine.js`, and `charts.js` with `?v=<tag>`. Section 7 of
+  `analysis/tests/test-tool-engine.mjs` checks the tags exist and match.
+  `docs/README.md` says when to bump the tag. Current tag: `2026-10-02.4`.
+- **Draft banner** (c15265d). "DRAFT - WORK IN PROGRESS" across the top of all
+  three pages, with light and dark colors, checked by the same test section.
+- **Design review.** No `/design` skill exists, so we used the built-in dataviz
+  guidance and its palette validator. The review produced 12 findings; Andrew
+  chose 1, 2, 7, and 8 (2972796):
+  - `frame()` draws at the container width on narrow screens, and pages
+    redraw on resize via `onResize()`.
+  - The intro box starts collapsed.
+  - On desktop the controls stay in view while the results scroll.
+  - Every chart has an aria-label.
+  - Stat tiles and summary values use proportional digits.
+- **Phone order corrected** (772a2eb). The design pass had put the results
+  above the controls on phones. Andrew pointed out the numbers need the
+  settings first, so the order is now controls, main chart, tiles, rest.
+  The rule is recorded in `tasks/lessons.md`.
+- **Checked by Andrew:** desktop and a real phone (over the LAN).
+- **Open from the review, not chosen:**
+  - 3: ED chart as small multiples or a gap line.
+  - 4: replace the flat-line profile charts when tilts are neutral.
+  - 5: shorter chip labels.
+  - 6: tilt buttons labeled by ratio.
+  - 9: phone table overflow cue.
+  - 10: rounds-page dumbbell on phones.
+  - 11: rounds count as a hero number.
+  - 12: light-mode green contrast (acceptable as is).
+
+---
+
+# PREVIOUS TASK: "WHAT WOULD IT TAKE?" EXPLORER VIEW (2026-10-01, complete, live)
 
 **Status:** Complete. All plan steps are done and tested. Work is on branch
 `explorer-rounds-view`, cut from `main` because the design snapshot (commit
