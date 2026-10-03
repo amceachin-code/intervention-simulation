@@ -187,6 +187,40 @@
     return `Data: ${srcs.map((f) => `${f.path} (md5 ${f.md5.slice(0, 8)})`).join(", ")}.`;
   }
 
+  // ---------------------------------------------------------------------
+  // Year pickers, shared by the three pages so they agree on what a valid
+  // pair is and how a link's years are corrected. A cell's years come from
+  // years.js; the reference must be earlier than the comparison.
+
+  // The years a years.js cell offers, ascending.
+  const yearsOf = (yc) => Object.keys(yc.years).map(Number).sort((a, b) => a - b);
+  // The closest year in a list to y (the earlier one on a tie).
+  const nearest = (y, list) => list.reduce((b, v) => (Math.abs(v - y) < Math.abs(b - y) ? v : b), list[0]);
+  // A valid [ref, cmp] for this cell, as close as possible to the requested
+  // years: a year the cell lacks (grade 12 skips 2007, 2011, 2017, and 2022,
+  // say, when switching from grade 8) moves to its nearest neighbour, and a
+  // comparison that is not after the reference moves to the first year that
+  // is. Requests that are not numbers fall back to the default pair.
+  function snapYears(yc, ref, cmp, dflt) {
+    const ys = yearsOf(yc);
+    const want = (v, d) => (Number.isFinite(Number(v)) && v !== null && v !== "" ? Number(v) : d);
+    let r = nearest(want(ref, dflt[0]), ys.slice(0, -1));
+    const after = ys.filter((y) => y > r);
+    const c = nearest(want(cmp, dflt[1]), after);
+    return [r, c];
+  }
+  // Fill the two selects for a cell: every year but the last can be the
+  // reference, and the comparison lists only years after the reference.
+  function fillYearSelects(refSel, cmpSel, yc, ref, cmp) {
+    const ys = yearsOf(yc);
+    const fill = (sel, list, v) => {
+      sel.replaceChildren(...list.map((y) => new Option(String(y), String(y))));
+      sel.value = String(v);
+    };
+    fill(refSel, ys.slice(0, -1), ref);
+    fill(cmpSel, ys.filter((y) => y > ref), cmp);
+  }
+
   globalThis.NAEPShared = { f0, f1, f2, f3, fmtPct, cellName, configValue, CHIP_NAMES, chipName,
-                            TILT_LABELS, tiltName, provenanceText };
+                            TILT_LABELS, tiltName, provenanceText, yearsOf, snapYears, fillYearSelects };
 })();

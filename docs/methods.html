@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- draft v4, 2026-10-01 (section 8, rounds of a program); draft v3, 2026-09-29 (eligibility screen and ED / not-ED results); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
+<!-- draft v5, 2026-10-03 (section 9, choosing the years; text follows the chosen pair); draft v4, 2026-10-01 (section 8, rounds of a program); draft v3, 2026-09-29 (eligibility screen and ED / not-ED results); sources: docs/cells.js (tables/sim-quantiles.csv, tables/sim-distribution.csv, tables/sim-distribution-econdis.csv, tables/kraft-2023-benchmarks-by-target.csv, analysis/config/sim-params.yaml), docs/engine.js, references/references.bib, source PDFs checked 2026-09-28 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explorer Methods</title>
 <meta name="description" content="How the NAEP Recovery Explorer was built: the data, the drop, the program presets, the gradients, the two ways to count, rounds of a program, the checks, and the limits.">
-<link rel="stylesheet" href="style.css?v=2026-10-02.4">
+<link rel="stylesheet" href="style.css?v=2026-10-03">
 </head>
 <body>
 <div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS</div>
@@ -29,6 +29,7 @@
       <li><a href="#who-gains">Who gains the most</a></li>
       <li><a href="#counting">Two ways to count</a></li>
       <li><a href="#rounds">Rounds of a program</a></li>
+      <li><a href="#years">Choosing the years</a></li>
       <li><a href="#checks">The checks</a></li>
       <li><a href="#limits">The limits</a></li>
       <li><a href="#references">References</a></li>
@@ -39,9 +40,11 @@
   <section id="data">
     <h2>1. The data</h2>
     <p>The explorer uses public NAEP results only. For each subject and grade, we took the national scores at
-    the 10th, 25th, 50th, 75th, and 90th percentiles in 2019 and 2024, and the 2019 standard deviation, from
-    the NAEP Data Service <a href="#ref-naep">(National Center for Education Statistics [NCES], 2025)</a>.
-    "National" covers public and private schools together. The table shows how far each percentile's score fell.
+    the 10th, 25th, 50th, 75th, and 90th percentiles and the standard deviation in every year the explorer
+    offers, from the NAEP Data Service <a href="#ref-naep">(National Center for Education Statistics [NCES],
+    2025)</a>. "National" covers public and private schools together. The table shows how far each
+    percentile's score fell from 2019 to 2024, the pair the project's paper studies and the only pair checked
+    against NAEP's student records.
     From the same source we also took each year's score distribution: the share of students in every 10-point
     band of the scale. We took the same bands separately for students NAEP counts as economically disadvantaged
     and for students it does not, which the eligibility screen and the group results in
@@ -51,17 +54,19 @@
     </div>
     <p>Grade 12 math is reported on a 0 to 300 scale and the other five on a 0 to 500 scale, so NAEP points
     are not comparable across every row. The explorer therefore measures both the drop and the program in
-    standard deviations (SD), using each subject and grade's own 2019 SD.</p>
+    standard deviations (SD), using each subject and grade's own SD in the reference year
+    (<a href="#years">section 9</a>).</p>
   </section>
 
   <!-- ============================================================ 2 -->
   <section id="drop">
     <h2>2. The drop</h2>
-    <p>At each percentile p, the drop is the 2024 score minus the 2019 score at that percentile, written
-    D(p). Dividing by the 2019 SD, S, puts it in SD units: <span class="eq">D(p) / S</span>. That is the dashed
-    line in the explorer. Its mirror image, <span class="eq">g*(p) = &minus;D(p) / S</span>, is what a program
-    would have to add at percentile p to bring that percentile back to its 2019 score. We call g*(p) the
-    restoration requirement.</p>
+    <p>At each percentile p, the change is the comparison year's score minus the reference year's score at
+    that percentile, written D(p); in the pair chosen below, that is <span data-yr="cmp">2024</span> minus <span data-yr="ref">2019</span>. Dividing by the reference
+    year's SD, S, puts it in SD units: <span class="eq">D(p) / S</span>. That is the dashed line in the
+    explorer. Its mirror image, <span class="eq">g*(p) = &minus;D(p) / S</span>, is what a program would have
+    to add at percentile p to bring that percentile back to its <span data-yr="ref">2019</span> score. We call g*(p) the restoration
+    requirement. Where scores rose between the two years, D(p) is positive and there is nothing to restore.</p>
     <p>To draw the whole curve, we use the five percentiles and the score bands together. Stacking the bands
     from the bottom of the scale up shows what share of students scored below each band's upper edge, so each
     band gives one point on the curve, 30 to 40 points per year. We add the five published percentiles as points too, so the curve matches them exactly. Through all
@@ -69,15 +74,21 @@
     (monotone cubic interpolation; <a href="#ref-fc">Fritsch &amp; Carlson, 1980</a>). Because the bands
     cover the whole scale, no part of the curve rests on an assumed shape, including the parts below the 10th
     percentile and above the 90th. The charts still run only from the 10th to the 90th percentile, for the
-    reason given in <a href="#limits">section 10</a>; the dots mark the five published percentiles.</p>
+    reason given in <a href="#limits">section 11</a>; the dots mark the five published percentiles.</p>
+    <p>One cell needed care. In reading, grade 8, in 2017, the edge of the 310-point band falls 0.011
+    percentile points from the published 90th percentile. Two points that close bend the curve sharply between
+    them, so the tool drops that band point and keeps the published percentile, as it does when a band edge
+    and a percentile coincide exactly. No other cell and year has a gap under 0.04 percentile points.</p>
     <div class="card">
-      <h3>The drop, in SD <select id="cell" class="inline-select" aria-label="Subject and grade"></select></h3>
+      <h3>The change, in SD <select id="cell" class="inline-select" aria-label="Subject and grade"></select>
+        <select id="ref" class="inline-select" aria-label="Reference year"></select> to
+        <select id="cmp" class="inline-select" aria-label="Comparison year"></select></h3>
       <div class="chart" id="drop-chart"><div class="tip"></div></div>
       <p class="axis-cap">Percentile, from lowest-scoring students (left) to highest (right)</p>
     </div>
-    <p>These are different students in each year. The 2024 fourth graders are not the 2019 fourth graders, so
-    the drop compares two groups of students. It is a decline across cohorts, not a measure of what any one
-    student lost.</p>
+    <p>These are different students in each year. The <span data-yr="cmp">2024</span> fourth graders are not the <span data-yr="ref">2019</span> fourth graders, so
+    the change compares two groups of students. It is a change across cohorts, not a measure of what any one
+    student lost or gained.</p>
   </section>
 
   <!-- ============================================================ 3 -->
@@ -168,7 +179,7 @@
     student as economically disadvantaged if they are eligible for the National School Lunch Program. Under the
     rule, seats go at random to those students and to no one else.</p>
     <p>What that does at each score level depends on how many disadvantaged students are there. In every
-    10-point band, the tool divides the disadvantaged students in the band by all students in it, using the 2024
+    10-point band, the tool divides the disadvantaged students in the band by all students in it, using the <span data-yr="cmp">2024</span>
     score distributions from <a href="#data">section 1</a>, and places that share at the band's percentile. In
     <span data-ed="cell"></span>, disadvantaged students are <span data-ed="pop"></span> of all students,
     <span data-ed="s10"></span> of students at the 10th percentile, and <span data-ed="s90"></span> at the
@@ -176,8 +187,8 @@
     seat is B divided by their share of students, and the share taking part at a score level is that chance
     times the disadvantaged share there. A program with more seats than eligible students seats every one of
     them and leaves the rest empty, because the rule has no one else to give them to.</p>
-    <p>The rule uses 2024 shares because the program serves 2024 students. Students whose status NAEP does not
-    know (<span data-ed="info"></span> of students in 2024) are never eligible.</p>
+    <p>The rule uses <span data-yr="cmp">2024</span> shares because the program serves <span data-yr="cmp">2024</span> students. Students whose status NAEP does not
+    know (<span data-ed="info"></span> of students in <span data-yr="cmp">2024</span>) are never eligible.</p>
 
     <h3 id="groups">Results for disadvantaged students and everyone else</h3>
     <p>The explorer also shows each group's own distribution before and after the program. A disadvantaged
@@ -186,7 +197,7 @@
     seat and size of boost are read. Under the eligibility screen, every disadvantaged student has the same
     chance and no one else has any. Each group's result is then counted the same way as the national one
     (<a href="#counting">section 7</a>).</p>
-    <p>The chart plots each group against its own 2019 score, so zero means that group is back where it was.
+    <p>The chart plots each group against its own <span data-yr="ref">2019</span> score, so zero means that group is back where it was.
     The table gives the distance between the groups at the same percentile of each group, in NAEP points. Each
     group's curve runs through its own 10-point bands; NAEP's percentiles for each group are not used there.</p>
   </section>
@@ -251,7 +262,7 @@
   <section id="rounds">
     <h2>8. Rounds of a program</h2>
     <p>The <a href="rounds.html">"What would it take?"</a> page counts how many times a program would have to
-    run to bring the 10th percentile back to its 2019 score. We call each run a round. A round seats a share c
+    run to bring the 10th percentile back to its reference-year score. We call each run a round. A round seats a share c
     of students, with the same chance at every score level, and each seated student gains g SD.</p>
     <p>The page counts the way "Same students" does (<a href="#counting">section 7</a>). In one round, the
     students who started at any percentile gain <span class="eq">c &times; g</span> SD on average, so every
@@ -259,12 +270,12 @@
     therefore needs <span class="eq">g*(10th) / (c &times; g)</span> rounds, rounded up, where g*(10th) is its
     drop in SD. If each round serves students who have not had a turn, every student has taken part once after
     <span class="eq">1 / c</span> rounds, rounded up. Because every percentile rises together, the 90-10 gap
-    keeps its 2024 size however many rounds run. Only the product c &times; g enters, so take-up and gain count
+    keeps its comparison-year size however many rounds run. Only the product c &times; g enters, so take-up and gain count
     equally.</p>
     <p>Three hopeful assumptions sit under these counts. Gains add up from round to round, none fade, and a
     second turn helps a student as much as the first. Fading can undo the whole plan. If a share f of the gains
     built up so far fades between rounds, the gain just after each round levels off at
-    <span class="eq">c &times; g / f</span> SD, so the 10th percentile gets back to 2019 only if f is at most
+    <span class="eq">c &times; g / f</span> SD, so the 10th percentile gets back to its reference score only if f is at most
     <span class="eq">c &times; g / g*(10th)</span>. The page reports that threshold for the program you set.
     The rounds also follow one group of students through repeated runs. Real students move on to the next
     grade, so the count shows the size of the task, not a schedule.</p>
@@ -275,8 +286,34 @@
   </section>
 
   <!-- ============================================================ 9 -->
+  <section id="years">
+    <h2>9. Choosing the years</h2>
+    <p>The explorer and the rounds page compare any two NAEP years from 2005 to 2024: a reference year, whose
+    scores are the target, and a later comparison year, whose students the program serves. Grades 4 and 8 were
+    tested in more years than grade 12, so the grade 12 menus are shorter. The table lists the years for each
+    subject and grade.</p>
+    <div class="card">
+      <div class="tbl-wrap"><table id="years-tbl"></table></div>
+    </div>
+    <p>Three things change with the years. First, the unit. S is the reference year's SD, so the same change in
+    NAEP points is a slightly different number of SD under a different reference year, and so is a program's
+    effect. Second, the direction. Between some pairs of years scores rose, at some percentiles or at all of
+    them. There the explorer reports "No drop" rather than a share undone, and the rounds page counts no rounds.
+    Third, the check. Only 2019 to 2024 is checked against NAEP's student records
+    (<a href="#data">section 1</a>); every other pair rests on the public data and the same method.</p>
+    <p>The economically disadvantaged share also moves. The table below gives, for the subject and grade chosen
+    in <a href="#drop">section 2</a>, the share NAEP counts as disadvantaged and the share it could not
+    classify, in every year. Comparisons between the two groups are cleaner when those shares are close in the
+    two years compared.</p>
+    <div class="card">
+      <h3 id="ed-years-title"></h3>
+      <div class="tbl-wrap"><table id="ed-years-tbl"></table></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 10 -->
   <section id="checks">
-    <h2>9. The checks</h2>
+    <h2>10. The checks</h2>
     <ul>
       <li><strong>The public data match the restricted-use analysis.</strong> The companion analysis of NAEP
       student records reports how much more the 10th percentile fell than the 90th in each subject and grade.
@@ -302,19 +339,24 @@
       explorer's "Same students" answer, several rounds against a program that shifts every student by the same
       total, and a 90-10 gap that never moves. No research-code result covers more than one round, so these
       checks tie the page to the one-round answer, not to a separate simulation.</li>
-      <li><strong>Sanity checks.</strong> With no one taking part, the tool returns the 2024 scores exactly. With
+      <li><strong>Other years.</strong> The public-data method is the same for every pair of years, but only
+      2019 to 2024 has the student-record check above. For other pairs, the explorer's results for the
+      proportional rule and the eligibility screen match the research code, run separately on three other
+      pairs, to about 12 decimal places. With the 2019 and 2024 data, the multi-year data file reproduces the
+      original file value for value.</li>
+      <li><strong>Sanity checks.</strong> With no one taking part, the tool returns the comparison year's scores exactly. With
       everyone taking part and the same boost for all, every percentile moves up by exactly that boost, and the
       two ways to count agree. Every tilt keeps the share taking part and the average boost where the controls
       set them.</li>
     </ul>
   </section>
 
-  <!-- ============================================================ 10 -->
+  <!-- ============================================================ 11 -->
   <section id="limits">
-    <h2>10. The limits</h2>
+    <h2>11. The limits</h2>
     <ul id="limits-list">
-      <li><strong>Different students.</strong> The drop compares two cohorts. Undoing it on the chart means the
-      2024 students would score like the 2019 students did, not that any student recovers a loss.</li>
+      <li><strong>Different students.</strong> The change compares two cohorts. Undoing it on the chart means the
+      <span data-yr="cmp">2024</span> students would score like the <span data-yr="ref">2019</span> students did, not that any student recovers a loss.</li>
       <li><strong>Thin tails.</strong> Few students score in the top and bottom tenth, so NAEP measures those
       scores much less precisely. From NAEP's own standard errors, the drop at the 1st or 99th percentile is
       uncertain by two to four times as much as at the middle. The charts therefore stop at the 10th and 90th
@@ -324,9 +366,10 @@
       percentile) rather than a smooth slope. The tilts show the direction of an effect, not any one
       program's rule.</li>
       <li><strong>A school-lunch measure of disadvantage.</strong> Eligibility for the National School Lunch
-      Program is a rough measure of family income, not a direct one. The share of students whose status NAEP
-      does not know also grew from 2019 to 2024 (to <span data-ed="info"></span> in the subject and grade chosen
-      in <a href="#drop">section 2</a>), and the tool leaves them out of both groups.</li>
+      Program is a rough measure of family income, not a direct one. Both the share counted as disadvantaged
+      and the share whose status NAEP does not know move from year to year (<a href="#years">section 9</a>
+      gives them for the subject and grade chosen in <a href="#drop">section 2</a>), and the tool leaves the
+      unknown students out of both groups.</li>
       <li><strong>A random screen.</strong> The screen gives every eligible student the same chance. A real
       program might screen on disadvantage and then favor its lowest scorers; the tool does not model that.</li>
       <li><strong>Same gain for similar students.</strong> The tool assumes that, among students with the same
@@ -334,7 +377,7 @@
       gained more (or less), the results are too pessimistic (or too optimistic).</li>
       <li><strong>No fade-out.</strong> The explorer adds the boost once, in full. The rounds page repeats it
       and assumes none of it fades between rounds, the best case (<a href="#rounds">section 8</a> gives the
-      fade rate that would stop the 10th percentile short of 2019). Neither page models effects that fade over
+      fade rate that would stop the 10th percentile short of its reference score). Neither page models effects that fade over
       later years, or that build over several years of a program.</li>
       <li><strong>Generous effects.</strong> Research effects are applied to the national SD without shrinking,
       as <a href="#effects">section 3</a> explains. The large-program tutoring estimate is also not
@@ -344,9 +387,9 @@
     </ul>
   </section>
 
-  <!-- ============================================================ 11 -->
+  <!-- ============================================================ 12 -->
   <section id="references">
-    <h2>11. References</h2>
+    <h2>12. References</h2>
     <ul class="refs" id="refs-list">
       <li id="ref-callen">Callen, I., Carbonari, M. V., DeArmond, M., Dewey, D., Dizon-Ross, E., Goldhaber, D.,
       Isaacs, J., Kane, T. J., Kuhfeld, M., McDonald, A., McEachin, A., Morton, E., Muroga, A., &amp; Staiger,
@@ -395,9 +438,10 @@
   <p class="back"><a href="index.html">&larr; Back to the explorer</a></p>
 </main>
 
-<script src="cells.js?v=2026-10-02.4"></script>
-<script src="engine.js?v=2026-10-02.4"></script>
-<script src="charts.js?v=2026-10-02.4"></script>
+<script src="cells.js?v=2026-10-03"></script>
+<script src="years.js?v=2026-10-03"></script>
+<script src="engine.js?v=2026-10-03"></script>
+<script src="charts.js?v=2026-10-03"></script>
 <script>
 "use strict";
 // Every table, chart, and config value on this page is read from cells.js
@@ -405,9 +449,10 @@
 // cannot disagree with it. The only numbers typed into the prose are facts
 // from the cited sources (study counts, unrounded rates), each next to its
 // citation.
-const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const D = globalThis.TOOL_DATA, Y = globalThis.TOOL_YEARS, E = globalThis.NAEPEngine;
 const { ord, el, path, hover, frame, CURVE_P, onResize } = globalThis.NAEPCharts;
-const { f1, f2, f3, fmtPct, cellName, configValue, chipName, tiltName, provenanceText } = globalThis.NAEPShared;
+const { f1, f2, f3, fmtPct, cellName, configValue, chipName, tiltName, provenanceText,
+        yearsOf, snapYears, fillYearSelects } = globalThis.NAEPShared;
 const PS = D.percentiles;
 const $ = (id) => document.getElementById(id);
 const at = (cell, key, p) => cell[key][PS.indexOf(p)];
@@ -436,9 +481,16 @@ const sourceText = (x) => x.cite || x.source;
 })();
 
 // ------------------------------------------------------------ 2. drop chart
+// The subject, grade, and years chosen here drive the drop chart, the
+// counting example, the screen numbers, the ED shares table, and every year
+// named in the prose. This page cannot keep them in the URL hash as the
+// explorer does, because the hash carries the section anchors the explorer
+// links to (methods.html#effects), so it opens on the paper's pair.
 const cellSel = $("cell");
-D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
-function currentCell() { return D.cells.find((c) => c.label === cellSel.value); }
+const yearsCell = (label) => Y.cells.find((c) => c.label === label);
+Y.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
+const yrs = { ref: Y.default_pair[0], cmp: Y.default_pair[1] };
+function currentCell() { return E.pair(yearsCell(cellSel.value), yrs.ref, yrs.cmp); }
 
 function drawDrop(cell) {
   // The no-program scenario gives the interpolated drop at every percentile.
@@ -448,7 +500,7 @@ function drawDrop(cell) {
   const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals), pad = (hi - lo) * 0.08;
   const F = frame("drop-chart", 720, 260, [lo - pad, hi > 0 ? hi + pad : 0], f2, 5);
   const ends = [res.knots[0], res.knots[res.knots.length - 1]];
-  F.svg.setAttribute("aria-label", `The drop from 2019 to 2024 at each percentile, in SD, ${cellName(cell.label)}: ` +
+  F.svg.setAttribute("aria-label", `The change from ${cell.ref} to ${cell.cmp} at each percentile, in SD, ${cellName(cell.label)}: ` +
     ends.map((r) => `${f3(v(r))} at the ${ord(r.p)}`).join(", ") + ".");
   el("path", { d: path(res.curve.map((r) => [F.x(r.p), F.y(v(r))])), fill: "none",
                stroke: "var(--series-before)", "stroke-width": 2, "stroke-dasharray": "5 4" }, F.svg);
@@ -456,7 +508,7 @@ function drawDrop(cell) {
                                           stroke: "var(--surface-1)", "stroke-width": 2 }, F.svg));
   hover(F, res.curve, (r) => F.y(v(r)), (r) =>
     `<div>${ord(r.p)} percentile${PS.includes(r.p) ? " (published)" : " (from the score bands)"}</div>` +
-    `<div>Drop: <b>${f3(v(r))}</b> SD, <b>${f1(r.q2024_pts - r.q2019_pts)}</b> points</div>`);
+    `<div>Change: <b>${f3(v(r))}</b> SD, <b>${f1(r.qCmp_pts - r.qRef_pts)}</b> points</div>`);
 }
 
 // ------------------------------------------------------------ 3, 4. presets
@@ -579,7 +631,7 @@ function drawCounting(cell) {
   $("count-tbl").innerHTML = `<thead><tr><th>Percentile</th><th>Same students</th><th>All students</th></tr></thead>` +
     `<tbody>${rows}<tr><td>90-10 gap, points</td><td>${f1(grp.gap9010.post)}</td><td>${f1(dist.gap9010.post)}</td></tr></tbody>` +
     `<caption>Drop undone, in SD, under each way of counting. Without the program the 90-10 gap is
-    ${f1(grp.gap9010.y2024)} points (${f1(grp.gap9010.y2019)} in 2019). Change the subject and grade in
+    ${f1(grp.gap9010.cmp)} points in ${cell.cmp} (${f1(grp.gap9010.ref)} in ${cell.ref}). Change the subject, grade, and years in
     <a href="#drop">section 2</a> to update this example.</caption>`;
 }
 
@@ -594,14 +646,49 @@ $("provenance").textContent = provenanceText(D);
 // The eligibility-screen paragraph's numbers, for the cell chosen in section 2.
 function fillScreen(cell) {
   const s = (p) => E.edShareAt(cell.ed, [p])[0];
-  const info = E.edUnknownShare(cell.ed);
+  const info = cell.ed.unknownCmp;
   const vals = { cell: cellName(cell.label), pop: fmtPct(cell.ed.pop), s10: fmtPct(s(10)), s90: fmtPct(s(90)),
                  info: fmtPct(info) };
   document.querySelectorAll("[data-ed]").forEach((n) => { n.textContent = vals[n.dataset.ed]; });
 }
 
-function render() { const c = currentCell(); drawDrop(c); drawCounting(c); fillScreen(c); }
-cellSel.addEventListener("change", render);
+// ------------------------------------------------------------ 9. the years
+// Which years each subject and grade offers, from years.js.
+(function yearsTable() {
+  const all = [...new Set(Y.cells.flatMap((c) => yearsOf(c)))].sort((a, b) => a - b);
+  $("years-tbl").innerHTML = `<thead><tr><th>Subject and grade</th>${all.map((y) => `<th>${y}</th>`).join("")}</tr></thead>` +
+    `<tbody>${Y.cells.map((c) => `<tr><td>${cellName(c.label)}</td>` +
+      all.map((y) => `<td>${c.years[y] ? "&#10003;" : ""}</td>`).join("") + "</tr>").join("")}</tbody>` +
+    `<caption>A check mark means NAEP published the percentiles, SD, score bands, and disadvantage breakdown
+    the explorer needs for that year (national public and private schools).</caption>`;
+})();
+// The disadvantaged and unclassified shares in every year of the chosen cell,
+// with the two years being compared in bold.
+function edYears(yc) {
+  $("ed-years-title").textContent = `Economically disadvantaged students by year: ${cellName(yc.label)}`;
+  const bold = (y, t) => (y === yrs.ref || y === yrs.cmp ? `<b>${t}</b>` : t);
+  const ys = yearsOf(yc);
+  $("ed-years-tbl").innerHTML = `<thead><tr><th>Share of students</th>${ys.map((y) => `<th>${bold(y, y)}</th>`).join("")}</tr></thead>` +
+    `<tbody><tr><td>Disadvantaged</td>${ys.map((y) => `<td>${bold(y, fmtPct(yc.years[y].ed.pop))}</td>`).join("")}</tr>` +
+    `<tr><td>Not classified</td>${ys.map((y) => `<td>${bold(y, fmtPct(yc.years[y].ed.unknown))}</td>`).join("")}</tr></tbody>` +
+    `<caption>NAEP counts a student as disadvantaged if they are eligible for the National School Lunch Program.
+    The two years compared are in bold.</caption>`;
+}
+
+function render() {
+  const yc = yearsCell(cellSel.value);
+  fillYearSelects($("ref"), $("cmp"), yc, yrs.ref, yrs.cmp);
+  document.querySelectorAll("[data-yr]").forEach((n) => { n.textContent = yrs[n.dataset.yr]; });
+  const c = currentCell(); drawDrop(c); drawCounting(c); fillScreen(c); edYears(yc);
+}
+// A new cell or reference year keeps the pair valid, as on the explorer.
+cellSel.addEventListener("change", () => {
+  [yrs.ref, yrs.cmp] = snapYears(yearsCell(cellSel.value), yrs.ref, yrs.cmp, Y.default_pair); render();
+});
+$("ref").addEventListener("change", (e) => {
+  [yrs.ref, yrs.cmp] = snapYears(yearsCell(cellSel.value), Number(e.target.value), yrs.cmp, Y.default_pair); render();
+});
+$("cmp").addEventListener("change", (e) => { yrs.cmp = Number(e.target.value); render(); });
 // Charts are drawn at their container's width (frame()), so redraw both the
 // cell's charts and the tilt chart when the window width changes.
 onResize(() => { render(); tiltChart(); });

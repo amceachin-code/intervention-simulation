@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NAEP Recovery Explorer</title>
 <meta name="description" content="How much of the 2019-to-2024 drop in NAEP scores a tutoring or summer program could undo, for low, middle, and high scorers.">
-<link rel="stylesheet" href="style.css?v=2026-10-02.4">
+<link rel="stylesheet" href="style.css?v=2026-10-03">
 </head>
 <body>
 <div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS</div>
@@ -17,7 +17,7 @@
     Between 2019 and 2024, scores on the National Assessment of Educational Progress (NAEP) fell in
     reading and math, and the lowest-scoring students fell the furthest. Use this tool to design a
     program, such as tutoring or summer school, and see how much of that drop it would undo for
-    students at different score levels.
+    students at different score levels. You can also compare other test years, from 2005 on.
   </p>
   <a class="btn" href="methods.html">Show me the details</a>
   <a class="btn" id="rounds-link" href="rounds.html">What would it take?</a>
@@ -34,9 +34,9 @@
       </div>
       <div>
         <h3>Different students each time</h3>
-        <p>The students tested in 2024 are not the ones tested in 2019. The tool compares 2024's
-        fourth graders with 2019's fourth graders, and the same for grades 8 and 12. It does not measure
-        how much any one student lost.</p>
+        <p>The students tested in <span data-yr="cmp">2024</span> are not the ones tested in <span data-yr="ref">2019</span>. The tool compares <span data-yr="cmp">2024</span>'s
+        fourth graders with <span data-yr="ref">2019</span>'s fourth graders, and the same for grades 8 and 12. It does not measure
+        how much any one student lost or gained.</p>
       </div>
       <div>
         <h3>Percentiles</h3>
@@ -46,19 +46,22 @@
       </div>
       <div>
         <h3>The widening gap</h3>
-        <p>In every subject and grade here, scores fell more at the 10th percentile than at the 90th, so
-        low and high scorers ended up further apart. <span id="intro-gap"></span></p>
+        <p>Between 2019 and 2024, in every subject and grade here, scores fell more at the 10th
+        percentile than at the 90th, so low and high scorers ended up further apart.
+        <span id="intro-gap"></span></p>
       </div>
       <div>
         <h3>Standard deviations</h3>
         <p>Researchers usually report a program's effect in standard deviations (SD), a unit that lets
-        different tests be compared. The tool uses SD for both the drop and the program.
+        different tests be compared. The tool uses SD for both the change and the program, measured
+        in the reference year's SD.
         <span id="intro-sd"></span></p>
       </div>
       <div>
         <h3>How to use it</h3>
-        <p>Pick a subject and grade, then set up the program on the left. The chart shows how far each
-        percentile sits below its 2019 score, with and without the program. Zero means back to 2019.</p>
+        <p>Pick a subject and grade and the two years to compare, then set up the program. The chart
+        shows how far each percentile sits from its <span data-yr="ref">2019</span> score in <span data-yr="cmp">2024</span>, with and without the program.
+        Zero means back to <span data-yr="ref">2019</span>.</p>
       </div>
     </div>
   </details>
@@ -69,6 +72,17 @@
       <div>
         <label class="ctl-label" for="cell">Subject and grade <a class="why" href="methods.html#data">Data</a></label>
         <select id="cell"></select>
+        <div class="year-row">
+          <div>
+            <label class="ctl-label" for="ref">Reference year <a class="why" href="methods.html#years">About the years</a></label>
+            <select id="ref"></select>
+          </div>
+          <div>
+            <label class="ctl-label" for="cmp">Comparison year</label>
+            <select id="cmp"></select>
+          </div>
+        </div>
+        <p class="ctl-help" id="years-help"></p>
       </div>
 
       <div>
@@ -122,12 +136,12 @@
 
       <section class="card main-card">
         <h2 id="main-title"></h2>
-        <p class="sub">In standard deviations. Below zero means below the 2019 score.</p>
+        <p class="sub">In standard deviations. Below zero means below the <span data-yr="ref">2019</span> score.</p>
         <div class="legend">
-          <span><i class="sw dash" style="border-color:var(--series-before)"></i>2024, no program</span>
-          <span><i class="sw" style="border-color:var(--series-after)"></i>2024, with the program</span>
+          <span><i class="sw dash" style="border-color:var(--series-before)"></i><span><span data-yr="cmp">2024</span>, no program</span></span>
+          <span><i class="sw" style="border-color:var(--series-after)"></i><span><span data-yr="cmp">2024</span>, with the program</span></span>
           <span><i class="sw box" style="background:var(--closed-fill)"></i>Drop the program undoes</span>
-          <span><i class="sw box" style="background:var(--over-fill)"></i>Above the 2019 score</span>
+          <span><i class="sw box" style="background:var(--over-fill)"></i><span>Above the <span data-yr="ref">2019</span> score</span></span>
         </div>
         <div class="chart" id="main-chart"><div class="tip"></div></div>
         <p class="axis-cap">Percentile, from lowest-scoring students (left) to highest (right)</p>
@@ -145,7 +159,7 @@
 
       <section class="card">
         <h2>Economically disadvantaged students and everyone else</h2>
-        <p class="sub">Each group against its own 2019 score, in standard deviations. Percentiles are within each group.</p>
+        <p class="sub">Each group against its own <span data-yr="ref">2019</span> score, in standard deviations. Percentiles are within each group.</p>
         <div class="legend">
           <span><i class="sw dash" style="border-color:var(--series-ed)"></i>Disadvantaged, no program</span>
           <span><i class="sw" style="border-color:var(--series-ed)"></i>Disadvantaged, with the program</span>
@@ -183,18 +197,18 @@
         "Same students" follows each starting group and averages its gain. The two agree when everyone
         at a score level takes part, or no one does.</p>
         <p>The tool assumes that, among students with the same score, those who take part would gain as
-        much as those who do not. A share above 100 percent means a percentile ends up above its 2019
+        much as those who do not. A share above 100 percent means a percentile ends up above its <span data-yr="ref">2019</span>
         score.</p>
         <details>
           <summary>Technical notes</summary>
-          <p>The dashed curve is D(p)/S, the 2024 quantile minus the 2019 quantile at percentile p,
-          divided by the 2019 national standard deviation S for that subject and grade. The restoration
+          <p>The dashed curve is D(p)/S, the <span data-yr="cmp">2024</span> quantile minus the <span data-yr="ref">2019</span> quantile at percentile p,
+          divided by the <span data-yr="ref">2019</span> national standard deviation S for that subject and grade. The restoration
           requirement g*(p) = &minus;D(p)/S is the same curve with the sign flipped. Quantile functions pass
           through the published percentiles and the cumulative 10-point score distribution (NAEP DP:DP),
           joined by monotone (Fritsch&ndash;Carlson) interpolation; the score bins bound the support, so no
           tails are assumed. Participation and the treated effect are linear in prior rank with mean held
           fixed; participation is capped at 1 and water-filled to conserve the seat budget. Under the
-          eligibility screen, participation at rank p is r&middot;s(p), where s(p) is the 2024 share of
+          eligibility screen, participation at rank p is r&middot;s(p), where s(p) is the <span data-yr="cmp">2024</span> share of
           economically disadvantaged students at p (from the ECONDIS score distributions) and
           r = min(1, B / e), with e their share of all students; the screen spends min(B, e).</p>
           <p>"All students" is the distributional estimand: post-program quantiles of the exact
@@ -209,21 +223,25 @@
   </div>
 </main>
 
-<script src="cells.js?v=2026-10-02.4"></script>
-<script src="engine.js?v=2026-10-02.4"></script>
-<script src="charts.js?v=2026-10-02.4"></script>
+<script src="cells.js?v=2026-10-03"></script>
+<script src="years.js?v=2026-10-03"></script>
+<script src="engine.js?v=2026-10-03"></script>
+<script src="charts.js?v=2026-10-03"></script>
 <script>
 "use strict";
-const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const D = globalThis.TOOL_DATA, Y = globalThis.TOOL_YEARS, E = globalThis.NAEPEngine;
 const { ord, el, path, hover, frame, CURVE_P, onResize } = globalThis.NAEPCharts;
-const { f0, f1, f2, f3, fmtPct, cellName, configValue, chipName, TILT_LABELS, provenanceText } = globalThis.NAEPShared;
+const { f0, f1, f2, f3, fmtPct, cellName, configValue, chipName, TILT_LABELS, provenanceText,
+        snapYears, fillYearSelects } = globalThis.NAEPShared;
 const PS = D.percentiles;
 
 // ---------------------------------------------------------------- state
-// Defaults: the pipeline's treated effect, the district tutoring share,
-// neutral gradients, the distributional reading (the paper's estimand).
+// Defaults: the paper's years (2019 to 2024), the pipeline's treated
+// effect, the district tutoring share, neutral gradients, the distributional
+// reading (the paper's estimand).
+const yearsCell = (label) => Y.cells.find((c) => c.label === label);
 const defaults = {
-  cell: D.cells[0].label,
+  cell: Y.cells[0].label, ref: Y.default_pair[0], cmp: Y.default_pair[1],
   effect: configValue(D.benchmarks, D.treated_effect).g,
   share: configValue(D.participation, "hdt_dist").c,
   kPart: "neutral", kEffect: "neutral", mode: "distributional", rule: "tilt",
@@ -245,7 +263,10 @@ function readHash() {
       } else out[k] = v;
     });
   } catch (e) { /* malformed hash: ignore and use defaults */ }
-  if (out.cell && !D.cells.some((c) => c.label === out.cell)) delete out.cell;
+  if (out.cell && !yearsCell(out.cell)) delete out.cell;
+  // Years from a link are corrected to a valid pair for the cell (nearest
+  // year it has; comparison after reference) rather than rejected.
+  [out.ref, out.cmp] = snapYears(yearsCell(out.cell || defaults.cell), out.ref, out.cmp, Y.default_pair);
   for (const k of ["kPart", "kEffect"]) if (out[k] && !E.TILT_LEVELS.some((l) => l.id === out[k])) delete out[k];
   if (out.mode && !["group", "distributional"].includes(out.mode)) delete out.mode;
   if (out.rule && !["tilt", "ed"].includes(out.rule)) delete out.rule;
@@ -259,7 +280,7 @@ function writeHash() {
 // ---------------------------------------------------------------- controls
 const $ = (id) => document.getElementById(id);
 const cellSel = $("cell");
-D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
+Y.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
 
 function chip(parent, text, title, onClick) {
   const b = document.createElement("button");
@@ -306,10 +327,10 @@ function tiltHelp(levelId, kind) {
 // are eligible, how they are spread across score levels, and whether the
 // chosen share runs past the eligible pool.
 function screenHelp() {
-  const cell = D.cells.find((c) => c.label === state.cell);
+  const cell = currentPair();
   const s = (p) => E.edShareAt(cell.ed, [p])[0];
   let t = `Seats go at random to economically disadvantaged students, ${fmtPct(cell.ed.pop)} of students in ` +
-    `${cellName(cell.label)} in 2024. They are ${fmtPct(s(10))} of students at the 10th percentile and ` +
+    `${cellName(cell.label)} in ${cell.cmp}. They are ${fmtPct(s(10))} of students at the 10th percentile and ` +
     `${fmtPct(s(90))} at the 90th.`;
   if (state.share > cell.ed.pop)
     t += ` Only ${fmtPct(cell.ed.pop)} of students are eligible, so every one of them takes part and the other ` +
@@ -317,13 +338,27 @@ function screenHelp() {
   return t;
 }
 const MODE_HELP = {
-  distributional: "Line everyone up again after the program and compare each percentile with its 2019 score. " +
-    "Students who took part can move past classmates who did not. This is the tool's main measure.",
+  distributional: "Line everyone up again after the program and compare each percentile with its reference-year " +
+    "score. Students who took part can move past classmates who did not. This is the tool's main measure.",
   group: "Follow the students who started at each percentile and average their gain, " +
     "counting both those who took part and those who did not.",
 };
 
-cellSel.addEventListener("change", () => { state.cell = cellSel.value; sync(); });
+// The pair being compared, built from years.js for the chosen cell and years.
+function currentPair() { return E.pair(yearsCell(state.cell), state.ref, state.cmp); }
+// A new cell keeps the chosen years if it has them, or moves to the nearest
+// ones it does (grade 12 has fewer). A new reference year pulls the
+// comparison year along if it is no longer later.
+cellSel.addEventListener("change", () => {
+  state.cell = cellSel.value;
+  [state.ref, state.cmp] = snapYears(yearsCell(state.cell), state.ref, state.cmp, Y.default_pair);
+  sync();
+});
+$("ref").addEventListener("change", (e) => {
+  [state.ref, state.cmp] = snapYears(yearsCell(state.cell), Number(e.target.value), state.cmp, Y.default_pair);
+  sync();
+});
+$("cmp").addEventListener("change", (e) => { state.cmp = Number(e.target.value); sync(); });
 $("effect").addEventListener("input", (e) => { state.effect = Number(e.target.value); sync(); });
 $("share").addEventListener("input", (e) => { state.share = Number(e.target.value) / 100; sync(); });
 
@@ -332,6 +367,11 @@ $("share").addEventListener("input", (e) => { state.share = Number(e.target.valu
 let pending = false;
 function sync() {
   cellSel.value = state.cell;
+  fillYearSelects($("ref"), $("cmp"), yearsCell(state.cell), state.ref, state.cmp);
+  $("years-help").textContent = `The program serves ${state.cmp} students, and the goal is the scores of ` +
+    `${state.ref} students at the same percentile.`;
+  // Every year named in the static copy follows the chosen pair.
+  document.querySelectorAll("[data-yr]").forEach((n) => { n.textContent = state[n.dataset.yr]; });
   $("effect").value = state.effect; $("effect-v").textContent = state.effect.toFixed(3) + " SD";
   $("share").value = (state.share * 100).toFixed(1); $("share-v").textContent = fmtPct(state.share);
   for (const k of ["rule", "kPart", "kEffect", "mode"]) $(`${k}-${state[k]}`).checked = true;
@@ -353,10 +393,10 @@ function fmtShare(s) { return Number.isFinite(s) ? Math.round(s * 100) + "%" : "
 // ---------------------------------------------------------------- render
 function render() {
   writeHash();
-  // The rounds page reads the same cell, share, and effect keys.
-  $("rounds-link").href = "rounds.html#" + new URLSearchParams({ cell: state.cell, share: state.share.toFixed(3),
-                                                                 effect: state.effect.toFixed(3) });
-  const cell = D.cells.find((c) => c.label === state.cell);
+  // The rounds page reads the same cell, year, share, and effect keys.
+  $("rounds-link").href = "rounds.html#" + new URLSearchParams({ cell: state.cell, ref: state.ref, cmp: state.cmp,
+                                                                 share: state.share.toFixed(3), effect: state.effect.toFixed(3) });
+  const cell = currentPair();
   const k = (id) => E.TILT_LEVELS.find((l) => l.id === id).k;
   const inputs = {
     effect: state.effect, share: state.share, kPart: k(state.kPart), kEffect: k(state.kEffect),
@@ -365,37 +405,49 @@ function render() {
   const res = E.scenario(cell, PS, inputs, CURVE_P);
   const at = (p) => res.knots.find((r) => r.p === p);
 
-  // Tiles
+  // Tiles. Where scores did not fall between the two years there is no drop
+  // to undo, so say that instead of printing a share of a negative number.
   for (const p of [10, 50]) {
     const r = at(p);
-    $(`t-p${p}`).textContent = fmtShare(shareClosed(r));
-    $(`t-p${p}-s`).textContent = `${f3(r.gain)} of a ${f3(r.gStar)} SD drop`;
+    if (r.gStar <= 0) {
+      $(`t-p${p}`).textContent = "No drop";
+      $(`t-p${p}-s`).textContent = `Scores here ${r.gStar < 0 ? `rose ${f3(-r.gStar)} SD` : "did not change"} ` +
+        `from ${cell.ref} to ${cell.cmp}.`;
+    } else {
+      $(`t-p${p}`).textContent = fmtShare(shareClosed(r));
+      $(`t-p${p}-s`).textContent = `${f3(r.gain)} of a ${f3(r.gStar)} SD drop`;
+    }
   }
   const g = res.gap9010;
-  const widen = g.y2024 - g.y2019;
+  const widen = g.cmp - g.ref;
   $("t-gap").textContent = f1(g.post) + " points";
   // Say which way the program moved the gap rather than printing a negative
   // share: a program that favors higher scorers can widen it further.
-  const moved = g.y2024 - g.post;
+  const moved = g.cmp - g.post;
   let verdict = "";
   if (Math.abs(moved) < 0.05) verdict = "About the same as without the program.";
   else if (moved < 0) verdict = `The program widens it by ${f1(-moved)} more points.`;
-  else if (widen > 0) verdict = `The program undoes ${fmtShare(moved / widen)} of the widening since 2019.`;
+  else if (widen > 0) verdict = `The program undoes ${fmtShare(moved / widen)} of the widening since ${cell.ref}.`;
   else verdict = `The program narrows it by ${f1(moved)} points.`;
-  $("t-gap-s").textContent = `It was ${f1(g.y2019)} in 2019 and ${f1(g.y2024)} in 2024. ${verdict}`;
+  $("t-gap-s").textContent = `It was ${f1(g.ref)} in ${cell.ref} and ${f1(g.cmp)} in ${cell.cmp}. ${verdict}`;
 
   // Cell-specific sentences in the introduction and the effect control, so
   // the reader sees real points for the subject and grade they picked.
-  const name = cellName(cell.label), S = cell.sd2019;
-  const drop = (p) => -cell.d[PS.indexOf(p)];
-  $("intro-gap").textContent = `In ${name}, students at the 10th percentile scored ${f0(drop(10))} points lower ` +
-    `in 2024 than in 2019; students at the 90th scored ${f0(drop(90))} ${f0(drop(90)) === "1" ? "point" : "points"} lower. ` +
-    `The tool tracks the distance between the 90th and 10th percentiles, called the 90-10 gap.`;
+  const name = cellName(cell.label), S = cell.sdRef;
+  // "11 points lower", "3 points higher", "about the same": whole points, so
+  // a change under half a point reads as no change rather than "0 points".
+  const change = (p) => {
+    const d = cell.d[PS.indexOf(p)], n = Math.round(Math.abs(d));
+    return n === 0 ? "about the same" : `${n} ${n === 1 ? "point" : "points"} ${d < 0 ? "lower" : "higher"}`;
+  };
+  $("intro-gap").textContent = `In ${name}, students at the 10th percentile scored ${change(10)} in ${cell.cmp} ` +
+    `than in ${cell.ref}; students at the 90th scored ${change(90)}. The tool tracks the distance between the ` +
+    `90th and 10th percentiles, called the 90-10 gap.`;
   $("intro-sd").textContent = `In ${name}, 1 SD is about ${f0(S)} NAEP points, so a 0.1 SD boost adds about ${f0(0.1 * S)} points.`;
   $("effect-help").textContent = `The average boost for a student who takes part, in SD. ` +
     `${f3(state.effect)} SD is about ${f1(state.effect * S)} NAEP points in ${name}.`;
 
-  $("main-title").textContent = `How far each percentile sits below its 2019 score: ${name}`;
+  $("main-title").textContent = `How far each percentile sits from its ${cell.ref} score in ${cell.cmp}: ${name}`;
   drawMain(res.curve);
   drawProfile("part-chart", res.curve, (r) => r.part, [0, 1], (v) => fmtPct(v), "var(--series-part)", "Taking part");
   const effMax = Math.max(0.05, ...res.curve.map((r) => r.effect)) * 1.1;
@@ -403,16 +455,17 @@ function render() {
   drawTable(res, cell);
   drawGroups(E.groupScenario(cell, inputs, CURVE_P), cell);
 
-  // Only the files this page uses; the Kraft (2023) table feeds the methods page.
-  $("provenance").textContent = provenanceText(D, ["tables/sim-quantiles.csv", "tables/sim-distribution.csv",
-                                                   "tables/sim-distribution-econdis.csv", "analysis/config/sim-params.yaml"]) + " " +
+  // The NAEP data come from years.js (analysis/11-export-explorer-years.R),
+  // fingerprinted by its two configs; the presets from cells.js.
+  $("provenance").textContent = provenanceText(Y) + ` NAEP Data Service, ${cell.ref} and ${cell.cmp}. ` +
     `Mean participation across all percentiles: ${fmtPct(res.meanPart)}` +
     (state.rule === "ed" && state.share > cell.ed.pop ? ` (the eligible share; the other seats go unused).` : ".");
 }
 
 function drawMain(curve) {
-  // The chart plots the decline, not the requirement: D(p)/S is 2024 minus
-  // 2019 in 2019 SD units, negative where scores fell, and the program lifts
+  // The chart plots the change, not the requirement: D(p)/S is the
+  // comparison year minus the reference year in reference-year SD units,
+  // negative where scores fell, and the program lifts
   // it toward zero. It is the requirement with its sign flipped
   // (D/S = -g*), so before = -gStar and after = -remaining.
   const before = (r) => -r.gStar, after = (r) => -r.remaining;
@@ -422,19 +475,21 @@ function drawMain(curve) {
   const F = frame("main-chart", 720, 320, [lo - pad, hi > 0 ? hi + pad : 0], f2, 6);
   const { svg, x, y } = F;
   const ends = [curve[0], curve[curve.length - 1]];
-  svg.setAttribute("aria-label", `How far each percentile sits below its 2019 score, in SD, without and with the ` +
+  svg.setAttribute("aria-label", `How far each percentile sits from its ${state.ref} score in ${state.cmp}, in SD, without and with the ` +
     `program. ` + ends.map((r) => `${ord(r.p)} percentile: ${f3(before(r))} without, ${f3(after(r))} with.`).join(" "));
-  // Area between the decline and the post-program position, split at zero
-  // so the part above zero (a percentile lifted past its 2019 level) reads
-  // as overshoot rather than as more of the decline undone.
+  // Area between the starting position and the post-program position, split
+  // at zero: below zero is the drop the program undoes, above zero is a
+  // percentile lifted past its reference level. Both parts are clipped to
+  // their own side of zero, so where scores already rose between the two
+  // years (no drop), nothing is shaded as "undone".
   const base = curve.map((r) => [x(r.p), y(before(r))]);
-  const closedTop = curve.map((r) => [x(r.p), y(Math.min(0, after(r)))]);
-  el("path", { d: path(base) + path(closedTop.slice().reverse()).replace("M", "L") + "Z", fill: "var(--closed-fill)" }, svg);
-  if (curve.some((r) => after(r) > 0)) {
-    const z = curve.map((r) => [x(r.p), y(0)]);
-    const pos = curve.map((r) => [x(r.p), y(Math.max(0, after(r)))]);
-    el("path", { d: path(z) + path(pos.slice().reverse()).replace("M", "L") + "Z", fill: "var(--over-fill)" }, svg);
-  }
+  const band = (lo, hi, fill) => {
+    const a = curve.map((r) => [x(r.p), y(lo(r))]), b = curve.map((r) => [x(r.p), y(hi(r))]);
+    el("path", { d: path(a) + path(b.slice().reverse()).replace("M", "L") + "Z", fill }, svg);
+  };
+  band((r) => Math.min(0, before(r)), (r) => Math.min(0, after(r)), "var(--closed-fill)");
+  if (curve.some((r) => after(r) > 0))
+    band((r) => Math.max(0, before(r)), (r) => Math.max(0, after(r)), "var(--over-fill)");
   el("path", { d: path(base), fill: "none", stroke: "var(--series-before)", "stroke-width": 2, "stroke-dasharray": "5 4" }, svg);
   el("path", { d: path(curve.map((r) => [x(r.p), y(after(r))])), fill: "none", stroke: "var(--series-after)", "stroke-width": 2 }, svg);
   // Markers at the published percentiles, where the numbers are data rather
@@ -460,30 +515,33 @@ function drawProfile(id, curve, acc, yDom, yFmt, color, name) {
 function drawTable(res, cell) {
   const rows = res.knots.map((r) => `<tr><td>${ord(r.p)}</td><td>${f3(-r.gStar)}</td><td>${fmtPct(r.part)}</td>` +
     `<td>${f3(r.effect)}</td><td>${f3(r.gain)}</td><td>${f3(-r.remaining)}</td><td>${fmtShare(shareClosed(r))}</td></tr>`).join("");
-  $("tbl").innerHTML = `<thead><tr><th>Percentile</th><th>Drop, 2019 to 2024</th><th>Taking part</th>` +
+  $("tbl").innerHTML = `<thead><tr><th>Percentile</th><th>Change, ${cell.ref} to ${cell.cmp}</th><th>Taking part</th>` +
     `<th>Boost</th><th>Drop undone</th><th>With the program</th><th>Share undone</th></tr></thead><tbody>${rows}</tbody>` +
-    `<caption>All columns except the two shares are in SD, measured against the 2019 score.</caption>`;
+    `<caption>All columns except the two shares are in SD, measured against the ${cell.ref} score. ` +
+    `"Share undone" is n/a where scores did not fall.</caption>`;
   const g = res.gap9010;
-  $("gap-tbl").innerHTML = `<thead><tr><th>90-10 gap, NAEP points</th><th>2019</th><th>2024</th><th>2024 with the program</th></tr></thead>` +
-    `<tbody><tr><td>${cellName(cell.label)}</td><td>${f1(g.y2019)}</td><td>${f1(g.y2024)}</td><td>${f1(g.post)}</td></tr></tbody>`;
+  $("gap-tbl").innerHTML = `<thead><tr><th>90-10 gap, NAEP points</th><th>${cell.ref}</th><th>${cell.cmp}</th>` +
+    `<th>${cell.cmp} with the program</th></tr></thead>` +
+    `<tbody><tr><td>${cellName(cell.label)}</td><td>${f1(g.ref)}</td><td>${f1(g.cmp)}</td><td>${f1(g.post)}</td></tr></tbody>`;
 }
 
 // Economically disadvantaged (ED) and other students. Each group's curve is
-// its own 2024 quantile (dashed) and post-program quantile (solid) minus its
-// own 2019 quantile, in 2019 national SD, so it reads like the main chart:
-// zero is back to that group's 2019 score. The table gives the gap between
+// its own comparison-year quantile (dashed) and post-program quantile (solid)
+// minus its own reference-year quantile, in reference-year national SD, so it
+// reads like the main chart: zero is back to that group's reference score.
+// The table gives the gap between
 // the groups in NAEP points.
 const GROUP_STYLE = { "ED": { color: "var(--series-ed)", name: "Disadvantaged" },
                       "Not ED": { color: "var(--series-ned)", name: "Not disadvantaged" } };
 function drawGroups(groups, cell) {
-  const S = cell.sd2019;
-  const before = (r) => (r.q2024 - r.q2019) / S, after = (r) => (r.post - r.q2019) / S;
+  const S = cell.sdRef;
+  const before = (r) => (r.qCmp - r.qRef) / S, after = (r) => (r.post - r.qRef) / S;
   const vals = groups.flatMap((g) => g.rows.flatMap((r) => [before(r), after(r)]));
   const lo = Math.min(-0.05, ...vals), hi = Math.max(0, ...vals), pad = (hi - lo) * 0.08;
   // Extra room below for the lower group's direct label.
   const F = frame("ed-chart", 720, 280, [lo - 2 * pad, hi > 0 ? hi + pad : 0], f2, 5);
   F.svg.setAttribute("aria-label", "Economically disadvantaged students and everyone else, each against their own " +
-    "2019 score, in SD, without and with the program. The table below gives the gap between the groups.");
+    `${cell.ref} score, in SD, without and with the program. The table below gives the gap between the groups.`);
   for (const g of groups) {
     const c = GROUP_STYLE[g.id].color;
     el("path", { d: path(g.rows.map((r) => [F.x(r.p), F.y(before(r))])), fill: "none", stroke: c, "stroke-width": 2, "stroke-dasharray": "5 4" }, F.svg);
@@ -509,15 +567,21 @@ function drawGroups(groups, cell) {
 
   const at = (g, p) => g.rows.find((r) => r.p === p);
   const gap = (p, key) => at(ned, p)[key] - at(ed, p)[key];
-  const body = [10, 50, 90].map((p) => `<tr><td>${ord(p)}</td><td>${f1(gap(p, "q2019"))}</td>` +
-    `<td>${f1(gap(p, "q2024"))}</td><td>${f1(gap(p, "post"))}</td></tr>`).join("");
-  $("ed-tbl").innerHTML = `<thead><tr><th>Percentile within each group</th><th>2019</th><th>2024</th>` +
-    `<th>2024 with the program</th></tr></thead><tbody>${body}</tbody>` +
+  const body = [10, 50, 90].map((p) => `<tr><td>${ord(p)}</td><td>${f1(gap(p, "qRef"))}</td>` +
+    `<td>${f1(gap(p, "qCmp"))}</td><td>${f1(gap(p, "post"))}</td></tr>`).join("");
+  $("ed-tbl").innerHTML = `<thead><tr><th>Percentile within each group</th><th>${cell.ref}</th><th>${cell.cmp}</th>` +
+    `<th>${cell.cmp} with the program</th></tr></thead><tbody>${body}</tbody>` +
     `<caption>How far other students score above disadvantaged students at the same percentile of their own group, in NAEP points.</caption>`;
-  const other = E.edUnknownShare(cell.ed);
+  // The caveat Andrew asked for (2026-10-02): the measure is school-lunch
+  // eligibility, and both its share and the unclassified share move between
+  // years, so the two groups are not the same slice of students in each year.
+  // Every number here is NAEP's own, from years.js.
+  const e = cell.ed;
   $("ed-note").textContent = `NAEP counts a student as economically disadvantaged if they are eligible for the ` +
-    `National School Lunch Program. In 2024 that was ${fmtPct(cell.ed.pop)} of students in ${cellName(cell.label)}; ` +
-    `for another ${fmtPct(other)} the information was not available, and they are left out of both groups here.`;
+    `National School Lunch Program. In ${cellName(cell.label)} that was ${fmtPct(e.popRef)} of students in ` +
+    `${cell.ref} and ${fmtPct(e.pop)} in ${cell.cmp}; NAEP could not classify ${fmtPct(e.unknownRef)} and ` +
+    `${fmtPct(e.unknownCmp)}, who are left out of both groups here. Because these shares move between years, ` +
+    `the two groups are not quite the same slice of students in ${cell.ref} and ${cell.cmp}.`;
 }
 
 // Charts are drawn at their container's width (frame()), so redraw when the

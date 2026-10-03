@@ -5,8 +5,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What Would It Take?</title>
-<meta name="description" content="How many rounds of a tutoring or summer program it would take to bring NAEP scores at the 10th percentile back to 2019.">
-<link rel="stylesheet" href="style.css?v=2026-10-02.4">
+<meta name="description" content="How many rounds of a tutoring or summer program it would take to bring NAEP scores at the 10th percentile back to an earlier year's level.">
+<link rel="stylesheet" href="style.css?v=2026-10-03">
 </head>
 <body>
 <div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS</div>
@@ -26,6 +26,16 @@
     <div>
       <label class="ctl-label" for="cell">Subject and grade <a class="why" href="methods.html#data">Data</a></label>
       <select id="cell"></select>
+      <div class="year-row">
+        <div>
+          <label class="ctl-label" for="ref">Reference year <a class="why" href="methods.html#years">About the years</a></label>
+          <select id="ref"></select>
+        </div>
+        <div>
+          <label class="ctl-label" for="cmp">Comparison year</label>
+          <select id="cmp"></select>
+        </div>
+      </div>
     </div>
     <div>
       <label class="ctl-label" for="share">Share of students served each round <a class="why" href="methods.html#participation">Sources</a></label>
@@ -77,7 +87,7 @@
       <p class="summary-lead" id="lead"></p>
       <dl class="summary-dl">
         <div><dt>Rounds to reach every student once</dt><dd id="s-reach"></dd></div>
-        <div><dt>Rounds to bring the 10th percentile back to 2019</dt><dd id="s-rest"></dd></div>
+        <div><dt>Rounds to bring the 10th percentile back to <span data-yr="ref">2019</span></dt><dd id="s-rest"></dd></div>
         <div><dt>90-10 gap after any number of rounds</dt><dd id="s-gap"></dd></div>
       </dl>
       <p class="ctl-help" id="gap-note"></p>
@@ -94,9 +104,10 @@
   <p class="note" id="provenance"></p>
 </main>
 
-<script src="cells.js?v=2026-10-02.4"></script>
-<script src="engine.js?v=2026-10-02.4"></script>
-<script src="charts.js?v=2026-10-02.4"></script>
+<script src="cells.js?v=2026-10-03"></script>
+<script src="years.js?v=2026-10-03"></script>
+<script src="engine.js?v=2026-10-03"></script>
+<script src="charts.js?v=2026-10-03"></script>
 <script>
 "use strict";
 // The "What would it take?" view: question 1 of the project, read as rounds
@@ -104,9 +115,9 @@
 // (the arithmetic, tested in analysis/tests/test-tool-engine.mjs) and, for
 // the one "All students" comparison, NAEPEngine.scenario. Nothing about a
 // cell is typed here.
-const D = globalThis.TOOL_DATA, E = globalThis.NAEPEngine;
+const D = globalThis.TOOL_DATA, Y = globalThis.TOOL_YEARS, E = globalThis.NAEPEngine;
 const { el } = globalThis.NAEPCharts;
-const { f1, f3, fmtPct, cellName, configValue, chipName, provenanceText } = globalThis.NAEPShared;
+const { f1, f3, fmtPct, cellName, configValue, chipName, provenanceText, snapYears, fillYearSelects } = globalThis.NAEPShared;
 const PS = D.percentiles;
 const $ = (id) => document.getElementById(id);
 const MINUS = "−", EPS = 1e-9;
@@ -114,10 +125,12 @@ const MINUS = "−", EPS = 1e-9;
 // ---------------------------------------------------------------- state
 // Defaults are the design's: Math, grade 8 (the cell the other design
 // studies use), the opt-in tutoring take-up, and the pipeline's treated
-// effect. The hash keys match the explorer's (cell, share, effect), so a
-// link between the two pages keeps the settings.
+// effect, with the paper's years. The hash keys match the explorer's (cell,
+// ref, cmp, share, effect), so a link between the two pages keeps the settings.
+const yearsCell = (label) => Y.cells.find((c) => c.label === label);
 const defaults = {
-  cell: (D.cells.find((c) => c.label === "Math G8") || D.cells[0]).label,
+  cell: (Y.cells.find((c) => c.label === "Math G8") || Y.cells[0]).label,
+  ref: Y.default_pair[0], cmp: Y.default_pair[1],
   share: configValue(D.participation, "optin").c,
   effect: configValue(D.benchmarks, D.treated_effect).g,
 };
@@ -135,16 +148,18 @@ function readHash() {
       } else out[k] = v;
     });
   } catch (e) { /* malformed hash: ignore and use defaults */ }
-  if (out.cell && !D.cells.some((c) => c.label === out.cell)) delete out.cell;
+  if (out.cell && !yearsCell(out.cell)) delete out.cell;
+  // Years from a link are corrected to a valid pair for the cell.
+  [out.ref, out.cmp] = snapYears(yearsCell(out.cell || defaults.cell), out.ref, out.cmp, Y.default_pair);
   return out;
 }
-const hashOf = (extra) => new URLSearchParams({ cell: state.cell, share: state.share.toFixed(3),
+const hashOf = (extra) => new URLSearchParams({ cell: state.cell, ref: state.ref, cmp: state.cmp, share: state.share.toFixed(3),
                                                 effect: state.effect.toFixed(3), ...extra }).toString();
 function writeHash() { history.replaceState(null, "", "#" + hashOf()); }
 
 // ---------------------------------------------------------------- controls
 const cellSel = $("cell");
-D.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
+Y.cells.forEach((c) => cellSel.add(new Option(cellName(c.label), c.label)));
 function chip(parent, text, title, onClick) {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chip"; b.textContent = text; b.title = title;
@@ -158,13 +173,26 @@ const shareChips = D.participation.map((p) => ({ v: p.c, b: chip($("share-chips"
 const effectChips = D.benchmarks.map((b) => ({ v: b.g, b: chip($("effect-chips"), `${f3(b.g)} SD: ${chipName(b)}`,
   "Source: " + b.source, () => { state.effect = b.g; sync(); }) }));
 
-cellSel.addEventListener("change", () => { state.cell = cellSel.value; sync(); });
+// A new cell keeps the chosen years if it has them, or moves to the nearest
+// ones it does; a new reference pulls the comparison along if needed.
+cellSel.addEventListener("change", () => {
+  state.cell = cellSel.value;
+  [state.ref, state.cmp] = snapYears(yearsCell(state.cell), state.ref, state.cmp, Y.default_pair);
+  sync();
+});
+$("ref").addEventListener("change", (e) => {
+  [state.ref, state.cmp] = snapYears(yearsCell(state.cell), Number(e.target.value), state.cmp, Y.default_pair);
+  sync();
+});
+$("cmp").addEventListener("change", (e) => { state.cmp = Number(e.target.value); sync(); });
 $("share").addEventListener("input", (e) => { state.share = Number(e.target.value) / 100; sync(); });
 $("effect").addEventListener("input", (e) => { state.effect = Number(e.target.value); sync(); });
 
 let pending = false;
 function sync() {
   cellSel.value = state.cell;
+  fillYearSelects($("ref"), $("cmp"), yearsCell(state.cell), state.ref, state.cmp);
+  document.querySelectorAll("[data-yr]").forEach((n) => { n.textContent = state[n.dataset.yr]; });
   $("share").value = (state.share * 100).toFixed(1); $("share-v").textContent = fmtPct(state.share);
   $("effect").value = state.effect; $("effect-v").textContent = f3(state.effect) + " SD";
   for (const { v, b } of shareChips) b.setAttribute("aria-pressed", String(Math.abs(v - state.share) < 1e-6));
@@ -220,11 +248,11 @@ function whoTookPart(c) {
 // ---------------------------------------------------------------- render
 function render() {
   writeHash();
-  const cell = D.cells.find((c) => c.label === state.cell);
+  const cell = E.pair(yearsCell(state.cell), state.ref, state.cmp);
   const c = state.share, g = state.effect, name = cellName(cell.label);
   const R = E.rounds(cell, PS, c, g);
 
-  $("eyebrow").textContent = `${name} · 2019 to 2024`;
+  $("eyebrow").textContent = `${name} · ${state.ref} to ${state.cmp}`;
   $("headline").textContent = headline(R);
   $("effect-help").textContent = `${f3(g)} SD is about ${f1(R.gainPts)} NAEP points in ${name}.`;
   drawOneRound(R, c);
@@ -235,25 +263,25 @@ function render() {
   // way this page counts, so the explorer opens on it.
   $("back-link").href = "index.html#" + hashOf();
   $("next-link").href = "index.html#" + hashOf({ mode: "group" });
-  $("provenance").textContent = provenanceText(D, ["tables/sim-quantiles.csv", "analysis/config/sim-params.yaml"]);
+  $("provenance").textContent = provenanceText(Y) + ` NAEP Data Service, ${state.ref} and ${state.cmp}.`;
 }
 
 // The headline follows the settings, so it never contradicts the numbers.
 function headline(R) {
-  if (R.rounds10 === 0) return "The 10th percentile is already at or above its 2019 score.";
-  if (R.rounds10 === null) return "With no seats or no gain, the 10th percentile never gets back to 2019.";
-  if (R.rounds10 <= 1) return "At these settings, one round brings the 10th percentile back to 2019.";
+  if (R.rounds10 === 0) return `The 10th percentile is already at or above its ${state.ref} score.`;
+  if (R.rounds10 === null) return `With no seats or no gain, the 10th percentile never gets back to ${state.ref}.`;
+  if (R.rounds10 <= 1) return `At these settings, one round brings the 10th percentile back to ${state.ref}.`;
   if (R.shareUndonePerRound < 0.2)
-    return "One round barely moves the average student. Getting back to 2019 takes many rounds.";
-  return `Getting the 10th percentile back to 2019 takes ${roundsWord(R.rounds10)}.`;
+    return `One round barely moves the average student. Getting back to ${state.ref} takes many rounds.`;
+  return `Getting the 10th percentile back to ${state.ref} takes ${roundsWord(R.rounds10)}.`;
 }
 
 // ------------------------------------------------ one round (waffle, dumbbell, tiles)
 function drawOneRound(R, c) {
   const nT = Math.round(c * 100);
   $("n-in").textContent = nT; $("n-out").textContent = 100 - nT;
-  $("one-sub").textContent = `NAEP points against the 2019 score at the 10th percentile. In 2024 the 10th ` +
-    `percentile sat ${f1(R.drop10)} points below it.`;
+  $("one-sub").textContent = `NAEP points against the ${state.ref} score at the 10th percentile. In ${state.cmp} ` +
+    `the 10th percentile sat ${f1(Math.abs(R.drop10))} points ${R.drop10 >= 0 ? "below" : "above"} it.`;
 
   // Waffle: 100 students, the first nT filled.
   const wbox = $("waffle");
@@ -266,7 +294,7 @@ function drawOneRound(R, c) {
                         : { cx: x, cy: y, r: 9.25, fill: "var(--surface-1)", stroke: "var(--text-muted)", "stroke-width": 1.5 }, ws);
   }
 
-  // Dumbbell: three rows against the 2019 score (zero).
+  // Dumbbell: three rows against the reference-year score (zero).
   const W = 560, H = 196, L = 16, Rm = 64, start = -R.drop10, part = start + R.gainPts, avg = start + R.perRoundPts;
   const lo = Math.min(start, -1), hi = Math.max(part, 1), pad = (hi - lo) * 0.06;
   const ticks = pointTicks(lo - pad, hi + pad, 8);
@@ -283,7 +311,7 @@ function drawOneRound(R, c) {
     el("text", { x: x(t), y: 188, "text-anchor": "middle" }, ax).textContent = signed(t);
   });
   el("line", { x1: x(0), x2: x(0), y1: 16, y2: 168, stroke: "var(--text-primary)", "stroke-width": 1.5 }, svg);
-  el("text", { x: x(0), y: 10, "text-anchor": "middle", class: "direct-label strong" }, svg).textContent = "2019 score";
+  el("text", { x: x(0), y: 10, "text-anchor": "middle", class: "direct-label strong" }, svg).textContent = `${state.ref} score`;
   const row = (y, label, to, color, value) => {
     el("text", { x: L, y: y - 12, class: "direct-label" }, svg).textContent = label;
     if (to !== null) {
@@ -317,15 +345,18 @@ function drawSummary(R, c, g, name) {
   let lead;
   if (R.rounds10 === 0) lead = `The 10th percentile in ${name} did not fall, so no round is needed.`;
   else if (R.perRound <= 0) lead = `At ${cTxt} take-up and ${gTxt} SD, the program does not move the 10th percentile at all.`;
-  else if (R.rounds10 <= 1) lead = `At ${cTxt} take-up and ${gTxt} SD, one round brings the 10th percentile back to 2019.`;
+  else if (R.rounds10 <= 1) lead = `At ${cTxt} take-up and ${gTxt} SD, one round brings the 10th percentile back to ${state.ref}.`;
   else lead = `At ${cTxt} take-up and ${gTxt} SD, one round moves the 10th percentile ${pointsPhrase(R.perRoundPts)} ` +
     `of its ${Math.round(R.drop10)}-point drop.`;
   $("lead").textContent = lead;
   $("s-reach").textContent = R.roundsReach === null ? "Never" : R.roundsReach;
   $("s-rest").textContent = R.rounds10 === null ? "Never" : R.rounds10;
-  $("s-gap").textContent = `${f1(R.gap2024)} points`;
-  $("gap-note").textContent = `The gap was ${f1(R.gap2019)} points in 2019. With an equal chance of a seat, every ` +
-    `percentile gains the same amount, so the gap stays ${f1(R.widen)} points wider however many rounds run.`;
+  $("s-gap").textContent = `${f1(R.gapCmp)} points`;
+  // Between two years the gap can widen, narrow, or hold; say which.
+  const w = R.widen, stays = Math.abs(w) < 0.05 ? `the same as in ${state.ref}`
+    : `${f1(Math.abs(w))} points ${w > 0 ? "wider" : "narrower"} than in ${state.ref}`;
+  $("gap-note").textContent = `The gap was ${f1(R.gapRef)} points in ${state.ref}. With an equal chance of a seat, ` +
+    `every percentile gains the same amount, so the gap stays ${stays} however many rounds run.`;
 }
 
 // ------------------------------------------------ caveats
@@ -335,7 +366,7 @@ function drawCare(cell, R, c, g) {
     : R.perRound <= 0 ? "With no gain, nothing builds up from round to round."
     : R.rounds10 <= 1 ? "One round is enough here, so fading between rounds does not matter for the 10th percentile."
     : `If more than about ${pctPhrase(R.shareUndonePerRound, true)} of the gains built up so far faded between one ` +
-      `round and the next, the 10th percentile would level off short of 2019.`;
+      `round and the next, the 10th percentile would level off short of ${state.ref}.`;
   const twice = g <= 0 ? "With no gain per turn, no number of turns is enough."
     : R.turnsPerStudent <= 1 ? "Here one turn per student is enough, so no student needs a second turn."
     : `Getting the 10th percentile back means each student takes part about ` +
@@ -355,7 +386,7 @@ function drawCare(cell, R, c, g) {
   if (full) counted = " With every student taking part, the two ways of counting agree.";
   else if (R.perRound > 0) {
     const dist = E.scenario(cell, PS, { effect: g, share: c, kPart: 0, kEffect: 0, mode: "distributional" }, [10, 90]);
-    const p10 = dist.knots.find((k) => k.p === 10).gain * cell.sd2019, wider = dist.gap9010.post - R.gap2024;
+    const p10 = dist.knots.find((k) => k.p === 10).gain * cell.sdRef, wider = dist.gap9010.post - R.gapCmp;
     // Below a twentieth of a point both differences print as 0.0, so say so
     // in words rather than print "0.0 rather than 0.0".
     counted = Math.abs(p10 - R.perRoundPts) < 0.05 && wider < 0.05

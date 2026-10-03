@@ -1,0 +1,37 @@
+# Years the explorer (docs/) lets a reader compare, read by
+# analysis/11-export-explorer-years.R. Kept apart from sim-params.yaml on
+# purpose: the paper's pipeline (scripts 01-10) is fixed at 2019 to 2024, and
+# this file must not change any of its inputs or outputs.
+#
+# The year lists are the national NAEP administrations from 2005 on that the
+# NAEP Data Service returns for every statistic the explorer needs (published
+# percentiles, SD, the 10-point score distribution DP:DP, and the ECONDIS
+# breakdown), all on the accommodations-permitted sample (R3). Checked against
+# the live API on 2026-10-02. Grade 12 was not tested in 2007, 2011, 2017, or
+# 2022, and a request that names any of those years is rejected whole, so the
+# grade 12 cells carry their own list. Math grade 12's 0-300 scale starts in
+# 2005, which is also where these lists start.
+years:
+  grade_4_8: [2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019, 2022, 2024]
+  grade_12:  [2005, 2009, 2013, 2015, 2019, 2024]
+
+# A score-distribution bin point closer than this many percentile points to a
+# published percentile is dropped in favor of the percentile (quantile_points
+# in analysis/mixture.R explains why). Only Reading G8 2017 is affected; the
+# paper's pipeline keeps its exact-match rule.
+min_bin_knot_gap: 0.02
+
+# The pair the pages open on, the paper's comparison.
+default_pair: [2019, 2024]
+
+# Pairs other than 2019 to 2024 that the export also runs through the R
+# pipeline's own functions (calibrated_program_quantiles, alloc_uniform,
+# make_ed_screen), writing tables/explorer-pairs-check.csv. The JavaScript
+# engine must reproduce them (analysis/tests/test-tool-engine.mjs), which ties
+# the generalized engine to R beyond the paper's pair. Chosen to cover a
+# decline (Math G8), an older reference (Reading G4 2005), and grade 12.
+check_pairs:
+  - {cell: "Math G8",    ref: 2013, cmp: 2024}
+  - {cell: "Reading G4", ref: 2005, cmp: 2019}
+  - {cell: "Math G12",   ref: 2005, cmp: 2015}
+check_budgets: [0.05, 0.13, 0.187, 0.28, 0.5, 1.0]

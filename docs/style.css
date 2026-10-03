@@ -118,6 +118,9 @@ legend, .ctl-label { font-weight: 600; font-size: 0.9rem; padding: 0; margin-bot
 .ctl-row { display: flex; align-items: center; gap: 10px; }
 .ctl-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
 .ctl-value { font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600; }
+/* Reference and comparison year selects, side by side under the cell. */
+.year-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.year-row .ctl-label { margin-bottom: 4px; }
 select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface-1); color: var(--text-primary);
          border: 1px solid var(--border); border-radius: 6px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -153,7 +156,9 @@ select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface
 .gridline { stroke: var(--grid); stroke-width: 1; }
 .zero { stroke: var(--text-muted); stroke-width: 1; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
+/* Only the legend's own entries are flex rows; a span inside an entry (a
+   year filled in by the page) stays inline, with no gap around it. */
+.legend > span { display: inline-flex; align-items: center; gap: 6px; }
 .chart .direct-label { fill: var(--text-secondary); font-size: 11px; font-weight: 600; }
 .sw { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
 .sw.dash { border-top-style: dashed; }

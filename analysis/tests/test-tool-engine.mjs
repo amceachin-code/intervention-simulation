@@ -44,8 +44,9 @@ import vm from "node:vm";
 // files' globalThis assignments land on ctx.
 const ctx = vm.createContext({});
 vm.runInContext(fs.readFileSync("docs/cells.js", "utf8"), ctx);
+vm.runInContext(fs.readFileSync("docs/years.js", "utf8"), ctx);
 vm.runInContext(fs.readFileSync("docs/engine.js", "utf8"), ctx);
-const DATA = ctx.TOOL_DATA, E = ctx.NAEPEngine;
+const DATA = ctx.TOOL_DATA, YEARS = ctx.TOOL_YEARS, E = ctx.NAEPEngine;
 
 let failures = 0, checks = 0;
 function check(ok, msg) {
@@ -70,6 +71,12 @@ function readCsv(path) {
 
 const PS = DATA.percentiles;
 const cellByLabel = Object.fromEntries(DATA.cells.map((c) => [c.label, c]));
+// The engine works on pairs built from years.js by E.pair(). Every check
+// below that compares with R runs on the 2019 to 2024 pair, which section 0
+// ties to cells.js value for value, so the paper's results are unchanged.
+const yearsByLabel = Object.fromEntries(YEARS.cells.map((c) => [c.label, c]));
+const PAIRS = DATA.cells.map((c) => E.pair(yearsByLabel[c.label], 2019, 2024));
+const pairByLabel = Object.fromEntries(PAIRS.map((c) => [c.label, c]));
 
 // ---- 1. cells.js matches sim-quantiles.csv -------------------------------
 const qd = readCsv("tables/sim-quantiles.csv");
@@ -88,6 +95,33 @@ check(DATA.cells.length === new Set(qd.map((r) => r.cell)).size, "cell count dif
 for (const c of DATA.cells) c.g_star.forEach((g, i) =>
   check(close(g, -c.d[i] / c.sd2019, 1e-12), `${c.label} g* is not -D/S at p${PS[i]}`));
 
+// ---- 0. the 2019 to 2024 pair from years.js is cells.js -------------------
+// years.js is a separate export (analysis/11-export-explorer-years.R) with
+// its own API requests. Built for 2019 and 2024 it must reproduce the cells
+// the paper's pipeline exported, every field, so the explorer's default view
+// cannot drift from the validated one. Tolerance: the two exports read the
+// same NAEP values, so they should agree exactly; 1e-9 allows for nothing
+// more than JSON round-trips.
+const sameArr = (a, b, tol) => a.length === b.length && a.every((v, i) => close(v, b[i], tol));
+for (const c of DATA.cells) {
+  const pr = pairByLabel[c.label], tag = `${c.label} pair(2019, 2024)`;
+  check(sameArr(pr.qRef, c.q2019, 1e-9), `${tag} qRef differs from cells.js q2019`);
+  check(sameArr(pr.d, c.d, 1e-9), `${tag} d differs from cells.js`);
+  check(sameArr(pr.gStar, c.g_star, 1e-12), `${tag} gStar differs from cells.js g_star`);
+  check(close(pr.sdRef, c.sd2019, 1e-9), `${tag} sdRef differs from cells.js sd2019`);
+  for (const [a, b, nm] of [[pr.qfRef, c.qf2019, "qfRef"], [pr.qfCmp, c.qf2024, "qfCmp"]])
+    check(sameArr(a.pct, b.pct, 1e-9) && sameArr(a.score, b.score, 1e-9), `${tag} ${nm} points differ from cells.js`);
+  check(close(pr.ed.pop, c.ed.pop, 1e-12), `${tag} ed.pop differs`);
+  check(sameArr(pr.ed.share.pct, c.ed.share.pct, 1e-9) && sameArr(pr.ed.share.share, c.ed.share.share, 1e-12),
+        `${tag} ED share curve differs`);
+  c.ed.groups.forEach((g, i) => {
+    const pg = pr.ed.groups[i];
+    check(pg.id === g.id && close(pg.pop, g.pop2024, 1e-12), `${tag} ${g.id} pop differs`);
+    for (const [a, b, nm] of [[pg.qfRef, g.qf2019, "qfRef"], [pg.qfCmp, g.qf2024, "qfCmp"]])
+      check(sameArr(a.pct, b.pct, 1e-9) && sameArr(a.score, b.score, 1e-9), `${tag} ${g.id} ${nm} differs`);
+  });
+}
+
 // ---- 2. engine reproduces the R seat-allocation grid ---------------------
 // The treated effect 06-seat-allocation.R used is the config's treated_effect.
 const G = DATA.benchmarks.find((b) => b.id === DATA.treated_effect).g;
@@ -104,7 +138,7 @@ const ALLOC = {
 // decimal places" rests on.
 const TOL = 1e-9;
 for (const [label, path] of Object.entries(ALLOC)) {
-  const cell = cellByLabel[label];
+  const cell = pairByLabel[label];
   // The two R rules the page offers: proportional (the neutral tilt) and the
   // eligibility screen (rule "ed").
   const rows = readCsv(path).filter((r) => r.rule.startsWith("Proportional") || r.rule.startsWith("Eligibility"));
@@ -117,7 +151,7 @@ for (const [label, path] of Object.entries(ALLOC)) {
     const base = { effect: G, share: B, kPart: 0, kEffect: 0, rule };
     const dist = E.scenario(cell, PS, { ...base, mode: "distributional" }, [10, 90]);
     const grp  = E.scenario(cell, PS, { ...base, mode: "group" }, [10, 90]);
-    const res = (s, p) => s.knots.find((k) => k.p === p).remaining * cell.sd2019;
+    const res = (s, p) => s.knots.find((k) => k.p === p).remaining * cell.sdRef;
     const gapD = res(dist, 10) - res(dist, 90);
     const gapG = res(grp, 10) - res(grp, 90);
     for (const [got, want, name] of [
@@ -139,7 +173,7 @@ for (const [label, path] of Object.entries(ALLOC)) {
 // screen at every budget, plus the 2019 and 2024 reference rows.
 const PCOL = PS.map((p) => "p" + p);
 for (const [label, path] of Object.entries(ALLOC)) {
-  const cell = cellByLabel[label];
+  const cell = pairByLabel[label];
   const gpath = path.replace("sim-seat-allocation-", "sim-group-outcomes-");
   const all = readCsv(gpath);
   check(all.length > 0, `${gpath} is missing or empty`);
@@ -150,7 +184,7 @@ for (const [label, path] of Object.entries(ALLOC)) {
   };
   // Reference rows: the groups' own 2019 and 2024 quantiles.
   const ref = E.groupScenario(cell, { effect: 0, share: 0, kPart: 0, kEffect: 0, mode: "distributional" }, PS);
-  for (const g of ref) for (const [rn, key] of [["2019", "q2019"], ["2024, no program", "q2024"]]) {
+  for (const g of ref) for (const [rn, key] of [["2019", "qRef"], ["2024, no program", "qCmp"]]) {
     const r = all.find((x) => x.rule === rn && x.group === g.id);
     PS.forEach((p, i) => cmp(g.rows[i][key], Number(r[PCOL[i]]), `${g.id} ${rn} p${p}`));
   }
@@ -177,15 +211,15 @@ for (const cell of DATA.cells) {
 }
 
 // ---- 3. invariants --------------------------------------------------------
-for (const cell of DATA.cells) {
-  const q2024 = cell.q2019.map((q, i) => q + cell.d[i]);
+for (const cell of PAIRS) {
+  const q2024 = cell.qCmp;
   for (const mode of ["group", "distributional"]) {
     // No program: post-program quantiles are the published 2024 knots, and
     // the remaining requirement is g*.
     const s0 = E.scenario(cell, PS, { effect: 0.2, share: 0, kPart: 0.6, kEffect: -0.6, mode }, PS);
     s0.knots.forEach((k, i) => {
       check(close(k.post_pts, q2024[i], 1e-9), `${cell.label} ${mode} zero share p${k.p}: ${k.post_pts} vs ${q2024[i]}`);
-      check(close(k.remaining, cell.g_star[i], 1e-9), `${cell.label} ${mode} zero share remaining != g*`);
+      check(close(k.remaining, cell.gStar[i], 1e-9), `${cell.label} ${mode} zero share remaining != g*`);
     });
   }
   // Everyone treated with a uniform effect is a pure shift in both modes, so
@@ -219,7 +253,7 @@ for (const lvl of E.TILT_LEVELS) {
 // The screen: spends min(B, ED share), is r * s(p), and in "Same students"
 // mode leaves not-ED students where they were while every ED student gains
 // r * effect on average.
-for (const cell of DATA.cells) {
+for (const cell of PAIRS) {
   for (const B of [0, 0.1, 0.3, cell.ed.pop, 0.8, 1]) {
     const pi = E.edParticipation(cell.ed, B)(E.FILL_GRID);
     check(close(E.mean(pi), Math.min(B, cell.ed.pop), 1e-3), `${cell.label} screen spends ${E.mean(pi)} at B=${B}`);
@@ -229,8 +263,8 @@ for (const cell of DATA.cells) {
   const out = E.groupScenario(cell, { effect: eff, share: B, kPart: 0.6, kEffect: 0, mode: "group", rule: "ed" }, PS);
   const ed = out.find((g) => g.id === "ED"), ned = out.find((g) => g.id === "Not ED");
   PS.forEach((p, i) => {
-    check(close(ned.rows[i].post, ned.rows[i].q2024, 1e-12), `${cell.label} screen moved not-ED students at p${p}`);
-    check(close(ed.rows[i].post - ed.rows[i].q2024, r * eff * cell.sd2019, 1e-9), `${cell.label} screen ED gain at p${p}`);
+    check(close(ned.rows[i].post, ned.rows[i].qCmp, 1e-12), `${cell.label} screen moved not-ED students at p${p}`);
+    check(close(ed.rows[i].post - ed.rows[i].qCmp, r * eff * cell.sdRef, 1e-9), `${cell.label} screen ED gain at p${p}`);
   });
   // kPart is ignored under the screen.
   const a = E.scenario(cell, PS, { effect: eff, share: B, kPart: 0.6, kEffect: 0, mode: "distributional", rule: "ed" }, PS);
@@ -252,10 +286,14 @@ for (const cell of DATA.cells) {
 //     left and right slopes agree closely.
 //     The five-percentile function this replaced (normal tails joined at p10
 //     and p90) failed this at p90 by a factor of 1.4 to 1.8.
+//   These run on every cell and year in years.js. The bin check needs the
+//   bins themselves, which only tables/sim-distribution.csv carries (2019
+//   and 2024); for the other years the R export built the points from the
+//   same bins with the same quantile_points(), and the other checks hold.
 const DIST = readCsv("tables/sim-distribution.csv");
-for (const cell of DATA.cells) {
-  for (const [yr, key, knots] of [[2019, "qf2019", cell.q2019], [2024, "qf2024", cell.q2019.map((q, i) => q + cell.d[i])]]) {
-    const qf = cell[key], tag = `${cell.label} ${yr}`;
+for (const yc of YEARS.cells) {
+  for (const yr of E.cellYears(yc)) {
+    const key = "qf", qf = yc.years[yr].qf, knots = yc.years[yr].q, cell = yc, tag = `${yc.label} ${yr}`;
     check(qf && qf.pct.length === qf.score.length && qf.pct.length > PS.length, `${tag}: ${key} missing or malformed`);
     if (!qf) continue;
     check(qf.pct[0] === 0 && qf.pct[qf.pct.length - 1] === 100, `${tag}: points do not run from 0 to 100`);
@@ -324,8 +362,8 @@ for (const c of DATA.cells) {
 // set of edge cases and invariants.
 const csvGStar = (label, p) => Number(qd.find((r) => r.cell === label && Number(r.percentile) === p).g_star);
 const PRESET_C = DATA.participation.map((x) => x.c), PRESET_G = DATA.benchmarks.map((x) => x.g);
-for (const cell of DATA.cells) {
-  const S = cell.sd2019, g10 = csvGStar(cell.label, 10), g90 = csvGStar(cell.label, 90);
+for (const cell of PAIRS) {
+  const S = cell.sdRef, g10 = csvGStar(cell.label, 10), g90 = csvGStar(cell.label, 90);
   for (const c of PRESET_C) for (const g of PRESET_G) {
     const R = E.rounds(cell, PS, c, g), tag = `${cell.label} c=${c} g=${g}`;
     // Rounds to restore p10 and p90: g* / (c g), rounded up.
@@ -352,13 +390,13 @@ for (const cell of DATA.cells) {
     // The 90-10 gap is the 2024 gap after any number of rounds.
     for (const k of [0, 1, n]) {
       const gp = after(k).gap9010;
-      check(close(gp.post, gp.y2024, 1e-9) && close(gp.post, R.gap2024, 1e-9), `${tag} 90-10 gap moved after ${k} rounds`);
+      check(close(gp.post, gp.cmp, 1e-9) && close(gp.post, R.gapCmp, 1e-9), `${tag} 90-10 gap moved after ${k} rounds`);
     }
   }
   const R = E.rounds(cell, PS, 0.5, 0.1);
   check(close(R.gStar10, g10, 1e-12) && close(R.gStar90, g90, 1e-12), `${cell.label} rounds g* differs from CSV`);
   check(R.widen.toFixed(1) === DATA.table2a[cell.label].toFixed(1), `${cell.label} rounds widen ${R.widen} vs Table 2(a)`);
-  check(close(R.gap2024, R.gap2019 + R.widen, 1e-12), `${cell.label} gap2024 != gap2019 + widen`);
+  check(close(R.gapCmp, R.gapRef + R.widen, 1e-12), `${cell.label} gapCmp != gapRef + widen`);
   check(close(R.turnsPerStudent, g10 / 0.1, 1e-9), `${cell.label} turnsPerStudent`);
   check(close(R.shareUndonePerRound, 0.05 / g10, 1e-12), `${cell.label} shareUndonePerRound`);
   // Never, with no seats or no gain.
@@ -383,7 +421,7 @@ for (const cell of DATA.cells) {
 // 0.33 / (0.3 * 0.1) as 11.000000000000002, so a plain ceil would say 31 and
 // 12. A ratio genuinely past a whole number is still rounded up.
 {
-  const fake = (gs10) => ({ sd2019: 1, g_star: PS.map((p) => (p === 10 ? gs10 : 0.1)), d: PS.map(() => 0), q2019: PS });
+  const fake = (gs10) => ({ sdRef: 1, gStar: PS.map((p) => (p === 10 ? gs10 : 0.1)), d: PS.map(() => 0), qRef: PS });
   check(E.rounds(fake(0.9), PS, 0.3, 0.1).rounds10 === 30, "0.9 / (0.3 * 0.1) should be 30 rounds");
   check(E.rounds(fake(0.33), PS, 0.3, 0.1).rounds10 === 11, "0.33 / (0.3 * 0.1) should be 11 rounds");
   check(E.rounds(fake(0.3), PS, 1, 0.1).rounds10 === 3, "0.3 / 0.1 should be 3 rounds");
@@ -392,7 +430,7 @@ for (const cell of DATA.cells) {
 }
 // Reaching everyone once: 1 / c rounded up; the four presets give 1, 4, 6, 8.
 {
-  const cell = DATA.cells[0];
+  const cell = PAIRS[0];
   const want = { universal: 1, hdt_dist: 4, optin: 6, summer: 8 };
   for (const p of DATA.participation)
     check(E.rounds(cell, PS, p.c, 0.1).roundsReach === want[p.id], `${p.id} reach ${E.rounds(cell, PS, p.c, 0.1).roundsReach} != ${want[p.id]}`);
@@ -418,7 +456,7 @@ for (const cell of DATA.cells) {
 // so bumping it in one place and not another is caught here.
 {
   const PAGES = ["docs/index.html", "docs/rounds.html", "docs/methods.html"];
-  const ASSETS = ["style.css", "cells.js", "engine.js", "charts.js"];
+  const ASSETS = ["style.css", "cells.js", "years.js", "engine.js", "charts.js"];
   const tags = new Set();
   for (const page of PAGES) {
     const html = fs.readFileSync(page, "utf8");
@@ -432,12 +470,112 @@ for (const cell of DATA.cells) {
     }
   }
   check(tags.size === 1, `pages use different asset version tags: ${[...tags].join(", ")}`);
+  // No page names 2019 or 2024 in its copy where the reader's chosen years
+  // belong. Years in the copy are filled in from the chosen pair through
+  // <span data-yr="ref|cmp">; what is left must be one of the deliberate
+  // mentions of the paper's pair, the year range, or a citation year.
+  const ALLOWED = [/2019-to-2024/, /Between 2019 and 2024/, /\b2005 to 2024\b/, /from 2019 to 2024, the pair/,
+    /Only 2019 to 2024 is checked/, /^\s*2019 to 2024 has the student-record check/, /With the 2019 and 2024 data/,
+    /, 2024(, p\. \d+)?\)/, /<th>2019 SD<\/th>/, /the 2024 score minus the 2019 score/];
+  for (const page of PAGES) {
+    let t = fs.readFileSync(page, "utf8");
+    t = t.replace(/<!--[\s\S]*?-->/g, "").replace(/<span data-yr="(ref|cmp)">\d{4}<\/span>/g, "")
+         .replace(/^\s*\/\/.*$/gm, "").replace(/<li id="ref-[\s\S]*?<\/li>/g, "");
+    for (const line of t.split("\n")) {
+      if (!/\b(2019|2024)\b/.test(line)) continue;
+      check(ALLOWED.some((re) => re.test(line)), `${page}: literal year outside the allowed mentions: ${line.trim().slice(0, 90)}`);
+    }
+  }
   // Every page opens with the draft banner, ahead of its content.
   for (const page of PAGES) {
     const html = fs.readFileSync(page, "utf8");
     check(/<body>\s*<div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS<\/div>/.test(html),
           `${page} does not open with the draft banner`);
   }
+}
+
+// ---- 8. other year pairs against R ---------------------------------------
+// tables/explorer-pairs-check.csv, from analysis/11-export-explorer-years.R:
+// for pairs other than 2019 to 2024 (configured in explorer-years.yaml), the
+// proportional rule and the eligibility screen at several budgets, computed
+// by the functions 06-seat-allocation.R uses. The engine, fed the same pair
+// from years.js, must agree to TOL, so the generalized engine is checked
+// against R on pairs beyond the paper's.
+{
+  const rows = readCsv("tables/explorer-pairs-check.csv");
+  check(rows.length > 0, "tables/explorer-pairs-check.csv is missing or empty");
+  const pairsSeen = new Set();
+  let worst = 0;
+  for (const r of rows) {
+    const yc = yearsByLabel[r.cell];
+    check(yc, `check pair cell '${r.cell}' is not in years.js`);
+    if (!yc) continue;
+    pairsSeen.add(`${r.cell} ${r.ref}-${r.cmp}`);
+    check(!(r.ref === "2019" && r.cmp === "2024"), "explorer-pairs-check.csv should hold pairs other than 2019-2024");
+    const cell = E.pair(yc, r.ref, r.cmp), B = Number(r.budget);
+    const rule = r.rule.startsWith("Eligibility") ? "ed" : "tilt";
+    const base = { effect: G, share: B, kPart: 0, kEffect: 0, rule };
+    const dist = E.scenario(cell, PS, { ...base, mode: "distributional" }, [10, 90]);
+    const grp  = E.scenario(cell, PS, { ...base, mode: "group" }, [10, 90]);
+    const res = (sc, p) => sc.knots.find((k) => k.p === p).remaining * cell.sdRef;
+    for (const [got, want, name] of [
+      [res(dist, 10), Number(r.res_p10), "res_p10"],
+      [res(dist, 90), Number(r.res_p90), "res_p90"],
+      [res(dist, 10) - res(dist, 90), Number(r.gap_remaining), "gap_remaining"],
+      [res(grp, 10) - res(grp, 90), Number(r.gap_remaining_tracked), "gap_remaining_tracked"],
+    ]) {
+      worst = Math.max(worst, Math.abs(got - want));
+      check(close(got, want, TOL), `${r.cell} ${r.ref}-${r.cmp} ${rule} B=${B} ${name}: JS ${got} vs R ${want}`);
+    }
+  }
+  check(pairsSeen.size >= 3, `explorer-pairs-check.csv covers ${pairsSeen.size} pairs, expected at least 3`);
+  console.log(`  other pairs: ${rows.length} rows over ${pairsSeen.size} pairs, max |JS - R| = ${worst.toExponential(2)} points`);
+}
+
+// ---- 9. every cell-year and every pair in years.js -------------------------
+// The year lists match the config's (grade 12 has its own), each record is
+// whole, the ED shares add up, and every valid pair (reference before
+// comparison) passes the invariants of section 3 and the rounds identities
+// of section 6. A pair the pages could offer cannot be malformed.
+{
+  const yamlText = fs.readFileSync("analysis/config/explorer-years.yaml", "utf8");
+  const listOf = (key) => yamlText.match(new RegExp(`${key}:\\s*\\[([^\\]]*)\\]`))[1].split(",").map(Number);
+  const Y48 = listOf("grade_4_8"), Y12 = listOf("grade_12");
+  check(YEARS.cells.length === DATA.cells.length, "years.js and cells.js have different cell counts");
+  check(YEARS.default_pair.join() === "2019,2024", `default pair is ${YEARS.default_pair}, expected 2019,2024`);
+  let nPairs = 0;
+  for (const yc of YEARS.cells) {
+    const want = yc.grade === 12 ? Y12 : Y48, got = E.cellYears(yc);
+    check(got.join() === want.join(), `${yc.label} years ${got} differ from the config's ${want}`);
+    for (const yr of got) {
+      const rec = yc.years[yr], tag = `${yc.label} ${yr}`;
+      check(rec.q.length === PS.length && rec.q.every((v, i) => i === 0 || v > rec.q[i - 1]), `${tag}: knots missing or not increasing`);
+      check(rec.sd > 0, `${tag}: SD not positive`);
+      const tot = rec.ed.groups.reduce((a, g) => a + g.pop, 0) + rec.ed.unknown;
+      check(close(tot, 1, 2e-3), `${tag}: ED, not-ED, and unclassified shares sum to ${tot}, not 1`);
+      check(close(rec.ed.pop, rec.ed.groups[0].pop, 1e-3), `${tag}: ED share curve pop ${rec.ed.pop} vs group pop ${rec.ed.groups[0].pop}`);
+    }
+    for (const ref of got) for (const cmp of got) {
+      if (ref >= cmp) continue;
+      nPairs++;
+      const cell = E.pair(yc, ref, cmp), tag = `${yc.label} ${ref}-${cmp}`;
+      for (const mode of ["group", "distributional"]) {
+        const s0 = E.scenario(cell, PS, { effect: 0.2, share: 0, kPart: 0.6, kEffect: -0.6, mode }, PS);
+        check(s0.knots.every((k, i) => close(k.post_pts, cell.qCmp[i], 1e-9) && close(k.remaining, cell.gStar[i], 1e-9)),
+              `${tag} ${mode}: a zero program does not return the comparison knots`);
+      }
+      const full = E.scenario(cell, PS, { effect: 0.1, share: 1, kPart: 0, kEffect: 0, mode: "group" }, PS);
+      check(full.knots.every((k) => close(k.gain, 0.1, 1e-9)), `${tag}: full uniform participation is not a pure shift`);
+      const R = E.rounds(cell, PS, 0.28, 0.155);
+      check(close(R.gapCmp, full.gap9010.cmp, 1e-9) && close(R.gapRef, full.gap9010.ref, 1e-9), `${tag}: rounds gaps differ from scenario`);
+      check(R.rounds10 === (cell.gStar[0] <= 0 ? 0 : Math.ceil(cell.gStar[0] / (0.28 * 0.155) - 1e-9)), `${tag}: rounds10 wrong`);
+    }
+    // Pairs out of order are refused.
+    let threw = false;
+    try { E.pair(yc, got[got.length - 1], got[0]); } catch (e) { threw = true; }
+    check(threw, `${yc.label}: pair() accepted a reference after the comparison`);
+  }
+  console.log(`  years.js: ${YEARS.cells.reduce((a, c) => a + E.cellYears(c).length, 0)} cell-years, ${nPairs} pairs checked`);
 }
 
 console.log(`${checks} checks, ${failures} failed`);

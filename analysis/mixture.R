@@ -90,7 +90,18 @@ RANK_GRID <- seq(0.01, 99.99, by=0.01)
 ## agree to about 0.1 point today, so a conflict would mean the data changed
 ## and a person should look. The closest pairs on 2026-09-28 were 0.05
 ## percentile points apart (Math G4 2024 at p50; Reading G8 2019 at p25).
-quantile_points <- function(dist, knots_pct, knots_val, label="") {
+##
+## min_gap: a bin point closer than this (in percentile points) to a
+## published percentile is dropped in favor of the percentile. The default,
+## 1e-9, drops only exact coincidences, which is what the paper's pipeline
+## (01-10) has always done; its outputs depend on that and must not change.
+## The explorer's multi-year export (11) passes 0.02 (Andrew, 2026-10-03):
+## in Reading G8 2017 the 310-point bin edge lands 0.011 percentile points
+## from the published p90 (309.97), and two points that close force a steep
+## sliver between them, a corner in the curve (slope ratio 1.30 against the
+## no-corners limit of 1.1). Across all 52 explorer cell-years that is the
+## only gap under 0.04, so 0.02 changes that one curve and no other.
+quantile_points <- function(dist, knots_pct, knots_val, label="", min_gap=1e-9) {
   dist <- dist[order(dist$lo), ]
   cum  <- cumsum(dist$pct) / sum(dist$pct) * 100
   used <- dist$pct > 0
@@ -98,7 +109,7 @@ quantile_points <- function(dist, knots_pct, knots_val, label="") {
   bins <- data.frame(pct=c(0, cum[used]), score=c(dist$lo[first], dist$hi[used]),
                      source="bin")
   bins$pct[nrow(bins)] <- 100
-  near_knot <- vapply(bins$pct, function(p) any(abs(p - knots_pct) < 1e-9), logical(1))
+  near_knot <- vapply(bins$pct, function(p) any(abs(p - knots_pct) < min_gap), logical(1))
   pts <- rbind(bins[!near_knot, ],
                data.frame(pct=knots_pct, score=knots_val, source=rep("knot", length(knots_pct))))
   pts <- pts[order(pts$pct), ]

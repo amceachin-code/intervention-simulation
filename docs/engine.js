@@ -54,8 +54,8 @@
 
   // Quantile function through points spanning 0 to 100 percent: the score
   // distribution's bin points plus the published percentiles, built in R by
-  // quantile_points (analysis/mixture.R) and exported in cells.js as qf2019
-  // and qf2024. A monotone spline with a continuous slope, so no corners, and
+  // quantile_points (analysis/mixture.R) and exported per cell and year in
+  // years.js (pair() below picks the two a page compares: qfRef, qfCmp). A monotone spline with a continuous slope, so no corners, and
   // no tails because the points reach the ends of the scale. Port of
   // make_quantile_fn.
   function makeQuantileFn(pct, vals) {
@@ -144,18 +144,18 @@
   // Eligibility screen, port of make_ed_screen (analysis/alloc-rules.R).
   // Seats go at random to economically disadvantaged (ED) students, so with
   // budget B the ED treatment rate is r = min(1, B / pop) and participation at
-  // rank p is r * s(p), where s(p) is the 2024 ED share at p (cells.js ed.share,
+  // rank p is r * s(p), where s(p) is the comparison year's ED share at p (ed.share,
   // exported from ed_share_points). Seats beyond pop have no eligible taker
   // and go unused, which the page reports.
   function edParticipation(ed, B) {
     const r = Math.min(1, B / ed.pop);
     return (ps) => edShareAt(ed, ps).map((s) => r * s);
   }
-  // s(p), the 2024 ED share at each rank in ps (an array), and the share of
+  // s(p), the comparison year's ED share at each rank in ps (an array), and the share of
   // students whose status NAEP does not know (neither group), for the pages'
   // text.
   function edShareAt(ed, ps) { return approx(ed.share.pct, ed.share.share, ps); }
-  function edUnknownShare(ed) { return 1 - ed.groups.reduce((a, g) => a + g.pop2024, 0); }
+  function edUnknownShare(ed) { return 1 - ed.groups.reduce((a, g) => a + g.pop, 0); }
 
   // National rank (0-100) of each score in xs, port of quantile_rank
   // (analysis/mixture.R): the inverse of Qfn read off a dense grid from 0 to
@@ -164,7 +164,7 @@
   function quantileRank(Qfn, xs) { return approx(INVERSE_GRID.map(Qfn), INVERSE_GRID, xs); }
 
   // Treated effect at each rank, in NAEP score points. `effect` is the
-  // population-average effect in 2019 SD units (the mean of w is 1, so the
+  // population-average effect in reference-year SD units (the mean of w is 1, so the
   // average over all ranks is exactly `effect`); S converts to points.
   function effectPoints(effect, k, S) {
     const w = tilt(k);
@@ -238,6 +238,44 @@
     return probs.map((p, i) => Qfn(p) + pr[i] * dl[i]);
   }
 
+  // ---------------------------------------------------------------------
+  // The pair a page compares. years.js (analysis/11-export-explorer-years.R)
+  // holds one record per cell and year; pair() builds, from a cell's records
+  // for a reference year and a later comparison year, the object every
+  // function below takes:
+  //   qRef, qCmp   published percentiles in each year (knots, PS order)
+  //   d, gStar     qCmp - qRef, and the restoration requirement -d / sdRef
+  //   sdRef, sdCmp national SD in each year; S is always the reference SD
+  //   qfRef, qfCmp quantile-function points in each year
+  //   ed           the comparison year's ED share curve and population share
+  //                (the program seats comparison-year students), each year's
+  //                unclassified share, and per group its population share in
+  //                the comparison year (pop) and reference year (popRef) and
+  //                its quantile points in both years
+  //   key          a string unique to the cell and the two years, which keys
+  //                the caches below (each pair has its own curves)
+  // The reference must be earlier than the comparison (Andrew, 2026-10-02).
+  function cellYears(yc) { return Object.keys(yc.years).map(Number).sort((a, b) => a - b); }
+  function pair(yc, ref, cmp) {
+    const a = yc.years[ref], b = yc.years[cmp];
+    if (!a || !b) throw new Error(`pair: ${yc.label} has no ${!a ? ref : cmp} data`);
+    if (!(Number(ref) < Number(cmp))) throw new Error(`pair: reference ${ref} must be before comparison ${cmp}`);
+    const d = b.q.map((v, i) => v - a.q[i]);
+    return {
+      label: yc.label, key: `${yc.label}|${ref}|${cmp}`, ref: Number(ref), cmp: Number(cmp),
+      qRef: a.q, qCmp: b.q, d, gStar: d.map((x) => -x / a.sd), sdRef: a.sd, sdCmp: b.sd,
+      qfRef: a.qf, qfCmp: b.qf,
+      ed: {
+        pop: b.ed.pop, popRef: a.ed.pop, share: b.ed.share,
+        unknownRef: a.ed.unknown, unknownCmp: b.ed.unknown,
+        groups: b.ed.groups.map((g) => {
+          const gr = a.ed.groups.find((x) => x.id === g.id);
+          return { id: g.id, label: g.label, pop: g.pop, popRef: gr.pop, qfRef: gr.qf, qfCmp: g.qf };
+        }),
+      },
+    };
+  }
+
   // inputs.rule is "tilt" (the default: any student may take part, tilted by
   // kPart) or "ed" (the eligibility screen; kPart is ignored).
   function participationFor(cell, inputs) {
@@ -254,20 +292,21 @@
   //         evaluated as well, in the same pass, for the table.
   //
   // Returns { curve, knots, gap9010, meanPart }. curve and knots hold one row
-  // per percentile, in 2019 SD units unless named *_pts:
-  //   gStar      restoration requirement, -(Q2024 - Q2019) / S (so D/S = -gStar)
-  //   remaining  requirement left after the program, (Q2019 - post) / S
+  // per percentile, in reference-year SD units unless named *_pts:
+  //   gStar      restoration requirement, -(Qcmp - Qref) / S (so D/S = -gStar)
+  //   remaining  requirement left after the program, (Qref - post) / S
   //   gain       what the program delivered at that percentile, gStar - remaining
   //   part, effect   the participation rate and treated effect (SD) at p
-  //   post_pts, q2019_pts, q2024_pts   the post-program, 2019, and 2024 scores
-  // gap9010 is the 90-10 gap in NAEP points { y2019, y2024, post }, and
+  //   post_pts, qRef_pts, qCmp_pts   the post-program, reference-year, and
+  //                                  comparison-year scores
+  // gap9010 is the 90-10 gap in NAEP points { ref, cmp, post }, and
   // meanPart is mean participation over all ranks: equal to share under the
   // tilts by construction, and min(share, ED share) under the screen (shown
   // on the page as a check).
   function scenario(cell, knotsPct, inputs, probs) {
-    const S = cell.sd2019;
-    const Q19 = makeQuantileFn(cell.qf2019.pct, cell.qf2019.score);
-    const Q24 = makeQuantileFn(cell.qf2024.pct, cell.qf2024.score);
+    const S = cell.sdRef;
+    const Q19 = makeQuantileFn(cell.qfRef.pct, cell.qfRef.score);
+    const Q24 = makeQuantileFn(cell.qfCmp.pct, cell.qfCmp.score);
     const piFn = participationFor(cell, inputs);
     const dFn = effectPoints(inputs.effect, inputs.kEffect, S);
 
@@ -277,14 +316,14 @@
     const all = [...new Set([...probs, ...knotsPct])].sort((a, b) => a - b);
     const after = inputs.mode === "group"
       ? groupQuantiles(Q24, piFn, dFn, all)
-      : mixtureQuantiles(Q24, piFn, dFn, all, cell.label + "|2024");
+      : mixtureQuantiles(Q24, piFn, dFn, all, cell.key + "|cmp");
     const pr = piFn(all), ef = dFn(all);
     const rows = all.map((p, i) => {
       const q19 = Q19(p), q24 = Q24(p);
       const gStar = (q19 - q24) / S, remaining = (q19 - after[i]) / S;
       return { p, gStar, remaining, gain: gStar - remaining,
                part: pr[i], effect: ef[i] / S, post_pts: after[i],
-               q2019_pts: q19, q2024_pts: q24 };
+               qRef_pts: q19, qCmp_pts: q24 };
     });
     const byP = new Map(rows.map((r) => [r.p, r]));
     const curve = probs.map((p) => byP.get(p));
@@ -292,7 +331,7 @@
     const gap = (key) => byP.get(90)[key] - byP.get(10)[key];
     return {
       curve, knots,
-      gap9010: { y2019: gap("q2019_pts"), y2024: gap("q2024_pts"), post: gap("post_pts") },
+      gap9010: { ref: gap("qRef_pts"), cmp: gap("qCmp_pts"), post: gap("post_pts") },
       meanPart: mean(piFn(FILL_GRID)),
     };
   }
@@ -303,7 +342,7 @@
   // analysis/06-seat-allocation.R.
   //
   // A student at rank u of group g scores Q_g(u) and sits at national rank
-  // v = F(Q_g(u)) in 2024. Under the tilt rules their chance of a seat is
+  // v = F(Q_g(u)) in the comparison year. Under the tilt rules their chance of a seat is
   // pi(v) and their boost delta(v), both read at the NATIONAL rank, because
   // that is what the program sees. Under the screen every ED student has the
   // same chance r = min(1, B / pop) and no one else has any. The group's
@@ -312,15 +351,15 @@
   // exactly). In "Same students" mode the group at its own percentile p gains
   // pi(v) * delta(v) on average, as groupQuantiles does nationally.
   //
-  // Returns [{ id, label, rows: [{ p, q2019, q2024, post }] }, ...], scores in
+  // Returns [{ id, label, rows: [{ p, qRef, qCmp, post }] }, ...], scores in
   // NAEP points, one entry per group in cells.js order (ED, then not ED).
   const groupCache = new Map();
   function groupBase(cell, g) {
-    const k = cell.label + "|" + g.id;
+    const k = cell.key + "|" + g.id;
     if (!groupCache.has(k)) {
-      const Q24 = makeQuantileFn(cell.qf2024.pct, cell.qf2024.score);
-      const Q19g = makeQuantileFn(g.qf2019.pct, g.qf2019.score);
-      const Q24g = makeQuantileFn(g.qf2024.pct, g.qf2024.score);
+      const Q24 = makeQuantileFn(cell.qfCmp.pct, cell.qfCmp.score);
+      const Q19g = makeQuantileFn(g.qfRef.pct, g.qfRef.score);
+      const Q24g = makeQuantileFn(g.qfCmp.pct, g.qfCmp.score);
       const x = onGrid(k, Q24g);
       const v = quantileRank(Q24, x);   // national rank, fixed across programs
       groupCache.set(k, { Q24, Q19g, Q24g, x, v });
@@ -328,7 +367,7 @@
     return groupCache.get(k);
   }
   function groupScenario(cell, inputs, probs) {
-    const S = cell.sd2019;
+    const S = cell.sdRef;
     const dFn = effectPoints(inputs.effect, inputs.kEffect, S);
     const piNat = inputs.rule === "ed" ? null : participation(inputs.share, inputs.kPart);
     const r = Math.min(1, inputs.share / cell.ed.pop);
@@ -342,12 +381,12 @@
         const pr = chance(vp), dl = dFn(vp);
         post = probs.map((p, i) => b.Q24g(p) + pr[i] * dl[i]);
       } else {
-        const without = withoutProgram(cell.label + "|" + g.id, b.x, probs);
+        const without = withoutProgram(cell.key + "|" + g.id, b.x, probs);
         const withProg = rawMixture(b.x, chance(b.v), dFn(b.v), probs);
         post = probs.map((p, i) => b.Q24g(p) + withProg[i] - without[i]);
       }
       return { id: g.id, label: g.label,
-               rows: probs.map((p, i) => ({ p, q2019: b.Q19g(p), q2024: b.Q24g(p), post: post[i] })) };
+               rows: probs.map((p, i) => ({ p, qRef: b.Q19g(p), qCmp: b.Q24g(p), post: post[i] })) };
     });
   }
 
@@ -361,11 +400,11 @@
   // the same at every p (groupQuantiles with a neutral tilt; the test checks
   // that the two agree). Repeating the round k times then adds k * c * g at
   // every percentile, so:
-  //   rounds to bring percentile p back to 2019 = g*(p) / (c * g), rounded up;
+  //   rounds to bring percentile p back to the reference = g*(p) / (c * g), rounded up;
   //   rounds to reach every student once        = 1 / c, rounded up, if each
   //                                               round serves students who
   //                                               have not had a turn;
-  //   the 90-10 gap after any number of rounds  = its 2024 value, because
+  //   the 90-10 gap after any number of rounds  = its comparison-year value, because
   //                                               every percentile moves by
   //                                               the same amount.
   // These are best-case assumptions, stated on the page: gains add up, none
@@ -375,7 +414,7 @@
   //
   // cell is a cells.js cell and knotsPct the percentiles its arrays are
   // indexed by (TOOL_DATA.percentiles, as for scenario); c is the share
-  // seated each round (0-1); g is the gain per participant in 2019 SD units.
+  // seated each round (0-1); g is the gain per participant in reference-year SD units.
   // Returns plain numbers, scores in NAEP points where named *Pts or
   // drop/gap, everything else in SD. Whole rounds are null when the program
   // never gets there (c or g is zero), and 0 when there is no drop.
@@ -385,18 +424,18 @@
   // rounds of 0.03 do restore a 0.9 drop.
   function ceilRounds(x) { return Number.isFinite(x) ? Math.max(0, Math.ceil(x - ROUND_EPS)) : null; }
   function rounds(cell, knotsPct, c, g) {
-    const S = cell.sd2019;
+    const S = cell.sdRef;
     const i10 = knotsPct.indexOf(10), i90 = knotsPct.indexOf(90);
     if (i10 < 0 || i90 < 0) throw new Error("rounds: knotsPct must include 10 and 90");
-    const gStar10 = cell.g_star[i10], gStar90 = cell.g_star[i90];
+    const gStar10 = cell.gStar[i10], gStar90 = cell.gStar[i90];
     const perRound = c * g;
     const ratio = (need) => (perRound > 0 ? need / perRound : Infinity);
-    const gap2019 = cell.q2019[i90] - cell.q2019[i10];
+    const gapRef = cell.qRef[i90] - cell.qRef[i10];
     const widen = cell.d[i90] - cell.d[i10];
     return {
       gStar10, gStar90,
       drop10: -cell.d[i10], drop90: -cell.d[i90],
-      gap2019, gap2024: gap2019 + widen, widen,
+      gapRef, gapCmp: gapRef + widen, widen,
       perRound, perRoundPts: perRound * S, gainPts: g * S,
       toRestore10: ratio(gStar10), toRestore90: ratio(gStar90),
       rounds10: ceilRounds(ratio(gStar10)), rounds90: ceilRounds(ratio(gStar90)),
@@ -408,7 +447,7 @@
       // fade-out threshold. If a share f of the gains built up so far fades
       // between one round and the next, the level just after a round tends
       // to perRound / f (the geometric series perRound * (1 + (1-f) +
-      // (1-f)^2 + ...)), so p10 gets back to 2019 only if f is at most
+      // (1-f)^2 + ...)), so p10 gets back to the reference only if f is at most
       // perRound / gStar10.
       shareUndonePerRound: gStar10 > 0 ? Math.min(1, perRound / gStar10) : 1,
       // Share reached at least once after k rounds if each round were instead
@@ -418,11 +457,11 @@
   }
   function mean(a) { let s = 0; for (const v of a) s += v; return s / a.length; }
 
-  // Exported: what the pages use (scenario, groupScenario, rounds, tilt,
+  // Exported: what the pages use (pair, cellYears, scenario, groupScenario, rounds, tilt,
   // TILT_LEVELS, edShareAt, edUnknownShare; the methods page also calls
   // participation) and what the test checks directly (the rest).
   root.NAEPEngine = {
-    scenario, groupScenario, rounds, tilt, TILT_LEVELS, edShareAt, edUnknownShare,
+    pair, cellYears, scenario, groupScenario, rounds, tilt, TILT_LEVELS, edShareAt, edUnknownShare,
     makeQuantileFn, participation, edParticipation, effectPoints, FILL_GRID, mean,
   };
 })(globalThis);

@@ -5,7 +5,126 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: EXPLORER LIVE FIXES AND DESIGN PASS (2026-10-02, complete, live)
+# CURRENT TASK: USER-CHOSEN REFERENCE AND COMPARISON YEARS (2026-10-03, complete on branch)
+
+**Status:** Complete on branch `explorer-reference-years`, cut from main. Not
+merged. Awaiting Andrew's review; not to be merged to main until he says it is
+ready.
+
+## Objective
+
+Let explorer users pick their own reference year and a later comparison year
+from NAEP years 2005 to 2024, on `index.html`, `rounds.html`, and
+`methods.html`.
+
+## Data availability
+
+Verified against the live NAEP Data Service on 2026-10-02 (national,
+accommodations-permitted sample R3 in every year):
+
+- Grades 4 and 8: 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019, 2022, 2024.
+- Grade 12: 2005, 2009, 2013, 2015, 2019, 2024. Math G12's 0-300 scale starts
+  in 2005.
+- DP:DP score distributions are available from 2005.
+- ECONDIS is available from 2005. The Reading G4 disadvantaged share was
+  41.2% (2005), 43.9% (2009), 50.0% (2013), and 51.0% (2019).
+
+## Decisions (Andrew)
+
+- The reference year must be earlier than the comparison year.
+- The defaults stay 2019 and 2024.
+- The ED card is shown for every pair, with a caveat on each year's
+  "information not available" share.
+- The year pickers go on all three pages. The explorer and the rounds page
+  share the hash keys `cell`, `ref`, `cmp`, `share`, and `effect`;
+  `methods.html` keeps its own selects, because its hash holds section
+  anchors.
+- `quantile_points` gets a `min_gap` argument, and the explorer export passes
+  0.02 (approved 2026-10-03; see step 1).
+
+## Plan and status
+
+1. **Done.** New `analysis/11-export-explorer-years.R`, with its own config
+   `analysis/config/explorer-years.yaml` (year lists, default pair,
+   `min_bin_knot_gap` 0.02, three check pairs, check budgets).
+   - It reuses `get_stats` and `get_distribution` (`api-helpers.R`),
+     `quantile_points` and `group_quantile_points` (`mixture.R`), and
+     `ed_share_points`, `make_ed_screen`, `alloc_uniform`, and
+     `calibrated_program_quantiles`. Nothing is reimplemented.
+   - It writes `docs/years.js` (52 cell-years, about 201 KB,
+     `globalThis.TOOL_YEARS`) and `tables/explorer-pairs-check.csv` (36 rows:
+     Math G8 2013-2024, Reading G4 2005-2019, Math G12 2005-2015; the
+     proportional rule and the eligibility screen at 6 budgets).
+   - It added 92 cached API responses to `analysis/.cache/` (128 files in
+     all). Run: `Rscript analysis/11-export-explorer-years.R`, about 1 second
+     from the cache.
+   - `analysis/mixture.R`: `quantile_points` gained `min_gap` (default 1e-9,
+     the old behaviour). The export passes 0.02 because in Reading G8 2017 the
+     310-point bin edge lands 0.011 percentile points from the published p90,
+     which made a corner. Only that one curve changes.
+2. **Done.** Engine (`docs/engine.js`): new `pair(yearsCell, ref, cmp)` and
+   `cellYears()`. Fields renamed to year-neutral names (`sdRef`, `qRef`,
+   `qfRef`, `qfCmp`, `gStar`, `gap9010.ref`/`.cmp`, group rows
+   `{qRef, qCmp}`, rounds `gapRef`/`gapCmp`, ED group `pop`). `charts.js`
+   gained the shared helpers `yearsOf`, `snapYears`, and `fillYearSelects`.
+3. **Done.** Pages:
+   - year selects on all three pages, with text generalized away from 2019
+     and 2024;
+   - "No drop" tiles where scores rose;
+   - chart shading clipped to each side of zero;
+   - the ED card caveat gives both years' disadvantaged and unclassified
+     shares;
+   - methods has a new section 9, "Choosing the years", with a years table
+     and an ED shares-by-year table; the checks, limits, and references are
+     now sections 10 to 12;
+   - the asset version tag is `2026-10-03` and now covers `years.js`.
+4. **Done.** Tests: `analysis/tests/test-tool-engine.mjs` runs 17,383 checks,
+   0 failed.
+   - Section 0: `pair(2019, 2024)` reproduces `cells.js` in every field.
+   - Section 7: asset tags, the draft banner, and no literal 2019 or 2024 in
+     page copy outside an allowlist.
+   - Section 8: the JS engine matches `tables/explorer-pairs-check.csv` to
+     3.5e-13 points.
+   - Section 9: all 52 cell-years and all 210 valid pairs pass the
+     invariants.
+5. **Done.** Verification:
+   - `run-all.sh --regen` passes with byte-identical tables;
+   - headless Chrome, zero console errors;
+   - a stub-DOM wording sweep of 1,890 renders across every cell, pair, and
+     setting.
+6. **Done.** Docs: `README.md`, `analysis/README.md`, `docs/README.md`, and
+   this file.
+
+## Key constraint (held)
+
+The paper pipeline (scripts 01-10, `tables/sim-*`, the Stata port, Table 2(a))
+stays fixed at 2019 to 2024 and byte-identical. `docs/cells.js` is unchanged
+and still feeds the presets, the Kraft data, `table2a`, and the anchor test.
+
+## Open items
+
+- Methods-page claims about the 2017 digital transition, the 2009 reading
+  framework, and school-lunch rule changes were left out because they are
+  unsourced. Add them only with a source opened.
+- Very small drops can show share-undone figures in the thousands of percent
+  (for example 2023% for Math G4 2005-2017 at 100% take-up), consistent with
+  the existing above-100% behaviour.
+- rtk (and now caveman) setup is queued for after this branch.
+
+## Files
+
+- **Created:** `analysis/11-export-explorer-years.R`,
+  `analysis/config/explorer-years.yaml`, `docs/years.js`,
+  `tables/explorer-pairs-check.csv`, 92 cache files in `analysis/.cache/`.
+- **Modified:** `analysis/mixture.R`, `analysis/tests/test-tool-engine.mjs`,
+  `docs/engine.js`, `docs/charts.js`, `docs/index.html`, `docs/rounds.html`,
+  `docs/methods.html`, `docs/style.css`, `docs/README.md`, `README.md`,
+  `analysis/README.md`, `PROGRESS.md`.
+- **Deleted:** none.
+
+---
+
+# PREVIOUS TASK: EXPLORER LIVE FIXES AND DESIGN PASS (2026-10-02, complete, live)
 
 **Status:** Complete and live on GitHub Pages (main at 772a2eb). Built on
 branches `explorer-rounds-view` and `explorer-design-pass`, both pushed.
