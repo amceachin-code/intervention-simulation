@@ -155,7 +155,8 @@ The R tests are plain `Rscript` files, not testthat, and they check the committe
 ```
 intervention-simulation/
 ├── README.md
-├── CLAUDE.md                 project guidelines for Claude sessions (and a quick orientation for humans)
+├── CLAUDE.md                 short rules for Claude sessions (about 400 tokens, loaded every session)
+├── PROJECT-NOTES.md          the full project background, data, and run notes that CLAUDE.md points to
 ├── PROGRESS.md               running progress log
 ├── PROJECTPLAN.md            plan for the ED breakdown in the explorer, memo refresh, and argument cleanup
 ├── TODO.md                   open items
@@ -260,7 +261,7 @@ intervention-simulation/
 | `kraft-2023-data/` | Copy of the Kraft (2023) effect-size spreadsheet (`kraft2023effectsize.xls`), the paper and its read-me (PDF), `CODEBOOK.md`, `SUMMARY.md`, and the study target-population coding in `studies/` (built by the article's scripts 14 to 18 and copied here as data). The retrieved study PDFs, extracted text, and WWC export under `studies/` are local-only. |
 | `district-enrollment-data/` | Copy of the CCD 2023-24 LEA material shared with the article: `SUMMARY.md` and the data-notes and membership-companion spreadsheets are tracked; the raw membership (CSV and SAS) and directory CSVs are local-only. |
 | `docs/` | The interactive tool (`index.html`, `rounds.html`, `methods.html`, `style.css`, `charts.js`, `engine.js`, the generated `cells.js` and `years.js`, and `README.md`), hosted on GitHub Pages from `/docs`. See [Interactive tool](#interactive-tool). |
-| `CLAUDE.md`, `PROGRESS.md`, `TODO.md`, `PROJECTPLAN.md`, `tasks/lessons.md` | Project guidelines, progress log, open items, the plan for the 2026-09-29 work (ED breakdown in the explorer, memo refresh, argument cleanup), and session lessons. |
+| `CLAUDE.md`, `PROJECT-NOTES.md`, `PROGRESS.md`, `TODO.md`, `PROJECTPLAN.md`, `tasks/lessons.md` | Short rules for Claude sessions (kept small because it loads every session), the full project notes it points to, the progress log, open items, the plans for recent work (the rounds page on 2026-10-01, earlier plans below it), and session lessons. |
 
 ## Dependencies
 

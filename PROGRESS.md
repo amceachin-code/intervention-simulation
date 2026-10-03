@@ -5,11 +5,57 @@ task sits at the top. The history imported from `naep-aera-open` follows it.
 
 ---
 
-# CURRENT TASK: USER-CHOSEN REFERENCE AND COMPARISON YEARS (2026-10-03, complete on branch)
+# CURRENT TASK: TOKEN EFFICIENCY (2026-10-03, in progress)
 
-**Status:** Complete on branch `explorer-reference-years`, cut from main. Not
-merged. Awaiting Andrew's review; not to be merged to main until he says it is
-ready.
+**Status:** In progress. Picked up after `/clear`; everything needed is below.
+
+## Done
+- **Global `~/.claude/CLAUDE.md`** is now 789 bytes (about 200 tokens), with 7 rules. The routine is lighter: README/PROGRESS agents run only at the end of a task, and the plan-mode question comes only before multi-file or architectural work. Backups:
+  - `CLAUDE.md.bak`: the original, 13.5 KB.
+  - `CLAUDE.md.new`: the condensed version, 3 KB.
+  - `CLAUDE.md.lean`: the current version.
+  - The Railway notes moved verbatim to `~/.claude/notes/railway.md`.
+- **Project `CLAUDE.md`** is slimmed to 1.6 KB (from 7.8 KB). The full old text is in `PROJECT-NOTES.md`. It is on branch `slim-claude-md` (commit 75dd1d6), **not merged or pushed**; this PROGRESS update is uncommitted on that branch.
+- **rtk 0.51.0** is installed with Homebrew. Only its Bash hook was added, as a PreToolUse `rtk hook claude` entry in `~/.claude/settings.json`; there is no RTK.md. Settings backups: `settings.json.pre-rtk` and `settings.json.pre-tokentest2`. `rtk gain` shows its savings.
+- **caveman** was installed with `npx skills add JuliusBrussee/caveman -g`, then trimmed to its core `caveman` skill. The 21 extra links were removed, and their files remain in `~/.agents/skills`. Some of the removed skills route requests through the "Caveman Cloud" gateway; do not use those without Andrew's say-so. Caveman is switched on with `/caveman`.
+
+## Token tests (headless `claude -p --output-format json`, 3 runs each)
+- Harness, kept in session scratch (it survives until reboot):
+  - `/private/tmp/claude-501/-Users-andrewmceachin-projects-intervention-simulation/d0b8deda-5f1a-4212-aa12-707fbc57c341/scratchpad/token-test/`
+  - Files: `run.sh`, `tools.py` (switches rtk and caveman on and off), `summarize.py`.
+  - Summarize with `python3 summarize.py results` or `python3 summarize.py results2`.
+- **Round 1 (`results/`):**
+  - A (old CLAUDE.md) against B (condensed): the "reply OK" prompt used 29,062 against 25,862 input tokens. The coding task used 101,471 against 79,638 input tokens and cost $0.143 against $0.082.
+  - The L/C/D coding-task rows in this round are **invalid**, because a leftover median() was swept into the test repo.
+  - Explore task: L 50,957, C (rtk) 50,994, and D (caveman, with 22 skills) 57,138 input tokens. Caveman's 22 skill descriptions added about 2,900 tokens per call; its output was about 18% shorter.
+- **Round 2 (`results2/`, complete):** a fair rerun with a clean repo, a realistic task (`realrun`: run-all.sh plus `git log -p` in a project clone), and caveman trimmed to one skill. Mean input tokens, L / C (rtk) / D (C + caveman):
+  - OK prompt: 25,112 / 24,599 / 26,690
+  - Coding task: 87,246 / 87,142 / 83,012
+  - Explore task: 51,018 / 50,705 / 54,225
+  - Realistic task: 124,661 / 124,048 / 132,127
+  - **rtk:** no meaningful change, under 1% on every task, including the realistic one.
+  - **caveman (on via `/caveman`):** adds about 1,600 input tokens per call, from loading the skill. Output tokens did not fall meaningfully (−4% to +1%), so it is a net cost here.
+  - Cost figures are noisy because of cache order; compare input tokens.
+  - **Decision (Andrew, 2026-10-03):** remove caveman, keep rtk, and use `/clear` between unrelated tasks (with PROGRESS updated first) as the main saving.
+    - caveman is removed: the `~/.claude/skills/caveman` link and all of `~/.agents` (which held only today's caveman install). Both are parked in session scratch, `caveman-removed/`, until reboot.
+    - rtk 0.51.0 and its hook stay on.
+- **4-hour heavy-session estimate,** from this session's busiest window: 127 calls, 71.6M input tokens (98% cache reads), 107k output.
+  - CLAUDE.md slimming plus the lighter routine save about 5%.
+  - rtk saves about 0.5 to 2%, because shell output was only 1.7M of the re-read tokens.
+  - caveman saves almost nothing.
+  - **Using `/clear` at task boundaries would have cut input by about 81%.** This is the main recommendation: update PROGRESS, then `/clear` between unrelated tasks, and `/compact` within a long task.
+
+## Next steps
+1. Round-2 results reported to Andrew on 2026-10-03, and the rtk/caveman decision is made (above).
+2. Ask whether to merge `slim-claude-md`, and whether to keep rtk and caveman installed.
+3. Optionally trim the other projects' CLAUDE.md files. These are over 500 tokens: pta (27 KB), pta-auction, naep-aera-open, grade-inflation, jobs, k12-fy27-planning, ed-in-america.
+
+---
+
+# PREVIOUS TASK: USER-CHOSEN REFERENCE AND COMPARISON YEARS (2026-10-03, complete, live)
+
+**Status:** Merged to main (47474af) and live on GitHub Pages on 2026-10-03, after Andrew's
+review. Branch `explorer-reference-years` is pushed.
 
 ## Objective
 
