@@ -44,7 +44,7 @@ The test compares the engine with the committed R outputs for proportional alloc
 
 ## Asset version tag
 
-Each page loads `style.css`, `cells.js`, `years.js`, `engine.js`, and `charts.js` with a version tag (`engine.js?v=2026-10-03`). GitHub Pages lets browsers cache files for 10 minutes, so without the tag a new page can run against a cached old engine or stylesheet and stop partway through drawing. Whenever you change any of those five files, including a `cells.js` rewrite by `10-export-tool-data.R` or a `years.js` rewrite by `11-export-explorer-years.R`, change the tag in all three pages to a new value: the date, with `.2`, `.3` for later changes on the same day. The engine test (section 7) fails if a page lacks the tag or the pages disagree.
+Each page loads `style.css`, `cells.js`, `years.js`, `engine.js`, and `charts.js` with a version tag (`engine.js?v=2026-10-03.3`). GitHub Pages lets browsers cache files for 10 minutes, so without the tag a new page can run against a cached old engine or stylesheet and stop partway through drawing. Whenever you change any of those five files, including a `cells.js` rewrite by `10-export-tool-data.R` or a `years.js` rewrite by `11-export-explorer-years.R`, change the tag in all three pages to a new value: the date, with `.2`, `.3` for later changes on the same day. The engine test (section 7) fails if a page lacks the tag or the pages disagree.
 
 ## Viewing and hosting
 

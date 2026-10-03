@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NAEP Recovery Explorer</title>
 <meta name="description" content="How much of the 2019-to-2024 drop in NAEP scores a tutoring or summer program could undo, for low, middle, and high scorers.">
-<link rel="stylesheet" href="style.css?v=2026-10-03">
+<link rel="stylesheet" href="style.css?v=2026-10-03.3">
 </head>
 <body>
 <div class="draft-banner" role="note">DRAFT - WORK IN PROGRESS</div>
@@ -74,7 +74,7 @@
         <select id="cell"></select>
         <div class="year-row">
           <div>
-            <label class="ctl-label" for="ref">Reference year <a class="why" href="methods.html#years">About the years</a></label>
+            <label class="ctl-label" for="ref">Reference year</label>
             <select id="ref"></select>
           </div>
           <div>
@@ -82,6 +82,7 @@
             <select id="cmp"></select>
           </div>
         </div>
+        <p class="years-link"><a class="why" href="methods.html#years">About the years</a></p>
         <p class="ctl-help" id="years-help"></p>
       </div>
 
@@ -223,10 +224,10 @@
   </div>
 </main>
 
-<script src="cells.js?v=2026-10-03"></script>
-<script src="years.js?v=2026-10-03"></script>
-<script src="engine.js?v=2026-10-03"></script>
-<script src="charts.js?v=2026-10-03"></script>
+<script src="cells.js?v=2026-10-03.3"></script>
+<script src="years.js?v=2026-10-03.3"></script>
+<script src="engine.js?v=2026-10-03.3"></script>
+<script src="charts.js?v=2026-10-03.3"></script>
 <script>
 "use strict";
 const D = globalThis.TOOL_DATA, Y = globalThis.TOOL_YEARS, E = globalThis.NAEPEngine;

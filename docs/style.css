@@ -119,8 +119,13 @@ legend, .ctl-label { font-weight: 600; font-size: 0.9rem; padding: 0; margin-bot
 .ctl-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
 .ctl-value { font-variant-numeric: tabular-nums; min-width: 5.5ch; text-align: right; font-weight: 600; }
 /* Reference and comparison year selects, side by side under the cell. */
-.year-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+/* align-items: end keeps the two selects level when a narrow column wraps
+   one label onto two lines. */
+.year-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; align-items: end; }
 .year-row .ctl-label { margin-bottom: 4px; }
+/* The "About the years" link sits on its own line under both selects. */
+.years-link { margin: 6px 0 0; }
+.years-link .why { margin-left: 0; }
 select { width: 100%; padding: 6px 8px; font: inherit; background: var(--surface-1); color: var(--text-primary);
          border: 1px solid var(--border); border-radius: 6px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
